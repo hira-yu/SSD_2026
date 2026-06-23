@@ -16,8 +16,8 @@ class StaffController extends Controller
             ['title' => '注文内容確認', 'description' => '受付済み注文の内容確認機能を今後追加します。', 'url' => null],
         ],
         'accountant' => [
-            ['title' => '注文検索', 'description' => '注文番号や購入者情報で検索する機能を今後追加します。', 'url' => null],
-            ['title' => '支払い状態更新', 'description' => '支払い状態の更新機能を今後追加します。', 'url' => null],
+            ['title' => '注文検索', 'description' => '注文番号、注文日、購入者氏名、支払い状態で注文を検索します。', 'url' => '/staff/accountant/orders'],
+            ['title' => '支払い状態更新', 'description' => '未払い注文の支払い状態を支払済へ更新します。', 'url' => '/staff/accountant/orders'],
         ],
         'shipper' => [
             ['title' => '未発送注文一覧', 'description' => '未発送注文の確認機能を今後追加します。', 'url' => null],

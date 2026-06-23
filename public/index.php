@@ -32,6 +32,9 @@ $router->post('/staff/receptionist/orders/confirm', [ReceptionOrderController::c
 $router->post('/staff/receptionist/orders', [ReceptionOrderController::class, 'store']);
 $router->get('/staff/receptionist/orders/complete', [ReceptionOrderController::class, 'complete']);
 $router->get('/staff/accountant', [StaffController::class, 'accountant']);
+$router->get('/staff/accountant/orders', [AccountingController::class, 'index']);
+$router->get('/staff/accountant/orders/{order_no}', [AccountingController::class, 'show']);
+$router->post('/staff/accountant/orders/{order_no}/payment', [AccountingController::class, 'updatePayment']);
 $router->get('/staff/shipper', [StaffController::class, 'shipper']);
 $router->get('/system/db-check', [SystemController::class, 'dbCheck']);
 $router->dispatch($_SERVER['REQUEST_METHOD'] ?? 'GET', $_SERVER['REQUEST_URI'] ?? '/');
