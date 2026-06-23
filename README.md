@@ -1,0 +1,269 @@
+# 通信販売システム
+
+授業内プロジェクト向けの通信販売システムです。  
+このリポジトリでは、機能実装に入る前段として、素の PHP 8.3 系で動かす軽量 MVC の土台を作成しています。
+
+## プロジェクト概要
+
+- ネット購入者、注文受付係、会計係、商品発送係を想定した通信販売システム
+- Web フレームワークは使わず、`public` 配下を公開ディレクトリとする構成
+- ローカル開発では SQLite、本番相当の発表デモ環境では MariaDB を切り替えて利用
+
+## 採用技術
+
+- PHP 8.3 系
+- PDO
+- HTML / CSS / JavaScript
+- セッション管理: `$_SESSION`
+- ローカル DB: SQLite
+- 発表デモ DB: MariaDB 10.11 系
+
+## ディレクトリ構成
+
+```text
+tsuhan-system/
+├── public/
+│   ├── .htaccess
+│   ├── index.php
+│   └── assets/
+├── app/
+│   ├── config/
+│   ├── core/
+│   ├── Controllers/
+│   ├── Services/
+│   ├── Repositories/
+│   ├── Views/
+│   ├── bootstrap.php
+│   ├── helpers.php
+│   └── db.php
+├── database/
+│   ├── schema.sqlite.sql
+│   ├── schema.mysql.sql
+│   ├── seed.sqlite.sql
+│   ├── seed.mysql.sql
+│   └── local.sqlite
+├── docs/
+│   └── quickwbs-api-notes.md
+├── logs/
+├── scripts/
+│   ├── quickwbs_docs.php
+│   ├── quickwbs_check.php
+│   ├── quickwbs_create_task.php
+│   └── quickwbs_update_task.php
+├── storage/
+├── .env.example
+├── .gitignore
+├── README.md
+└── router.php
+```
+
+## ローカル環境での起動方法
+
+1. 必要なら `.env.example` をコピーして `.env` を作成します。
+2. PHP 内蔵サーバを起動します。
+
+```bash
+cp .env.example .env
+php -S localhost:8000 -t public router.php
+```
+
+`.env` がまだない場合でも、初回起動時は `.env.example` を読み込むようにしてあります。
+
+## .env の設定方法
+
+```env
+APP_NAME=通信販売システム
+APP_ENV=local
+APP_DEBUG=true
+APP_URL=http://localhost:8000
+APP_TIMEZONE=Asia/Tokyo
+
+DB_DRIVER=sqlite
+DB_SQLITE_PATH=database/local.sqlite
+
+DB_HOST=localhost
+DB_PORT=3306
+DB_NAME=tsuhan_system
+DB_USER=root
+DB_PASSWORD=
+DB_CHARSET=utf8mb4
+
+SESSION_NAME=TSUHAN_SESSION
+
+QUICKWBS_API_BASE=https://quickwbs.hirayu.jp/api
+QUICKWBS_AGENT_DOCS_URL=https://quickwbs.hirayu.jp/api/agent/docs
+QUICKWBS_API_TOKEN=your_ai_token_here
+```
+
+`QUICKWBS_API_TOKEN` は Git 管理せず、画面やログにも表示しない前提です。
+
+## SQLite での初期化方法
+
+```bash
+cp .env.example .env
+php -r '
+$pdo = new PDO("sqlite:database/local.sqlite");
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+$pdo->exec(file_get_contents("database/schema.sqlite.sql"));
+$pdo->exec(file_get_contents("database/seed.sqlite.sql"));
+'
+```
+
+## MariaDB での初期化方法
+
+1. `.env` の `DB_DRIVER=mysql` に切り替えます。
+2. `DB_HOST`、`DB_PORT`、`DB_NAME`、`DB_USER`、`DB_PASSWORD` を実環境に合わせて設定します。
+3. MariaDB 側でデータベースを作成してから SQL を流します。
+
+```bash
+mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS tsuhan_system CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+mysql -u root -p tsuhan_system < database/schema.mysql.sql
+mysql -u root -p tsuhan_system < database/seed.mysql.sql
+```
+
+## DB 接続確認方法
+
+- トップページ: `http://localhost:8000/`
+- DB 接続確認: `http://localhost:8000/system/db-check`
+
+`/system/db-check` では以下を表示します。
+
+- DB接続成功 / 失敗
+- 使用中の `DB_DRIVER`
+- DB種別
+- 現在時刻
+- `SELECT 1` の結果
+
+失敗時の詳細は `logs/app.log` に記録し、画面には簡潔なメッセージのみ表示します。
+
+## 担当者認証
+
+- 担当者ログインURL: `http://localhost:8000/login`
+- ログアウト方法: `POST /logout`
+- 認証方式: `users` テーブルの `login_id` と `password_hash` を使い、`password_verify()` で照合
+- アクセス制御: 未ログイン時は `/login` へリダイレクトし、異なるロールの担当者画面は `403 Forbidden` を表示
+
+### 初期ログインIDとパスワード
+
+- 注文受付係: `reception01` / `reception123`
+- 会計係: `account01` / `account123`
+- 商品発送係: `shipper01` / `shipper123`
+
+### ロールごとの遷移先
+
+- `receptionist` → `/staff/receptionist`
+- `accountant` → `/staff/accountant`
+- `shipper` → `/staff/shipper`
+
+### 動作確認手順
+
+```bash
+php -S localhost:8000 -t public router.php
+```
+
+1. `http://localhost:8000/login` を開きます。
+2. 上記の初期ログイン情報でログインします。
+3. ロールごとの担当者トップへ自動遷移することを確認します。
+4. 別ロールの `/staff/...` URL へ直接アクセスし、`403 Forbidden` になることを確認します。
+5. ログアウトボタンを押し、再度担当者画面へアクセスすると `/login` へ戻ることを確認します。
+
+## QuickWBS 連携
+
+- QuickWBS API Base URL: `https://quickwbs.hirayu.jp/api`
+- Agent Docs URL: `https://quickwbs.hirayu.jp/api/agent/docs`
+- 必要な `.env` 項目
+  - `QUICKWBS_API_BASE`
+  - `QUICKWBS_AGENT_DOCS_URL`
+  - `QUICKWBS_API_TOKEN`
+
+### Agent Docs 取得方法
+
+```bash
+php scripts/quickwbs_docs.php
+```
+
+- `Authorization: Bearer <AIトークン>` 付きで `GET /api/agent/docs` を実行します
+- 成功時は Agent 情報と主要エンドポイントを表示し、要約を `docs/quickwbs-api-notes.md` に保存します
+- 生の Docs JSON を見たい場合は `php scripts/quickwbs_docs.php --raw` を使います
+
+### 接続確認方法
+
+```bash
+php scripts/quickwbs_check.php
+```
+
+- 接続成功 / 失敗
+- 使用中の API Base URL
+- HTTP ステータスコード
+- Agent の表示名
+- 利用可能タスク数
+- 実際に使う Agent API エンドポイント一覧
+
+### タスク作成スクリプト
+
+```bash
+php scripts/quickwbs_create_task.php <parent_task_id> "タスク名" "説明"
+php scripts/quickwbs_create_task.php <parent_task_id> "タスク名" "説明" --priority=medium --estimate-hours=4 --acceptance-criteria="..." --execute
+```
+
+- 実API仕様では `POST /api/agent/tasks/{task_id}/children` を使い、親タスク配下に子タスクを作成します
+- `project_id` / `board_id` / `list_id` の直接指定は不要ですが、`parent_task_id` は必須です
+- デフォルトは dry-run で、送信予定のエンドポイントと JSON を表示するだけです
+- 実際に登録する場合だけ `--execute` を付けてください
+
+### タスク更新スクリプト
+
+```bash
+php scripts/quickwbs_update_task.php <task_id> complete "完了メモ"
+php scripts/quickwbs_update_task.php <task_id> report "進捗報告" --progress=60 --summary="..." --artifacts=a,b
+php scripts/quickwbs_update_task.php <task_id> complete "完了メモ" --summary="..." --execute
+```
+
+- 実API仕様では以下の action を `POST /api/agent/tasks/{task_id}/{action}` で送ります
+  - `claim`
+  - `start`
+  - `block`
+  - `complete`
+  - `report`
+- `ready` / `in_progress` / `blocked` / `done` などの別名もスクリプト内で action に変換します
+- こちらもデフォルトは dry-run で、`--execute` を付けたときだけ実更新します
+
+### セキュリティ上の注意
+
+- `.env` は Git 管理しません
+- `QUICKWBS_API_TOKEN` を画面・ログ・例外メッセージに出さない実装にしています
+- `Authorization` ヘッダー全体はログ出力しません
+- QuickWBS Agent API で確認できたのは AI 向けエンドポイントです。トップレベルタスクの新規作成はこの Bearer Token API では未確認です
+
+### 初期タスク一括登録
+
+```bash
+php scripts/quickwbs_seed_tasks.php "<ここに親タスクIDを入れる>"
+php scripts/quickwbs_seed_tasks.php <parent_task_id>
+php scripts/quickwbs_seed_tasks.php <parent_task_id> --execute
+```
+
+- `scripts/quickwbs_seed_tasks.php` は通信販売システム向けの初期タスク10件を、親タスク配下の子タスクとして登録する準備用CLIです
+- デフォルトは dry-run で、10件分の作成予定と、1・2を完了扱いにする update 予定を表示します
+- 親タスクIDがプレースホルダのまま、または未指定扱いの場合は `--execute` を拒否します
+- 実登録時は 1. 開発環境・プロジェクト土台作成 と 2. QuickWBS API連携土台作成 を `complete` で完了扱いにします
+- 3 以降は作成のみ行い、未着手の作業候補として残します
+
+## スターレンタルサーバへ配置する際の注意
+
+- Web 公開対象は `public` 配下のみにしてください
+- ルート直下にある `.env` は公開領域の外に置くか、直接アクセスできないようにしてください
+- MariaDB 接続情報はサーバ発行の情報に差し替えてください
+- `logs` と `storage` に PHP が書き込みできる権限を付与してください
+- `.htaccess` によるルーティングが有効か事前に確認してください
+- クレジットカード情報は今後も DB 保存しない前提で進めてください
+
+## 今後実装予定の機能
+
+- 商品検索
+- ネット注文
+- 電話/FAX注文登録
+- 会計処理
+- 発送処理
+- 在庫管理
+- 担当者認証
