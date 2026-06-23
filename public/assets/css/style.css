@@ -234,6 +234,22 @@ code {
     border-color: var(--accent);
 }
 
+.form-field textarea,
+.form-field select {
+    width: 100%;
+    border: 1px solid #cdc5b4;
+    border-radius: 0.9rem;
+    padding: 0.9rem 1rem;
+    font: inherit;
+    background: #fff;
+}
+
+.form-field textarea:focus,
+.form-field select:focus {
+    outline: 2px solid rgba(15, 118, 110, 0.18);
+    border-color: var(--accent);
+}
+
 .alert {
     margin-top: 1rem;
     border-radius: 0.85rem;
@@ -412,6 +428,62 @@ code {
     text-decoration: none;
 }
 
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.panel-subsection {
+    margin-top: 1.5rem;
+    padding: 1.2rem;
+    background: linear-gradient(180deg, #fffef9 0%, #f8f2e8 100%);
+}
+
+.section-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.section-heading h3 {
+    margin: 0 0 0.35rem;
+}
+
+.reception-order-form {
+    display: grid;
+    gap: 1rem;
+}
+
+.order-entry-table select,
+.order-entry-table input {
+    min-width: 100%;
+}
+
+.order-summary {
+    margin-top: 1.5rem;
+}
+
+.total-row dt,
+.total-row dd {
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.error-list {
+    margin: 0.7rem 0 0;
+    padding-left: 1.2rem;
+}
+
+.detail-card {
+    margin-bottom: 1rem;
+    padding: 1rem 1.1rem;
+    border-radius: 0.9rem;
+    background: #f8f2e8;
+}
+
 @media (max-width: 720px) {
     .site-header .container,
     .site-footer .container,
@@ -442,6 +514,15 @@ code {
     .search-form,
     .receptionist-search-form {
         grid-template-columns: 1fr;
+    }
+
+    .form-grid,
+    .section-heading {
+        display: block;
+    }
+
+    .section-heading .button-link {
+        margin-top: 1rem;
     }
 
     .product-card-header,

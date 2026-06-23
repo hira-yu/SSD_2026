@@ -52,6 +52,14 @@ class ProductService
     }
 
     /**
+     * @return array<int, array<string, mixed>>
+     */
+    public function listSelectableProducts(): array
+    {
+        return $this->decorateProducts($this->products->listAll());
+    }
+
+    /**
      * @param array<int, array<string, mixed>> $products
      * @return array<int, array<string, mixed>>
      */
