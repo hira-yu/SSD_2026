@@ -1,0 +1,197 @@
+:root {
+    --bg: #f6f3ec;
+    --surface: #fffdf8;
+    --text: #1f2933;
+    --muted: #6b7280;
+    --line: #d8d2c4;
+    --accent: #0f766e;
+    --accent-strong: #115e59;
+    --ok: #0f766e;
+    --ng: #b91c1c;
+    --shadow: 0 16px 40px rgba(31, 41, 51, 0.08);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Hiragino Sans", "Yu Gothic", sans-serif;
+    color: var(--text);
+    background:
+        radial-gradient(circle at top right, rgba(15, 118, 110, 0.08), transparent 22rem),
+        linear-gradient(180deg, #f3efe5 0%, #f8f7f2 100%);
+}
+
+a {
+    color: var(--accent);
+}
+
+code {
+    padding: 0.1rem 0.35rem;
+    background: #f0ebe1;
+    border-radius: 0.35rem;
+}
+
+.container {
+    width: min(960px, calc(100% - 2rem));
+    margin: 0 auto;
+}
+
+.site-header,
+.site-footer {
+    background: rgba(255, 253, 248, 0.88);
+    backdrop-filter: blur(10px);
+}
+
+.site-header {
+    border-bottom: 1px solid var(--line);
+}
+
+.site-footer {
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+}
+
+.site-header .container,
+.site-footer .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 0;
+}
+
+.brand-block h1,
+.hero h2,
+.panel h2,
+.panel h3,
+.status-card h3 {
+    margin: 0;
+}
+
+.eyebrow {
+    margin: 0 0 0.35rem;
+    color: var(--accent-strong);
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.site-nav {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.site-nav a {
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.page-content {
+    padding: 2rem 0 3rem;
+}
+
+.hero {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1.5rem;
+    align-items: start;
+}
+
+.lead {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: var(--muted);
+}
+
+.panel,
+.status-card {
+    background: var(--surface);
+    border: 1px solid rgba(216, 210, 196, 0.9);
+    border-radius: 1rem;
+    box-shadow: var(--shadow);
+}
+
+.panel {
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+}
+
+.status-card {
+    padding: 1.25rem;
+}
+
+.status-card dl,
+.detail-list {
+    display: grid;
+    gap: 0.9rem;
+    margin: 1rem 0 0;
+}
+
+.status-card dl div,
+.detail-list div {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 0.7rem;
+    border-bottom: 1px solid #eee7da;
+}
+
+.status-card dt,
+.detail-list dt {
+    font-weight: 700;
+}
+
+.feature-list {
+    margin: 1rem 0 0;
+    padding-left: 1.2rem;
+    display: grid;
+    gap: 0.5rem;
+}
+
+.button-link {
+    display: inline-block;
+    padding: 0.8rem 1.1rem;
+    border-radius: 999px;
+    background: var(--accent);
+    color: #fff;
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.status-ok {
+    color: var(--ok);
+    font-weight: 700;
+}
+
+.status-ng {
+    color: var(--ng);
+    font-weight: 700;
+}
+
+.help-text {
+    color: var(--muted);
+    margin-bottom: 0;
+}
+
+@media (max-width: 720px) {
+    .site-header .container,
+    .site-footer .container,
+    .hero,
+    .status-card dl div,
+    .detail-list div {
+        display: block;
+    }
+
+    .site-nav {
+        margin-top: 1rem;
+    }
+
+    .detail-list dd,
+    .status-card dd {
+        margin: 0.35rem 0 0;
+    }
+}
