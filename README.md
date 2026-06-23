@@ -268,6 +268,40 @@ sh scripts/dev.sh
 4. `bank` / `convenience` / `cod` の各支払い方法で、手数料と案内文が変わることを確認します。
 5. 注文確定後、注文番号が採番され、`products.stock_quantity_2` が注文数量分だけ減算されることを確認します。
 
+## 発送処理
+
+- 商品発送係向け未発送注文一覧URL: `http://localhost:8000/staff/shipper/orders`
+- 利用可能ロール: `shipper`
+
+### 発送対象条件
+
+- `bank`: `payment_status = paid` かつ `shipping_status = unshipped`
+- `convenience`: `payment_status = paid` かつ `shipping_status = unshipped`
+- `cod`: `shipping_status = unshipped`
+- `credit`: `payment_status = paid` かつ `shipping_status = unshipped`
+- `shipping_status = shipped` の注文は再発送不可
+
+### 納品書・請求書表示仕様
+
+- 銀行振込、コンビニ決済、クレジットカードは納品書情報のみ表示します
+- 代金引換は納品書情報に加えて請求書情報も表示します
+- PDF出力は行わず、HTML上に印刷しやすい帳票風ブロックを表示します
+
+### 発送済更新時の在庫数量1更新仕様
+
+- 発送済更新では `orders.shipping_status` を `shipped` に更新します
+- 同一トランザクション内で `order_items` 数量分だけ `products.stock_quantity_1` を減算します
+- 更新後、対象商品の `stock_quantity_1` と `stock_quantity_2` が一致しない場合はロールバックします
+- 例: 注文登録後に `stock_quantity_1 = 12`, `stock_quantity_2 = 10` の商品は、発送済更新後に両方 `10` になります
+
+### 動作確認手順
+
+1. `shipper01 / shipper123` でログインし、`http://localhost:8000/staff/shipper/orders` を開きます。
+2. 銀行振込・コンビニ決済の `paid` 注文、代金引換注文が発送可能として表示されることを確認します。
+3. `unpaid` の銀行振込・コンビニ決済注文が支払い待ちとして別枠表示されることを確認します。
+4. 注文詳細を開き、商品明細、納品書情報、代金引換では請求書情報も表示されることを確認します。
+5. 発送可能な注文で `発送済へ更新` を実行し、`shipping_status` が `shipped` になり、対象商品の `stock_quantity_1` が減算されて `stock_quantity_2` と一致することを確認します。
+
 ## QuickWBS 連携
 
 - QuickWBS API Base URL: `https://quickwbs.hirayu.jp/api`
@@ -361,10 +395,6 @@ php scripts/quickwbs_seed_tasks.php <parent_task_id> --execute
 
 ## 今後実装予定の機能
 
-- 商品検索
 - ネット注文
-- 電話/FAX注文登録
-- 会計処理
-- 発送処理
-- 在庫管理
-- 担当者認証
+- 在庫整合性・排他制御
+- 発表デモ調整

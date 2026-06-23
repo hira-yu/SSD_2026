@@ -189,4 +189,57 @@ class OrderRepository
 
         return $statement->rowCount() === 1;
     }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    public function listUnshippedOrders(): array
+    {
+        $statement = db_connection()->query(
+            <<<'SQL'
+                SELECT
+                    id,
+                    order_no,
+                    order_date,
+                    customer_name,
+                    customer_address,
+                    customer_contact,
+                    order_type,
+                    payment_method,
+                    payment_status,
+                    shipping_status,
+                    subtotal,
+                    fee,
+                    shipping_fee,
+                    total_amount,
+                    created_at,
+                    updated_at
+                FROM orders
+                WHERE shipping_status = 'unshipped'
+                ORDER BY order_date ASC, id ASC
+            SQL
+        );
+
+        return $statement->fetchAll() ?: [];
+    }
+
+    public function markAsShipped(int $orderId): bool
+    {
+        $statement = db_connection()->prepare(
+            <<<'SQL'
+                UPDATE orders
+                SET shipping_status = :shipping_status,
+                    updated_at = CURRENT_TIMESTAMP
+                WHERE id = :id
+                  AND shipping_status = :current_status
+            SQL
+        );
+        $statement->execute([
+            'id' => $orderId,
+            'shipping_status' => 'shipped',
+            'current_status' => 'unshipped',
+        ]);
+
+        return $statement->rowCount() === 1;
+    }
 }

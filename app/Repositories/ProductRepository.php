@@ -167,4 +167,23 @@ class ProductRepository
 
         return $statement->rowCount() === 1;
     }
+
+    public function decrementStockQuantity1(int $productId, int $quantity): bool
+    {
+        $statement = db_connection()->prepare(
+            <<<'SQL'
+                UPDATE products
+                SET stock_quantity_1 = stock_quantity_1 - :quantity,
+                    updated_at = CURRENT_TIMESTAMP
+                WHERE id = :id
+                  AND stock_quantity_1 >= :quantity
+            SQL
+        );
+        $statement->execute([
+            'id' => $productId,
+            'quantity' => $quantity,
+        ]);
+
+        return $statement->rowCount() === 1;
+    }
 }
