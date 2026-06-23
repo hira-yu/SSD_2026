@@ -23,6 +23,7 @@ $authUser = $_SESSION['auth'] ?? null;
         </div>
         <nav class="site-nav" aria-label="主要メニュー">
             <a href="/">トップ</a>
+            <a href="/products">商品一覧</a>
             <a href="/system/db-check">DB接続確認</a>
             <?php if (is_array($authUser) && !empty($authUser['authenticated'])): ?>
                 <a href="<?= e((new AuthService())->destinationForRole((string) ($authUser['role'] ?? ''))) ?>">担当者トップ</a>

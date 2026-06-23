@@ -132,6 +132,7 @@ mysql -u root -p tsuhan_system < database/seed.mysql.sql
 ## DB 接続確認方法
 
 - トップページ: `http://localhost:8000/`
+- 商品一覧・商品検索: `http://localhost:8000/products`
 - DB 接続確認: `http://localhost:8000/system/db-check`
 
 `/system/db-check` では以下を表示します。
@@ -147,6 +148,7 @@ mysql -u root -p tsuhan_system < database/seed.mysql.sql
 ## 担当者認証
 
 - 担当者ログインURL: `http://localhost:8000/login`
+- 注文受付係向け商品検索URL: `http://localhost:8000/staff/receptionist/products`
 - ログアウト方法: `POST /logout`
 - 認証方式: `users` テーブルの `login_id` と `password_hash` を使い、`password_verify()` で照合
 - アクセス制御: 未ログイン時は `/login` へリダイレクトし、異なるロールの担当者画面は `403 Forbidden` を表示
@@ -174,6 +176,30 @@ sh scripts/dev.sh
 3. ロールごとの担当者トップへ自動遷移することを確認します。
 4. 別ロールの `/staff/...` URL へ直接アクセスし、`403 Forbidden` になることを確認します。
 5. ログアウトボタンを押し、再度担当者画面へアクセスすると `/login` へ戻ることを確認します。
+
+## 商品一覧・商品検索
+
+- 購入者向け商品一覧URL: `http://localhost:8000/products`
+- 注文受付係向け商品検索URL: `http://localhost:8000/staff/receptionist/products`
+
+### 検索条件
+
+- 購入者向け: `name` を使った商品名の部分一致検索
+- 注文受付係向け: `product_no` の部分一致検索、`name` の部分一致検索、両方指定時は AND 条件
+- いずれも未指定時は全商品を表示
+
+### 表示項目
+
+- 購入者向け: 商品番号、商品名、単価、商品カテゴリ、メーカー名、在庫数量2、注文可能状態
+- 注文受付係向け: 商品番号、商品名、単価、商品カテゴリ、メーカー名、在庫数量1、在庫数量2、注文可能状態
+
+### 動作確認手順
+
+1. `http://localhost:8000/products` を開き、商品一覧が表示されることを確認します。
+2. `http://localhost:8000/products?name=マウス` のように検索し、商品名の部分一致で絞り込まれることを確認します。
+3. `reception01 / reception123` でログインし、`http://localhost:8000/staff/receptionist/products` を開きます。
+4. `product_no`、`name`、両方指定の各パターンで検索結果が変わることを確認します。
+5. `account01` または `shipper01` で同URLへアクセスすると `403 Forbidden` になることを確認します。
 
 ## QuickWBS 連携
 

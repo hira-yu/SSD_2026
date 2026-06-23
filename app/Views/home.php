@@ -37,5 +37,8 @@ declare(strict_types=1);
 
 <section class="panel">
     <h3>確認用リンク</h3>
-    <p><a class="button-link" href="/system/db-check">DB接続確認ページへ</a></p>
+    <div class="action-links">
+        <a class="button-link" href="/products">商品一覧・商品検索へ</a>
+        <a class="button-link button-secondary" href="/system/db-check">DB接続確認ページへ</a>
+    </div>
 </section>
