@@ -14,6 +14,11 @@ class Router
         $this->addRoute('GET', $path, $action);
     }
 
+    public function post(string $path, callable|array $action): void
+    {
+        $this->addRoute('POST', $path, $action);
+    }
+
     public function dispatch(string $method, string $uri): void
     {
         $path = $this->normalizePath(parse_url($uri, PHP_URL_PATH) ?: '/');
