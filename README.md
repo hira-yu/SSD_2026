@@ -59,15 +59,23 @@ tsuhan-system/
 
 ## ローカル環境での起動方法
 
-1. 必要なら `.env.example` をコピーして `.env` を作成します。
-2. PHP 内蔵サーバを起動します。
+一発で起動する場合は、次のコマンドを使います。
 
 ```bash
-cp .env.example .env
-php -S localhost:8000 -t public router.php
+sh scripts/dev.sh
 ```
 
-`.env` がまだない場合でも、初回起動時は `.env.example` を読み込むようにしてあります。
+このスクリプトは次を自動で行います。
+
+- `.env` がなければ `.env.example` から作成
+- `DB_DRIVER=sqlite` の場合、`users` テーブルがなければ SQLite を初期化
+- PHP 内蔵サーバを `http://localhost:8000` で起動
+
+ポートやホストを変えたい場合は、環境変数で上書きできます。
+
+```bash
+APP_HOST=0.0.0.0 APP_PORT=8080 sh scripts/dev.sh
+```
 
 ## .env の設定方法
 
@@ -158,7 +166,7 @@ mysql -u root -p tsuhan_system < database/seed.mysql.sql
 ### 動作確認手順
 
 ```bash
-php -S localhost:8000 -t public router.php
+sh scripts/dev.sh
 ```
 
 1. `http://localhost:8000/login` を開きます。
