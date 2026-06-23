@@ -201,6 +201,40 @@ sh scripts/dev.sh
 4. `product_no`、`name`、両方指定の各パターンで検索結果が変わることを確認します。
 5. `account01` または `shipper01` で同URLへアクセスすると `403 Forbidden` になることを確認します。
 
+## 会計処理
+
+- 会計係向け注文検索URL: `http://localhost:8000/staff/accountant/orders`
+- 利用可能ロール: `accountant`
+
+### 検索条件
+
+- `order_no`: 注文番号の部分一致検索
+- `order_date`: 注文日の一致検索
+- `customer_name`: 購入者氏名の部分一致検索
+- `payment_status`: `unpaid` / `paid`
+- 複数条件指定時は AND 条件
+
+### 支払い状態更新方法
+
+- 注文詳細または検索一覧から、未払い注文のみ `支払済へ更新` ボタンを押します
+- 更新対象は `bank` / `convenience` / `cod`
+- `paid` の注文は再更新しません
+
+### 支払い方法ごとの扱い
+
+- `bank`: 会計係が入金確認後に `paid` へ更新
+- `convenience`: 会計係が入金確認後に `paid` へ更新
+- `cod`: 会計係が入金確認後に `paid` へ更新
+- `credit`: 表示はしますが、今回の会計更新対象外
+
+### 動作確認手順
+
+1. `account01 / account123` でログインし、`http://localhost:8000/staff/accountant/orders` を開きます。
+2. 注文番号、注文日、購入者氏名、支払い状態の各条件で検索できることを確認します。
+3. 未払い注文の詳細を開き、商品明細と金額内訳が表示されることを確認します。
+4. `支払済へ更新` を実行し、支払い状態が `paid` になることを確認します。
+5. 既に支払済の注文では更新ボタンが表示されないことを確認します。
+
 ## 電話/FAX注文登録
 
 - 電話/FAX注文登録URL: `http://localhost:8000/staff/receptionist/orders/new`

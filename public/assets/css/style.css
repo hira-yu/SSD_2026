@@ -339,6 +339,10 @@ code {
     grid-template-columns: repeat(2, minmax(0, 1fr)) auto;
 }
 
+.accountant-search-form {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
+}
+
 .product-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -428,6 +432,30 @@ code {
     text-decoration: none;
 }
 
+.inline-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    align-items: flex-start;
+}
+
+.button-small {
+    padding: 0.55rem 0.85rem;
+    font-size: 0.92rem;
+}
+
+.status-muted {
+    color: var(--muted);
+    font-weight: 700;
+}
+
+.detail-split {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
 .form-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -512,7 +540,12 @@ code {
     }
 
     .search-form,
-    .receptionist-search-form {
+    .receptionist-search-form,
+    .accountant-search-form {
+        grid-template-columns: 1fr;
+    }
+
+    .detail-split {
         grid-template-columns: 1fr;
     }
 
