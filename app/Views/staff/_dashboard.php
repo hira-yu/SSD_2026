@@ -40,8 +40,11 @@ declare(strict_types=1);
     <div class="menu-grid">
         <?php foreach ($menuItems as $item): ?>
             <article class="menu-card">
-                <h4><?= e((string) $item) ?></h4>
-                <p>今後この画面から操作できるように実装します。</p>
+                <h4><?= e((string) ($item['title'] ?? '')) ?></h4>
+                <p><?= e((string) ($item['description'] ?? '')) ?></p>
+                <?php if (!empty($item['url'])): ?>
+                    <p class="menu-card-action"><a class="text-link" href="<?= e((string) $item['url']) ?>">この画面を開く</a></p>
+                <?php endif; ?>
             </article>
         <?php endforeach; ?>
     </div>

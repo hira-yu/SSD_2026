@@ -20,11 +20,13 @@ set_exception_handler(static function (Throwable $exception): void {
 
 $router = new Router();
 $router->get('/', [HomeController::class, 'index']);
+$router->get('/products', [ProductController::class, 'index']);
 $router->get('/login', [AuthController::class, 'showLogin']);
 $router->post('/login', [AuthController::class, 'login']);
 $router->post('/logout', [AuthController::class, 'logout']);
 $router->get('/logout', [AuthController::class, 'logout']);
 $router->get('/staff/receptionist', [StaffController::class, 'receptionist']);
+$router->get('/staff/receptionist/products', [ProductController::class, 'receptionistIndex']);
 $router->get('/staff/accountant', [StaffController::class, 'accountant']);
 $router->get('/staff/shipper', [StaffController::class, 'shipper']);
 $router->get('/system/db-check', [SystemController::class, 'dbCheck']);

@@ -172,6 +172,12 @@ code {
     cursor: pointer;
 }
 
+.button-secondary {
+    background: transparent;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+}
+
 .status-ok {
     color: var(--ok);
     font-weight: 700;
@@ -286,8 +292,124 @@ code {
     line-height: 1.7;
 }
 
+.menu-card-action {
+    margin-top: 0.9rem !important;
+}
+
 .logout-form {
     margin-top: 1rem;
+}
+
+.action-links,
+.search-actions {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+}
+
+.search-panel {
+    display: grid;
+    gap: 1rem;
+}
+
+.search-form {
+    display: grid;
+    gap: 1rem;
+    align-items: end;
+    grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.receptionist-search-form {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) auto;
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.product-card {
+    background: var(--surface);
+    border: 1px solid rgba(216, 210, 196, 0.9);
+    border-radius: 1rem;
+    box-shadow: var(--shadow);
+    padding: 1.2rem;
+}
+
+.product-card h3 {
+    margin: 0.25rem 0 1rem;
+}
+
+.product-card-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+.product-no,
+.product-status {
+    margin: 0;
+    font-weight: 700;
+}
+
+.product-meta {
+    display: grid;
+    gap: 0.8rem;
+    margin: 0;
+}
+
+.product-meta div {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 0.7rem;
+    border-bottom: 1px solid #eee7da;
+}
+
+.product-meta dt {
+    font-weight: 700;
+}
+
+.product-meta dd {
+    margin: 0;
+    text-align: right;
+}
+
+.empty-state {
+    margin: 0;
+    color: var(--muted);
+    font-weight: 700;
+}
+
+.table-wrap {
+    overflow-x: auto;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 860px;
+}
+
+.data-table th,
+.data-table td {
+    padding: 0.85rem 0.9rem;
+    border-bottom: 1px solid #eee7da;
+    text-align: left;
+    vertical-align: top;
+}
+
+.data-table th {
+    background: #f8f2e8;
+    font-size: 0.95rem;
+}
+
+.text-link {
+    font-weight: 700;
+    text-decoration: none;
 }
 
 @media (max-width: 720px) {
@@ -315,5 +437,20 @@ code {
 
     .menu-grid {
         grid-template-columns: 1fr;
+    }
+
+    .search-form,
+    .receptionist-search-form {
+        grid-template-columns: 1fr;
+    }
+
+    .product-card-header,
+    .product-meta div {
+        display: block;
+    }
+
+    .product-meta dd {
+        margin-top: 0.35rem;
+        text-align: left;
     }
 }
