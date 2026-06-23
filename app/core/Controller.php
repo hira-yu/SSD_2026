@@ -9,4 +9,9 @@ abstract class Controller
         http_response_code($statusCode);
         View::render($view, $data);
     }
+
+    protected function redirect(string $path): never
+    {
+        redirect($path);
+    }
 }

@@ -123,3 +123,74 @@ function app_log(string $message, array $context = []): void
 
     file_put_contents(base_path('logs/app.log'), $logLine, FILE_APPEND | LOCK_EX);
 }
+
+function current_path(): string
+{
+    $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
+
+    return $path === '' ? '/' : $path;
+}
+
+function redirect(string $path): never
+{
+    header('Location: ' . $path, true, 302);
+    exit;
+}
+
+function session_get(string $key, mixed $default = null): mixed
+{
+    return $_SESSION[$key] ?? $default;
+}
+
+function session_forget(string ...$keys): void
+{
+    foreach ($keys as $key) {
+        unset($_SESSION[$key]);
+    }
+}
+
+function flash(string $key, mixed $value): void
+{
+    $_SESSION['_flash'][$key] = $value;
+}
+
+function get_flash(string $key, mixed $default = null): mixed
+{
+    $value = $_SESSION['_flash'][$key] ?? $default;
+    unset($_SESSION['_flash'][$key]);
+
+    return $value;
+}
+
+function old_input(string $key, mixed $default = ''): mixed
+{
+    $old = $_SESSION['_old_input'][$key] ?? $default;
+
+    return $old;
+}
+
+function store_old_input(array $input): void
+{
+    $_SESSION['_old_input'] = $input;
+}
+
+function clear_old_input(): void
+{
+    unset($_SESSION['_old_input']);
+}
+
+function csrf_token(): string
+{
+    if (!isset($_SESSION['_csrf_token']) || !is_string($_SESSION['_csrf_token'])) {
+        $_SESSION['_csrf_token'] = bin2hex(random_bytes(32));
+    }
+
+    return $_SESSION['_csrf_token'];
+}
+
+function verify_csrf_token(?string $token): bool
+{
+    $sessionToken = $_SESSION['_csrf_token'] ?? null;
+
+    return is_string($token) && is_string($sessionToken) && hash_equals($sessionToken, $token);
+}

@@ -136,6 +136,37 @@ mysql -u root -p tsuhan_system < database/seed.mysql.sql
 
 失敗時の詳細は `logs/app.log` に記録し、画面には簡潔なメッセージのみ表示します。
 
+## 担当者認証
+
+- 担当者ログインURL: `http://localhost:8000/login`
+- ログアウト方法: `POST /logout`
+- 認証方式: `users` テーブルの `login_id` と `password_hash` を使い、`password_verify()` で照合
+- アクセス制御: 未ログイン時は `/login` へリダイレクトし、異なるロールの担当者画面は `403 Forbidden` を表示
+
+### 初期ログインIDとパスワード
+
+- 注文受付係: `reception01` / `reception123`
+- 会計係: `account01` / `account123`
+- 商品発送係: `shipper01` / `shipper123`
+
+### ロールごとの遷移先
+
+- `receptionist` → `/staff/receptionist`
+- `accountant` → `/staff/accountant`
+- `shipper` → `/staff/shipper`
+
+### 動作確認手順
+
+```bash
+php -S localhost:8000 -t public router.php
+```
+
+1. `http://localhost:8000/login` を開きます。
+2. 上記の初期ログイン情報でログインします。
+3. ロールごとの担当者トップへ自動遷移することを確認します。
+4. 別ロールの `/staff/...` URL へ直接アクセスし、`403 Forbidden` になることを確認します。
+5. ログアウトボタンを押し、再度担当者画面へアクセスすると `/login` へ戻ることを確認します。
+
 ## QuickWBS 連携
 
 - QuickWBS API Base URL: `https://quickwbs.hirayu.jp/api`
@@ -226,12 +257,6 @@ php scripts/quickwbs_seed_tasks.php <parent_task_id> --execute
 - `logs` と `storage` に PHP が書き込みできる権限を付与してください
 - `.htaccess` によるルーティングが有効か事前に確認してください
 - クレジットカード情報は今後も DB 保存しない前提で進めてください
-
-## 初期ログイン情報
-
-- 注文受付係: `reception01` / `reception123`
-- 会計係: `account01` / `account123`
-- 商品発送係: `shipper01` / `shipper123`
 
 ## 今後実装予定の機能
 
