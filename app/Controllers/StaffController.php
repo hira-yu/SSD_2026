@@ -11,7 +11,7 @@ class StaffController extends Controller
      */
     private array $roleMenus = [
         'receptionist' => [
-            ['title' => '電話/FAX注文登録', 'description' => '電話またはFAXで受け付けた注文を代理登録します。', 'url' => null],
+            ['title' => '電話/FAX注文登録', 'description' => '電話またはFAXで受け付けた注文を代理登録します。', 'url' => '/staff/receptionist/orders/new'],
             ['title' => '商品検索', 'description' => '商品番号や商品名で検索し、在庫状況を確認します。', 'url' => '/staff/receptionist/products'],
             ['title' => '注文内容確認', 'description' => '受付済み注文の内容確認機能を今後追加します。', 'url' => null],
         ],

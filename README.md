@@ -201,6 +201,39 @@ sh scripts/dev.sh
 4. `product_no`、`name`、両方指定の各パターンで検索結果が変わることを確認します。
 5. `account01` または `shipper01` で同URLへアクセスすると `403 Forbidden` になることを確認します。
 
+## 電話/FAX注文登録
+
+- 電話/FAX注文登録URL: `http://localhost:8000/staff/receptionist/orders/new`
+- 利用可能ロール: `receptionist`
+
+### 支払い方法
+
+- `bank`: 銀行振込
+- `convenience`: コンビニ決済
+- `cod`: 代金引換
+
+### 手数料・送料
+
+- 配送料: `660円`
+- コンビニ決済手数料: `220円`
+- 代金引換手数料: `330円`
+- 銀行振込手数料: `0円`
+
+### 注文登録時の在庫更新仕様
+
+- 電話/FAX注文は `orders.order_type = phone_fax` で登録
+- `payment_status` は `unpaid`、`shipping_status` は `unshipped` で初期登録
+- 注文登録と `products.stock_quantity_2` の減算は同一トランザクションで処理
+- 在庫数量2を超える数量は登録不可
+
+### 動作確認手順
+
+1. `reception01 / reception123` でログインし、`http://localhost:8000/staff/receptionist/orders/new` を開きます。
+2. 購入者情報、支払い方法、商品、数量を入力して確認画面へ進みます。
+3. 単一商品と複数商品の両方で合計金額が正しく計算されることを確認します。
+4. `bank` / `convenience` / `cod` の各支払い方法で、手数料と案内文が変わることを確認します。
+5. 注文確定後、注文番号が採番され、`products.stock_quantity_2` が注文数量分だけ減算されることを確認します。
+
 ## QuickWBS 連携
 
 - QuickWBS API Base URL: `https://quickwbs.hirayu.jp/api`
