@@ -26,6 +26,7 @@ function db_connection(): PDO
 
         $connection = new PDO('sqlite:' . $sqlitePath, null, null, $options);
         $connection->exec('PRAGMA foreign_keys = ON');
+        $connection->exec('PRAGMA busy_timeout = 5000');
 
         return $connection;
     }

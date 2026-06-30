@@ -6,7 +6,7 @@ class ShippingService
 {
     private OrderRepository $orders;
     private OrderItemRepository $orderItems;
-    private ProductRepository $products;
+    private InventoryService $inventory;
 
     /**
      * @var array<string, string>
@@ -38,7 +38,7 @@ class ShippingService
     {
         $this->orders = new OrderRepository();
         $this->orderItems = new OrderItemRepository();
-        $this->products = new ProductRepository();
+        $this->inventory = new InventoryService();
     }
 
     /**
@@ -86,7 +86,7 @@ class ShippingService
 
         try {
             $connection->beginTransaction();
-            $order = $this->orders->findByOrderNo($orderNo);
+            $order = $this->orders->findByOrderNoForUpdate($orderNo);
 
             if ($order === null) {
                 $connection->rollBack();
@@ -120,38 +120,16 @@ class ShippingService
             }
 
             $items = $this->orderItems->findByOrderId((int) $order['id']);
-            $productIds = [];
+
+            if ($items === []) {
+                throw new RuntimeException('発送対象の注文明細が見つかりませんでした。');
+            }
 
             if (!$this->orders->markAsShipped((int) $order['id'])) {
                 throw new RuntimeException('発送状態の更新に失敗しました。');
             }
 
-            foreach ($items as $item) {
-                $productId = (int) $item['product_id'];
-                $quantity = (int) $item['quantity'];
-                $productIds[] = $productId;
-
-                if (!$this->products->decrementStockQuantity1($productId, $quantity)) {
-                    throw new RuntimeException(sprintf('%s の在庫数量1更新に失敗しました。', (string) $item['product_name']));
-                }
-            }
-
-            $products = $this->products->findByIds($productIds);
-
-            foreach ($items as $item) {
-                $product = $products[(int) $item['product_id']] ?? null;
-
-                if ($product === null) {
-                    throw new RuntimeException('対象商品の在庫確認に失敗しました。');
-                }
-
-                if ((int) $product['stock_quantity_1'] !== (int) $product['stock_quantity_2']) {
-                    throw new RuntimeException(sprintf(
-                        '%s の在庫数量1と在庫数量2が一致しないため、発送更新を中止しました。',
-                        (string) $product['name']
-                    ));
-                }
-            }
+            $this->inventory->finalizeShipment($items);
 
             $connection->commit();
 

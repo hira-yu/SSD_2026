@@ -294,6 +294,17 @@ sh scripts/dev.sh
 - 更新後、対象商品の `stock_quantity_1` と `stock_quantity_2` が一致しない場合はロールバックします
 - 例: 注文登録後に `stock_quantity_1 = 12`, `stock_quantity_2 = 10` の商品は、発送済更新後に両方 `10` になります
 
+### 在庫整合性確認CLI
+
+```bash
+php scripts/check_inventory_consistency.php
+```
+
+- `products` テーブルを走査して、負数在庫や `stock_quantity_1 < stock_quantity_2` を検出します
+- 未発送注文の引当数量を集計し、`stock_quantity_1 - stock_quantity_2 = 未発送引当数量` を検証します
+- 問題がなければ `在庫整合性OK` を表示します
+- 問題がある場合は、商品番号ごとに不整合内容を表示します
+
 ### 動作確認手順
 
 1. `shipper01 / shipper123` でログインし、`http://localhost:8000/staff/shipper/orders` を開きます。
@@ -396,5 +407,4 @@ php scripts/quickwbs_seed_tasks.php <parent_task_id> --execute
 ## 今後実装予定の機能
 
 - ネット注文
-- 在庫整合性・排他制御
 - 発表デモ調整

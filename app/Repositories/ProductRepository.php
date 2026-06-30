@@ -149,8 +149,69 @@ class ProductRepository
         return $products;
     }
 
-    public function decrementStockQuantity2(int $productId, int $quantity): bool
+    public function findById(int $productId): ?array
     {
+        return $this->findByIds([$productId])[$productId] ?? null;
+    }
+
+    public function findByIdForUpdate(int $productId): ?array
+    {
+        return $this->findByIdsForUpdate([$productId])[$productId] ?? null;
+    }
+
+    /**
+     * @param array<int, int> $ids
+     * @return array<int, array<string, mixed>>
+     */
+    public function findByIdsForUpdate(array $ids): array
+    {
+        if ($ids === []) {
+            return [];
+        }
+
+        $ids = array_values(array_unique(array_map('intval', $ids)));
+        sort($ids);
+        $placeholders = implode(', ', array_fill(0, count($ids), '?'));
+        $sql = sprintf(
+            <<<'SQL'
+                SELECT
+                    id,
+                    product_no,
+                    name,
+                    price,
+                    category,
+                    maker,
+                    stock_quantity_1,
+                    stock_quantity_2
+                FROM products
+                WHERE id IN (%s)
+                ORDER BY id ASC
+            SQL,
+            $placeholders
+        );
+
+        if ($this->usesRowLevelLocking()) {
+            $sql .= ' FOR UPDATE';
+        }
+
+        $statement = db_connection()->prepare($sql);
+        $statement->execute($ids);
+        $rows = $statement->fetchAll() ?: [];
+        $products = [];
+
+        foreach ($rows as $row) {
+            $products[(int) $row['id']] = $row;
+        }
+
+        return $products;
+    }
+
+    public function decreaseStockQuantity2(int $productId, int $quantity): bool
+    {
+        if ($quantity < 1) {
+            return false;
+        }
+
         $statement = db_connection()->prepare(
             <<<'SQL'
                 UPDATE products
@@ -168,8 +229,17 @@ class ProductRepository
         return $statement->rowCount() === 1;
     }
 
-    public function decrementStockQuantity1(int $productId, int $quantity): bool
+    public function decrementStockQuantity2(int $productId, int $quantity): bool
     {
+        return $this->decreaseStockQuantity2($productId, $quantity);
+    }
+
+    public function decreaseStockQuantity1(int $productId, int $quantity): bool
+    {
+        if ($quantity < 1) {
+            return false;
+        }
+
         $statement = db_connection()->prepare(
             <<<'SQL'
                 UPDATE products
@@ -185,5 +255,54 @@ class ProductRepository
         ]);
 
         return $statement->rowCount() === 1;
+    }
+
+    public function decrementStockQuantity1(int $productId, int $quantity): bool
+    {
+        return $this->decreaseStockQuantity1($productId, $quantity);
+    }
+
+    /**
+     * @return array<string, mixed>|null
+     */
+    public function getStockPair(int $productId): ?array
+    {
+        $statement = db_connection()->prepare(
+            <<<'SQL'
+                SELECT
+                    id,
+                    product_no,
+                    name,
+                    stock_quantity_1,
+                    stock_quantity_2
+                FROM products
+                WHERE id = :id
+                LIMIT 1
+            SQL
+        );
+        $statement->execute(['id' => $productId]);
+        $product = $statement->fetch();
+
+        return is_array($product) ? $product : null;
+    }
+
+    public function assertStockQuantity2Available(int $productId, int $quantity): bool
+    {
+        $product = $this->getStockPair($productId);
+
+        return $product !== null && (int) $product['stock_quantity_2'] >= $quantity;
+    }
+
+    public function assertStockQuantitiesEqual(int $productId): bool
+    {
+        $product = $this->getStockPair($productId);
+
+        return $product !== null
+            && (int) $product['stock_quantity_1'] === (int) $product['stock_quantity_2'];
+    }
+
+    private function usesRowLevelLocking(): bool
+    {
+        return (string) config('database.driver', 'sqlite') === 'mysql';
     }
 }

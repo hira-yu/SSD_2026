@@ -7,12 +7,14 @@ class ReceptionOrderService
     private ProductRepository $products;
     private OrderRepository $orders;
     private OrderItemRepository $orderItems;
+    private InventoryService $inventory;
 
     public function __construct()
     {
         $this->products = new ProductRepository();
         $this->orders = new OrderRepository();
         $this->orderItems = new OrderItemRepository();
+        $this->inventory = new InventoryService();
     }
 
     /**
@@ -136,27 +138,7 @@ class ReceptionOrderService
 
         try {
             $connection->beginTransaction();
-
-            $freshProducts = $this->products->findByIds(array_map(
-                static fn (array $item): int => (int) $item['product_id'],
-                $items
-            ));
-
-            foreach ($items as $item) {
-                $productId = (int) $item['product_id'];
-                $freshProduct = $freshProducts[$productId] ?? null;
-
-                if ($freshProduct === null) {
-                    throw new RuntimeException('選択した商品が見つかりません。');
-                }
-
-                if ((int) $freshProduct['stock_quantity_2'] < (int) $item['quantity']) {
-                    throw new RuntimeException(sprintf(
-                        '%s の在庫数量2が不足しているため、注文を登録できません。',
-                        (string) $freshProduct['name']
-                    ));
-                }
-            }
+            $this->inventory->reserveForOrder($items);
 
             $orderNo = $this->generateOrderNo();
             $orderDate = date('Y-m-d H:i:s');
@@ -177,20 +159,6 @@ class ReceptionOrderService
             ]);
 
             $this->orderItems->createMany($orderId, $items);
-
-            foreach ($items as $item) {
-                $updated = $this->products->decrementStockQuantity2(
-                    (int) $item['product_id'],
-                    (int) $item['quantity']
-                );
-
-                if (!$updated) {
-                    throw new RuntimeException(sprintf(
-                        '%s の在庫更新に失敗しました。時間をおいて再度お試しください。',
-                        (string) $item['product_name']
-                    ));
-                }
-            }
 
             $connection->commit();
 
