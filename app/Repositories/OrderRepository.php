@@ -116,24 +116,34 @@ class OrderRepository
         $conditions = [];
         $params = [];
 
-        if ($filters['order_no'] !== '') {
+        if (($filters['order_no'] ?? '') !== '') {
             $conditions[] = 'order_no LIKE :order_no';
             $params['order_no'] = '%' . $filters['order_no'] . '%';
         }
 
-        if ($filters['order_date'] !== '') {
+        if (($filters['order_date'] ?? '') !== '') {
             $conditions[] = 'order_date LIKE :order_date';
             $params['order_date'] = $filters['order_date'] . '%';
         }
 
-        if ($filters['customer_name'] !== '') {
+        if (($filters['customer_name'] ?? '') !== '') {
             $conditions[] = 'customer_name LIKE :customer_name';
             $params['customer_name'] = '%' . $filters['customer_name'] . '%';
         }
 
-        if (in_array($filters['payment_status'], ['unpaid', 'paid'], true)) {
+        if (in_array($filters['payment_status'] ?? '', ['unpaid', 'paid'], true)) {
             $conditions[] = 'payment_status = :payment_status';
             $params['payment_status'] = $filters['payment_status'];
+        }
+
+        if (in_array($filters['payment_method'] ?? '', ['bank', 'convenience', 'cod', 'credit'], true)) {
+            $conditions[] = 'payment_method = :payment_method';
+            $params['payment_method'] = $filters['payment_method'];
+        }
+
+        if (in_array($filters['shipping_status'] ?? '', ['unshipped', 'shipped'], true)) {
+            $conditions[] = 'shipping_status = :shipping_status';
+            $params['shipping_status'] = $filters['shipping_status'];
         }
 
         if ($conditions !== []) {

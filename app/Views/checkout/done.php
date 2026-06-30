@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 ?>
-<section class="panel checkout-done-panel">
+<section class="panel customer-panel checkout-done-panel">
     <p class="eyebrow">Order Complete</p>
     <h2>ご注文ありがとうございました</h2>
     <p class="lead">ネット注文を受け付けました。これはデモ用の疑似決済による注文です。</p>

@@ -8,6 +8,7 @@ declare(strict_types=1);
         <h2>電話/FAX注文登録</h2>
         <p class="lead compact">電話またはFAXで受け付けた注文を代理登録します。複数商品の明細登録に対応しています。</p>
         <p><a class="text-link" href="/staff/receptionist">注文受付係トップへ戻る</a></p>
+        <p><a class="text-link" href="/staff/receptionist/orders">登録済み注文一覧</a></p>
     </div>
 
     <aside class="status-card">

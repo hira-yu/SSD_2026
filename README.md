@@ -1,6 +1,6 @@
-# 通信販売システム
+# IPUT EC
 
-授業内プロジェクト向けの通信販売システムです。  
+授業内プロジェクト向けの EC / 業務管理デモシステムです。
 このリポジトリでは、機能実装に入る前段として、素の PHP 8.3 系で動かす軽量 MVC の土台を作成しています。
 
 ## プロジェクト概要
@@ -8,6 +8,7 @@
 - ネット購入者、注文受付係、会計係、商品発送係を想定した通信販売システム
 - Web フレームワークは使わず、`public` 配下を公開ディレクトリとする構成
 - ローカル開発では SQLite、本番相当の発表デモ環境では MariaDB を切り替えて利用
+- 購入者向け画面は `IPUT EC`、管理者向け画面は業務管理画面として見た目を分けています
 
 ## 採用技術
 
@@ -80,7 +81,7 @@ APP_HOST=0.0.0.0 APP_PORT=8080 sh scripts/dev.sh
 ## .env の設定方法
 
 ```env
-APP_NAME=通信販売システム
+APP_NAME=IPUT EC
 APP_ENV=local
 APP_DEBUG=true
 APP_URL=http://localhost:8000
@@ -207,6 +208,15 @@ sh scripts/dev.sh
 - 追加先URL: `POST /cart/add`
 - 在庫なし商品は `在庫なし` と表示し、追加できません
 
+### 購入者向けUI方針
+
+- サービス名は `IPUT EC`
+- 白ベースに青色アクセントの EC サイト風レイアウト
+- 上部に検索バーとカート導線を配置
+- `/products` はカテゴリ・メーカー絞り込みと商品カードを見やすく調整
+- `/cart`、`/checkout`、`/checkout/done` はスマホ幅でも読みやすい余白とボタンサイズに調整
+- ヨドバシ.com 風の情報量は参考にしつつ、配色・文言・構成は独自にしています
+
 ### 動作確認手順
 
 1. `http://localhost:8000/products` を開き、商品一覧が表示されることを確認します。
@@ -259,6 +269,13 @@ sh scripts/dev.sh
 - 実在する個人情報や本物のカード情報は入力しないでください
 - 入力例: `4111111111111111 / TARO YAMADA / 12/30 / 123`
 
+## 管理者向けUI方針
+
+- `/login` と `/staff/...` 配下は購入者向け画面と分離した業務システム風 UI です
+- 薄いグレー背景、濃紺見出し、罫線付きテーブル、小さめボタンを基本にしています
+- 検索条件は「検索条件」枠にまとめ、一覧は表形式中心にしています
+- 注文受付係・会計係・商品発送係で同じ管理画面トーンを共有しています
+
 ### 動作確認手順
 
 1. `http://localhost:8000/products` から在庫あり商品をカートへ追加します。
@@ -305,6 +322,8 @@ sh scripts/dev.sh
 ## 電話/FAX注文登録
 
 - 電話/FAX注文登録URL: `http://localhost:8000/staff/receptionist/orders/new`
+- 注文受付係向け注文一覧URL: `http://localhost:8000/staff/receptionist/orders`
+- 注文受付係向け注文詳細URL: `http://localhost:8000/staff/receptionist/orders/{order_no}`
 - 利用可能ロール: `receptionist`
 
 ### 支払い方法
@@ -334,6 +353,7 @@ sh scripts/dev.sh
 3. 単一商品と複数商品の両方で合計金額が正しく計算されることを確認します。
 4. `bank` / `convenience` / `cod` の各支払い方法で、手数料と案内文が変わることを確認します。
 5. 注文確定後、注文番号が採番され、`products.stock_quantity_2` が注文数量分だけ減算されることを確認します。
+6. `/staff/receptionist/orders` で登録済み注文一覧が表示され、`/staff/receptionist/orders/{order_no}` で詳細を参照できることを確認します。
 
 ## 発送処理
 
@@ -358,8 +378,11 @@ sh scripts/dev.sh
 
 - 発送済更新では `orders.shipping_status` を `shipped` に更新します
 - 同一トランザクション内で `order_items` 数量分だけ `products.stock_quantity_1` を減算します
-- 更新後、対象商品の `stock_quantity_1` と `stock_quantity_2` が一致しない場合はロールバックします
-- 例: 注文登録後に `stock_quantity_1 = 12`, `stock_quantity_2 = 10` の商品は、発送済更新後に両方 `10` になります
+- 発送済更新後は、各商品について `stock_quantity_1 - stock_quantity_2 = 未発送引当数量` を満たすことを確認します
+- `stock_quantity_1` / `stock_quantity_2` が負数でないこと、`stock_quantity_1 >= stock_quantity_2` であることも合わせて確認します
+- 在庫引当数量との整合性が確認できない場合のみロールバックします
+- 例1: 注文登録後に `stock_quantity_1 = 12`, `stock_quantity_2 = 10`、未発送引当2件なら、発送後に両方 `10` になります
+- 例2: `stock_quantity_1 = 20`, `stock_quantity_2 = 15`、未発送引当合計5件のうち2件を発送した場合、更新後は `stock_quantity_1 = 18`, `stock_quantity_2 = 15` で、差分3件が残未発送引当と一致すれば正常です
 
 ### 在庫整合性確認CLI
 
@@ -378,7 +401,9 @@ php scripts/check_inventory_consistency.php
 2. 銀行振込・コンビニ決済の `paid` 注文、代金引換注文が発送可能として表示されることを確認します。
 3. `unpaid` の銀行振込・コンビニ決済注文が支払い待ちとして別枠表示されることを確認します。
 4. 注文詳細を開き、商品明細、納品書情報、代金引換では請求書情報も表示されることを確認します。
-5. 発送可能な注文で `発送済へ更新` を実行し、`shipping_status` が `shipped` になり、対象商品の `stock_quantity_1` が減算されて `stock_quantity_2` と一致することを確認します。
+5. 同一商品に未発送注文が1件だけの場合、発送後に `stock_quantity_1` と `stock_quantity_2` が一致することを確認します。
+6. 同一商品に未発送注文が複数残る場合でも、発送後に `stock_quantity_1 - stock_quantity_2 = 残未発送引当数量` を満たしていればエラーにならないことを確認します。
+7. `php scripts/check_inventory_consistency.php` で正常データが `在庫整合性OK` になることを確認します。
 
 ## QuickWBS 連携
 

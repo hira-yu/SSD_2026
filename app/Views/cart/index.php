@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 ?>
-<section class="staff-hero">
-    <div class="panel">
+<section class="staff-hero customer-hero">
+    <div class="panel customer-panel">
         <p class="eyebrow">Shopping Cart</p>
         <h2>カート</h2>
         <p class="lead compact">選択した商品と数量、合計金額を確認できます。</p>
         <p><a class="text-link" href="/products">商品一覧へ戻る</a></p>
     </div>
 
-    <aside class="status-card">
+    <aside class="status-card customer-status-card">
         <h3>カート概要</h3>
         <dl>
             <div>
@@ -37,7 +37,7 @@ declare(strict_types=1);
 <?php endif; ?>
 
 <?php if ($warnings !== []): ?>
-    <section class="panel">
+    <section class="panel customer-panel">
         <h3>ご確認ください</h3>
         <ul class="error-list">
             <?php foreach ($warnings as $warning): ?>
@@ -48,11 +48,11 @@ declare(strict_types=1);
 <?php endif; ?>
 
 <?php if ($items === []): ?>
-    <section class="panel">
+    <section class="panel customer-panel">
         <p class="empty-state">カートは空です。商品一覧から追加してください。</p>
     </section>
 <?php else: ?>
-    <section class="panel">
+    <section class="panel customer-panel">
         <div class="table-wrap">
             <table class="data-table cart-table">
                 <thead>

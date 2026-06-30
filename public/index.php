@@ -35,6 +35,8 @@ $router->post('/logout', [AuthController::class, 'logout']);
 $router->get('/logout', [AuthController::class, 'logout']);
 $router->get('/staff/receptionist', [StaffController::class, 'receptionist']);
 $router->get('/staff/receptionist/products', [ProductController::class, 'receptionistIndex']);
+$router->get('/staff/receptionist/orders', [ReceptionOrderController::class, 'index']);
+$router->get('/staff/receptionist/orders/{order_no}', [ReceptionOrderController::class, 'show']);
 $router->get('/staff/receptionist/orders/new', [ReceptionOrderController::class, 'create']);
 $router->post('/staff/receptionist/orders/confirm', [ReceptionOrderController::class, 'confirm']);
 $router->post('/staff/receptionist/orders', [ReceptionOrderController::class, 'store']);

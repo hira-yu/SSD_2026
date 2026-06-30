@@ -13,20 +13,44 @@ class ProductService
 
     /**
      * @return array{
-     *   filters: array{name: string},
-     *   products: array<int, array<string, mixed>>
+     *   filters: array{name: string, category: string, maker: string},
+     *   products: array<int, array<string, mixed>>,
+     *   categoryOptions: array<int, array<string, mixed>>,
+     *   makerOptions: array<int, array<string, mixed>>
      * }
      */
-    public function searchPublicProducts(?string $name): array
+    public function searchPublicProducts(?string $name, ?string $category = null, ?string $maker = null): array
     {
         $normalizedName = trim((string) $name);
-        $products = $this->products->searchForCustomer($normalizedName);
+        $normalizedCategory = trim((string) $category);
+        $normalizedMaker = trim((string) $maker);
+        $products = $this->products->searchForCustomer($normalizedName, $normalizedCategory, $normalizedMaker);
+        $allProducts = $this->decorateProducts($this->products->listAll());
 
         return [
             'filters' => [
                 'name' => $normalizedName,
+                'category' => $normalizedCategory,
+                'maker' => $normalizedMaker,
             ],
             'products' => $this->decorateProducts($products),
+            'categoryOptions' => $this->buildFacetOptions($allProducts, 'category'),
+            'makerOptions' => $this->buildFacetOptions($allProducts, 'maker'),
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function homePageData(): array
+    {
+        $products = $this->decorateProducts($this->products->listAll());
+
+        return [
+            'featuredProducts' => array_slice($products, 0, 4),
+            'newArrivalProducts' => array_slice($products, 0, 8),
+            'categoryOptions' => $this->buildFacetOptions($products, 'category'),
+            'makerOptions' => $this->buildFacetOptions($products, 'maker'),
         ];
     }
 
@@ -74,5 +98,36 @@ class ProductService
 
             return $product;
         }, $products);
+    }
+
+    /**
+     * @param array<int, array<string, mixed>> $products
+     * @return array<int, array<string, mixed>>
+     */
+    private function buildFacetOptions(array $products, string $field): array
+    {
+        $counts = [];
+
+        foreach ($products as $product) {
+            $value = trim((string) ($product[$field] ?? ''));
+
+            if ($value === '') {
+                continue;
+            }
+
+            $counts[$value] = ($counts[$value] ?? 0) + 1;
+        }
+
+        ksort($counts, SORT_NATURAL);
+        $options = [];
+
+        foreach ($counts as $value => $count) {
+            $options[] = [
+                'value' => $value,
+                'count' => $count,
+            ];
+        }
+
+        return $options;
     }
 }

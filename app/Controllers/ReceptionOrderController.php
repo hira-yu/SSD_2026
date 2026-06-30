@@ -26,6 +26,40 @@ class ReceptionOrderController extends Controller
         ]);
     }
 
+    public function index(): void
+    {
+        $this->auth->authorizeRole('receptionist');
+        $result = $this->orders->searchOrders($_GET);
+
+        $this->render('staff/reception_orders', [
+            'pageTitle' => '注文受付係向け注文一覧',
+            'user' => $this->auth->user(),
+            'roleLabel' => $this->auth->roleLabel('receptionist'),
+            'csrfToken' => csrf_token(),
+            ...$result,
+        ]);
+    }
+
+    public function show(string $orderNo): void
+    {
+        $this->auth->authorizeRole('receptionist');
+        $detail = $this->orders->findOrderDetailViewData($orderNo);
+
+        if ($detail === null) {
+            http_response_code(404);
+            echo '404 Not Found';
+            return;
+        }
+
+        $this->render('staff/reception_order_detail', [
+            'pageTitle' => '注文受付係向け注文詳細',
+            'user' => $this->auth->user(),
+            'roleLabel' => $this->auth->roleLabel('receptionist'),
+            'csrfToken' => csrf_token(),
+            ...$detail,
+        ]);
+    }
+
     public function confirm(): void
     {
         $this->auth->authorizeRole('receptionist');

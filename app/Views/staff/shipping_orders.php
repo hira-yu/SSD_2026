@@ -37,7 +37,9 @@ declare(strict_types=1);
 <?php endif; ?>
 
 <section class="panel">
-    <h3>発送可能な注文</h3>
+    <div class="panel-heading-bar">
+        <h3>発送可能な注文</h3>
+    </div>
     <?php if ($shippable === []): ?>
         <p class="empty-state">発送可能な未発送注文はありません。</p>
     <?php else: ?>
@@ -77,7 +79,9 @@ declare(strict_types=1);
 </section>
 
 <section class="panel">
-    <h3>支払い待ち / 発送対象外の未発送注文</h3>
+    <div class="panel-heading-bar">
+        <h3>支払い待ち / 発送対象外の未発送注文</h3>
+    </div>
     <?php if ($waiting === []): ?>
         <p class="empty-state">支払い待ちの未発送注文はありません。</p>
     <?php else: ?>

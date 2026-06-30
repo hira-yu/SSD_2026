@@ -7,8 +7,8 @@ declare(strict_types=1);
         <p class="eyebrow">Staff Workspace</p>
         <h2><?= e((string) $roleLabel) ?>トップ</h2>
         <p class="lead compact">
-            <?= e((string) ($user['user_name'] ?? '')) ?> さん向けの仮トップ画面です。
-            今後の業務機能実装に備えたメニューを表示しています。
+            <?= e((string) ($user['user_name'] ?? '')) ?> さん向けの業務メニューです。
+            本日の確認対象や登録・照会画面へここから移動できます。
         </p>
     </div>
 
@@ -36,14 +36,16 @@ declare(strict_types=1);
 </section>
 
 <section class="panel">
-    <h3>業務メニュー</h3>
+    <div class="panel-heading-bar">
+        <h3>業務メニュー</h3>
+    </div>
     <div class="menu-grid">
         <?php foreach ($menuItems as $item): ?>
             <article class="menu-card">
                 <h4><?= e((string) ($item['title'] ?? '')) ?></h4>
                 <p><?= e((string) ($item['description'] ?? '')) ?></p>
                 <?php if (!empty($item['url'])): ?>
-                    <p class="menu-card-action"><a class="text-link" href="<?= e((string) $item['url']) ?>">この画面を開く</a></p>
+                    <p class="menu-card-action"><a class="text-link" href="<?= e((string) $item['url']) ?>">画面を開く</a></p>
                 <?php endif; ?>
             </article>
         <?php endforeach; ?>

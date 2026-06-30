@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 ?>
-<section class="staff-hero">
-    <div class="panel">
+<section class="staff-hero customer-hero">
+    <div class="panel customer-panel">
         <p class="eyebrow">Checkout</p>
         <h2>ネット注文情報入力</h2>
         <p class="lead compact">購入者情報と疑似クレジットカード情報を入力してください。</p>
         <p><a class="text-link" href="/cart">カートへ戻る</a></p>
     </div>
 
-    <aside class="status-card">
+    <aside class="status-card customer-status-card">
         <h3>注文サマリー</h3>
         <dl>
             <div>
@@ -47,7 +47,7 @@ declare(strict_types=1);
     </div>
 <?php endif; ?>
 
-<section class="panel">
+<section class="panel customer-panel">
     <div class="checkout-demo-note">
         <h3>デモ用注意書き</h3>
         <p><?= e((string) $demoNotice) ?></p>

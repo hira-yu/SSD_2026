@@ -31,7 +31,7 @@ class ProductRepository
     /**
      * @return array<int, array<string, mixed>>
      */
-    public function searchForCustomer(?string $name = null): array
+    public function searchForCustomer(?string $name = null, ?string $category = null, ?string $maker = null): array
     {
         $sql = <<<'SQL'
             SELECT
@@ -52,6 +52,16 @@ class ProductRepository
         if ($name !== null && $name !== '') {
             $conditions[] = 'name LIKE :name';
             $params['name'] = '%' . $name . '%';
+        }
+
+        if ($category !== null && $category !== '') {
+            $conditions[] = 'category = :category';
+            $params['category'] = $category;
+        }
+
+        if ($maker !== null && $maker !== '') {
+            $conditions[] = 'maker = :maker';
+            $params['maker'] = $maker;
         }
 
         if ($conditions !== []) {

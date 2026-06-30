@@ -17,12 +17,18 @@ class ProductController extends Controller
 
     public function index(): void
     {
-        $result = $this->products->searchPublicProducts($_GET['name'] ?? null);
+        $result = $this->products->searchPublicProducts(
+            $_GET['name'] ?? null,
+            $_GET['category'] ?? null,
+            $_GET['maker'] ?? null
+        );
 
         $this->render('products/index', [
             'pageTitle' => '商品一覧・商品検索',
             'filters' => $result['filters'],
             'products' => $result['products'],
+            'categoryOptions' => $result['categoryOptions'],
+            'makerOptions' => $result['makerOptions'],
             'cartItemCount' => $this->cart->itemCount(),
             'csrfToken' => csrf_token(),
         ]);

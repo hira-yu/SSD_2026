@@ -3,7 +3,8 @@
 declare(strict_types=1);
 
 return [
-    'name' => (string) env('APP_NAME', '通信販売システム'),
+    'name' => (string) env('APP_NAME', 'IPUT EC'),
+    'admin_name' => (string) env('APP_ADMIN_NAME', 'IPUT EC 管理画面'),
     'env' => (string) env('APP_ENV', 'local'),
     'debug' => (bool) env('APP_DEBUG', false),
     'url' => (string) env('APP_URL', 'http://localhost:8000'),
@@ -47,5 +48,11 @@ return [
             'expiry' => '12/30',
             'security_code' => '123',
         ],
+    ],
+    'customer_ui' => [
+        'service_name' => 'IPUT EC',
+        'tagline' => '学内デモ向けPC・周辺機器ストア',
+        'shipping_copy' => '在庫がある商品はすぐに引当処理へ進みます。',
+        'support_copy' => 'これは授業デモ用のEC画面です。実在する個人情報や本物のカード情報は入力しないでください。',
     ],
 ];
