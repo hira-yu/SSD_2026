@@ -78,34 +78,12 @@ class OrderRepository
 
     public function findByOrderNo(string $orderNo): ?array
     {
-        $statement = db_connection()->prepare(
-            <<<'SQL'
-                SELECT
-                    id,
-                    order_no,
-                    order_date,
-                    customer_name,
-                    customer_address,
-                    customer_contact,
-                    order_type,
-                    payment_method,
-                    payment_status,
-                    shipping_status,
-                    subtotal,
-                    fee,
-                    shipping_fee,
-                    total_amount,
-                    created_at,
-                    updated_at
-                FROM orders
-                WHERE order_no = :order_no
-                LIMIT 1
-            SQL
-        );
-        $statement->execute(['order_no' => $orderNo]);
-        $order = $statement->fetch();
+        return $this->findOrderByOrderNo($orderNo, false);
+    }
 
-        return is_array($order) ? $order : null;
+    public function findByOrderNoForUpdate(string $orderNo): ?array
+    {
+        return $this->findOrderByOrderNo($orderNo, true);
     }
 
     /**
@@ -241,5 +219,73 @@ class OrderRepository
         ]);
 
         return $statement->rowCount() === 1;
+    }
+
+    /**
+     * @return array<int, int>
+     */
+    public function getUnshippedItemQuantitiesByProduct(): array
+    {
+        $statement = db_connection()->query(
+            <<<'SQL'
+                SELECT
+                    oi.product_id,
+                    SUM(oi.quantity) AS reserved_quantity
+                FROM order_items oi
+                INNER JOIN orders o
+                    ON o.id = oi.order_id
+                WHERE o.shipping_status = 'unshipped'
+                GROUP BY oi.product_id
+            SQL
+        );
+        $rows = $statement->fetchAll() ?: [];
+        $quantities = [];
+
+        foreach ($rows as $row) {
+            $quantities[(int) $row['product_id']] = (int) $row['reserved_quantity'];
+        }
+
+        return $quantities;
+    }
+
+    private function findOrderByOrderNo(string $orderNo, bool $forUpdate): ?array
+    {
+        $sql = <<<'SQL'
+            SELECT
+                id,
+                order_no,
+                order_date,
+                customer_name,
+                customer_address,
+                customer_contact,
+                order_type,
+                payment_method,
+                payment_status,
+                shipping_status,
+                subtotal,
+                fee,
+                shipping_fee,
+                total_amount,
+                created_at,
+                updated_at
+            FROM orders
+            WHERE order_no = :order_no
+            LIMIT 1
+        SQL;
+
+        if ($forUpdate && $this->usesRowLevelLocking()) {
+            $sql .= ' FOR UPDATE';
+        }
+
+        $statement = db_connection()->prepare($sql);
+        $statement->execute(['order_no' => $orderNo]);
+        $order = $statement->fetch();
+
+        return is_array($order) ? $order : null;
+    }
+
+    private function usesRowLevelLocking(): bool
+    {
+        return (string) config('database.driver', 'sqlite') === 'mysql';
     }
 }
