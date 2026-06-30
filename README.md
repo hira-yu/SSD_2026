@@ -117,6 +117,12 @@ $pdo->exec(file_get_contents("database/seed.sqlite.sql"));
 '
 ```
 
+既存の `database/local.sqlite` に改修前データが残っている場合は、次のスクリプトで初期状態へ戻せます。
+
+```bash
+php scripts/reset_sqlite.php
+```
+
 ## MariaDB での初期化方法
 
 1. `.env` の `DB_DRIVER=mysql` に切り替えます。
@@ -180,6 +186,8 @@ sh scripts/dev.sh
 ## 商品一覧・商品検索
 
 - 購入者向け商品一覧URL: `http://localhost:8000/products`
+- カートURL: `http://localhost:8000/cart`
+- 注文情報入力URL: `http://localhost:8000/checkout`
 - 注文受付係向け商品検索URL: `http://localhost:8000/staff/receptionist/products`
 
 ### 検索条件
@@ -193,13 +201,72 @@ sh scripts/dev.sh
 - 購入者向け: 商品番号、商品名、単価、商品カテゴリ、メーカー名、在庫数量2、注文可能状態
 - 注文受付係向け: 商品番号、商品名、単価、商品カテゴリ、メーカー名、在庫数量1、在庫数量2、注文可能状態
 
+### カート追加
+
+- 在庫数量2が1以上の商品に数量入力欄と `カートに追加` ボタンを表示します
+- 追加先URL: `POST /cart/add`
+- 在庫なし商品は `在庫なし` と表示し、追加できません
+
 ### 動作確認手順
 
 1. `http://localhost:8000/products` を開き、商品一覧が表示されることを確認します。
 2. `http://localhost:8000/products?name=マウス` のように検索し、商品名の部分一致で絞り込まれることを確認します。
-3. `reception01 / reception123` でログインし、`http://localhost:8000/staff/receptionist/products` を開きます。
-4. `product_no`、`name`、両方指定の各パターンで検索結果が変わることを確認します。
-5. `account01` または `shipper01` で同URLへアクセスすると `403 Forbidden` になることを確認します。
+3. 在庫あり商品を `カートに追加` できることを確認します。
+4. `reception01 / reception123` でログインし、`http://localhost:8000/staff/receptionist/products` を開きます。
+5. `product_no`、`name`、両方指定の各パターンで検索結果が変わることを確認します。
+6. `account01` または `shipper01` で同URLへアクセスすると `403 Forbidden` になることを確認します。
+
+## ネット注文
+
+- カート表示URL: `http://localhost:8000/cart`
+- 注文情報入力URL: `http://localhost:8000/checkout`
+- 注文確認URL: `POST /checkout/confirm`
+- 注文完了URL: `http://localhost:8000/checkout/done?order_no=...`
+- 未ログインの購入者でも利用可能です
+
+### カート操作URL
+
+- `POST /cart/add`: 商品追加
+- `POST /cart/update`: 数量更新
+- `POST /cart/remove`: 商品削除
+
+### 疑似決済仕様
+
+- 支払い方法は `credit` 固定です
+- ネット注文完了時点で `payment_status = paid` として登録します
+- 発送状態は `shipping_status = unshipped` で登録します
+- クレジットカード番号全文とセキュリティコードは DB に保存しません
+- 疑似決済は形式チェックのみ行い、実際のカード会社連携は行いません
+- 画面表示時のカード番号は下4桁だけ確認できる形にします
+
+### 金額計算
+
+- 商品小計: 商品単価 × 数量の合計
+- 配送料: `660円`
+- 手数料: `0円`
+- 合計金額: 商品小計 + 配送料
+
+### 在庫更新仕様
+
+- ネット注文は `orders.order_type = online` で登録します
+- 注文登録時に `products.stock_quantity_2` を注文数量分だけ減算します
+- 在庫数量2を超える注文は確認画面と注文確定時に拒否します
+- 注文登録、注文明細登録、在庫引当は同一トランザクションで処理します
+
+### デモ用注意事項
+
+- これはデモ用の疑似決済です
+- 実在する個人情報や本物のカード情報は入力しないでください
+- 入力例: `4111111111111111 / TARO YAMADA / 12/30 / 123`
+
+### 動作確認手順
+
+1. `http://localhost:8000/products` から在庫あり商品をカートへ追加します。
+2. `http://localhost:8000/cart` で数量更新と削除ができることを確認します。
+3. カートが空の状態で `http://localhost:8000/checkout` へ進めないことを確認します。
+4. `http://localhost:8000/checkout` で購入者情報と疑似カード情報を入力し、確認画面へ進みます。
+5. 正しい形式の疑似カード情報で注文確定でき、`payment_method=credit`、`payment_status=paid`、`shipping_status=unshipped`、`order_type=online` で登録されることを確認します。
+6. 注文完了後にカートが空になり、`products.stock_quantity_2` が注文数量分だけ減算されることを確認します。
 
 ## 会計処理
 
@@ -406,5 +473,4 @@ php scripts/quickwbs_seed_tasks.php <parent_task_id> --execute
 
 ## 今後実装予定の機能
 
-- ネット注文
 - 発表デモ調整

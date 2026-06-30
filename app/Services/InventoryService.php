@@ -19,6 +19,28 @@ class InventoryService
     public function reserveForOrder(array $items): void
     {
         $normalizedItems = $this->normalizeItems($items);
+        $products = $this->assertOrderReservable($items);
+
+        foreach ($normalizedItems as $productId => $quantity) {
+            $product = $products[$productId] ?? null;
+
+            if ($product === null) {
+                throw new RuntimeException('選択した商品が見つかりません。');
+            }
+
+            if (!$this->products->decreaseStockQuantity2($productId, $quantity)) {
+                $this->throwReserveFailure($productId, $quantity, $product);
+            }
+        }
+    }
+
+    /**
+     * @param array<int, array<string, mixed>> $items
+     * @return array<int, array<string, mixed>>
+     */
+    public function assertOrderReservable(array $items): array
+    {
+        $normalizedItems = $this->normalizeItems($items);
         $products = $this->products->findByIdsForUpdate(array_keys($normalizedItems));
 
         foreach ($normalizedItems as $productId => $quantity) {
@@ -34,11 +56,9 @@ class InventoryService
                     (string) $product['name']
                 ));
             }
-
-            if (!$this->products->decreaseStockQuantity2($productId, $quantity)) {
-                $this->throwReserveFailure($productId, $quantity, $product);
-            }
         }
+
+        return $products;
     }
 
     /**

@@ -6,11 +6,13 @@ class ProductController extends Controller
 {
     private ProductService $products;
     private AuthService $auth;
+    private CartService $cart;
 
     public function __construct()
     {
         $this->products = new ProductService();
         $this->auth = new AuthService();
+        $this->cart = new CartService();
     }
 
     public function index(): void
@@ -21,6 +23,8 @@ class ProductController extends Controller
             'pageTitle' => '商品一覧・商品検索',
             'filters' => $result['filters'],
             'products' => $result['products'],
+            'cartItemCount' => $this->cart->itemCount(),
+            'csrfToken' => csrf_token(),
         ]);
     }
 
