@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 $name = (string) ($filters['name'] ?? '');
+$cartItemCount = (int) ($cartItemCount ?? 0);
 ?>
 <section class="panel search-panel">
     <p class="eyebrow">Products</p>
@@ -19,6 +20,16 @@ $name = (string) ($filters['name'] ?? '');
             <a class="button-link button-secondary" href="/products">条件をクリア</a>
         </div>
     </form>
+</section>
+
+<section class="panel quick-cart-panel">
+    <div class="section-heading compact-heading">
+        <div>
+            <h3>カート</h3>
+            <p class="help-text">購入予定の商品をまとめて確認できます。</p>
+        </div>
+        <a class="button-link" href="/cart">カートを見る<?= $cartItemCount > 0 ? ' (' . e((string) $cartItemCount) . ')' : '' ?></a>
+    </div>
 </section>
 
 <?php if ($products === []): ?>
@@ -54,6 +65,19 @@ $name = (string) ($filters['name'] ?? '');
                         <dd><?= e((string) $product['stock_quantity_2']) ?></dd>
                     </div>
                 </dl>
+                <?php if (!empty($product['is_orderable'])): ?>
+                    <form class="product-cart-form" method="post" action="/cart/add">
+                        <input type="hidden" name="_csrf" value="<?= e((string) $csrfToken) ?>">
+                        <input type="hidden" name="product_id" value="<?= e((string) $product['id']) ?>">
+                        <div class="form-field inline-quantity-field">
+                            <label for="qty-<?= e((string) $product['id']) ?>">数量</label>
+                            <input id="qty-<?= e((string) $product['id']) ?>" type="number" name="quantity" min="1" value="1" inputmode="numeric">
+                        </div>
+                        <button class="button-link button-submit" type="submit">カートに追加</button>
+                    </form>
+                <?php else: ?>
+                    <p class="status-ng product-cart-disabled">在庫なしのため追加できません。</p>
+                <?php endif; ?>
             </article>
         <?php endforeach; ?>
     </section>

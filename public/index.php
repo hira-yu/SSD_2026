@@ -21,6 +21,14 @@ set_exception_handler(static function (Throwable $exception): void {
 $router = new Router();
 $router->get('/', [HomeController::class, 'index']);
 $router->get('/products', [ProductController::class, 'index']);
+$router->get('/cart', [CartController::class, 'index']);
+$router->post('/cart/add', [CartController::class, 'add']);
+$router->post('/cart/update', [CartController::class, 'update']);
+$router->post('/cart/remove', [CartController::class, 'remove']);
+$router->get('/checkout', [CheckoutController::class, 'index']);
+$router->post('/checkout/confirm', [CheckoutController::class, 'confirm']);
+$router->post('/checkout/complete', [CheckoutController::class, 'complete']);
+$router->get('/checkout/done', [CheckoutController::class, 'done']);
 $router->get('/login', [AuthController::class, 'showLogin']);
 $router->post('/login', [AuthController::class, 'login']);
 $router->post('/logout', [AuthController::class, 'logout']);

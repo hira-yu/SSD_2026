@@ -323,6 +323,10 @@ code {
     flex-wrap: wrap;
 }
 
+.compact-heading {
+    margin-bottom: 0;
+}
+
 .search-panel {
     display: grid;
     gap: 1rem;
@@ -396,6 +400,20 @@ code {
 .product-meta dd {
     margin: 0;
     text-align: right;
+}
+
+.product-cart-form {
+    display: grid;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.inline-quantity-field {
+    max-width: 8rem;
+}
+
+.product-cart-disabled {
+    margin: 1rem 0 0;
 }
 
 .empty-state {
@@ -529,6 +547,75 @@ code {
     line-height: 1.8;
 }
 
+.cart-table {
+    min-width: 760px;
+}
+
+.cart-quantity-form {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+}
+
+.cart-quantity-form input {
+    width: 5.5rem;
+    border: 1px solid #cdc5b4;
+    border-radius: 0.8rem;
+    padding: 0.65rem 0.8rem;
+    font: inherit;
+    background: #fff;
+}
+
+.cart-warning {
+    margin: 0.45rem 0 0;
+    color: var(--ng);
+    font-size: 0.92rem;
+    font-weight: 700;
+}
+
+.cart-summary-card,
+.checkout-demo-note,
+.done-order-number {
+    margin-top: 1.5rem;
+    padding: 1.1rem 1.2rem;
+    border-radius: 1rem;
+    border: 1px solid #eee7da;
+    background: linear-gradient(180deg, #fffef9 0%, #f8f2e8 100%);
+}
+
+.checkout-form {
+    display: grid;
+    gap: 1rem;
+}
+
+.checkout-inline-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.done-order-number {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.done-order-number span {
+    font-weight: 700;
+    color: var(--muted);
+}
+
+.done-order-number strong {
+    font-size: clamp(1.5rem, 5vw, 2.3rem);
+    letter-spacing: 0.04em;
+}
+
+.checkout-done-panel {
+    display: grid;
+    gap: 1rem;
+}
+
 @media (max-width: 720px) {
     .site-header .container,
     .site-footer .container,
@@ -571,6 +658,12 @@ code {
         display: block;
     }
 
+    .checkout-inline-fields,
+    .done-order-number,
+    .cart-quantity-form {
+        display: block;
+    }
+
     .section-heading .button-link {
         margin-top: 1rem;
     }
@@ -587,5 +680,10 @@ code {
 
     .document-card {
         padding: 1rem;
+    }
+
+    .cart-quantity-form .button-link,
+    .done-order-number strong {
+        margin-top: 0.75rem;
     }
 }
