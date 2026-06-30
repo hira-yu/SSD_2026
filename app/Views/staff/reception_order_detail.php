@@ -72,6 +72,7 @@ declare(strict_types=1);
         <table class="data-table admin-data-table">
             <thead>
                 <tr>
+                    <th>画像</th>
                     <th>商品番号</th>
                     <th>商品名</th>
                     <th>単価</th>
@@ -79,12 +80,20 @@ declare(strict_types=1);
                     <th>小計</th>
                 </tr>
             </thead>
-            <tbody>
-                <?php foreach ($items as $item): ?>
-                    <tr>
-                        <td><?= e((string) $item['product_no']) ?></td>
-                        <td><?= e((string) $item['product_name']) ?></td>
-                        <td>¥<?= number_format((int) $item['unit_price']) ?></td>
+                <tbody>
+                    <?php foreach ($items as $item): ?>
+                        <tr>
+                            <td class="admin-thumb-cell">
+                                <img
+                                    class="admin-thumb"
+                                    src="<?= e((string) ($item['image_url'] ?? product_image_url((string) ($item['image_path'] ?? '')))) ?>"
+                                    alt="<?= e((string) $item['product_name']) ?>"
+                                    data-fallback-src="/assets/img/products/placeholder.svg"
+                                >
+                            </td>
+                            <td><?= e((string) $item['product_no']) ?></td>
+                            <td><?= e((string) $item['product_name']) ?></td>
+                            <td>¥<?= number_format((int) $item['unit_price']) ?></td>
                         <td><?= e((string) $item['quantity']) ?></td>
                         <td>¥<?= number_format((int) $item['line_total']) ?></td>
                     </tr>

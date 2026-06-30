@@ -10,10 +10,23 @@ class PaymentService
      */
     public function normalizeCardInput(array $input): array
     {
+        $rawExpiryMonth = trim((string) ($input['card_expiry_month'] ?? ''));
+        $expiryMonth = $rawExpiryMonth === '' ? '' : str_pad($rawExpiryMonth, 2, '0', STR_PAD_LEFT);
+        $expiryYear = trim((string) ($input['card_expiry_year'] ?? ''));
+        $legacyExpiry = strtoupper(trim((string) ($input['card_expiry'] ?? '')));
+
+        $cardExpiry = $legacyExpiry;
+
+        if ($expiryMonth !== '' && $expiryYear !== '') {
+            $cardExpiry = $expiryMonth . '/' . $expiryYear;
+        }
+
         return [
             'card_number' => preg_replace('/\s+/', '', trim((string) ($input['card_number'] ?? ''))) ?? '',
             'cardholder_name' => trim((string) ($input['cardholder_name'] ?? '')),
-            'card_expiry' => strtoupper(trim((string) ($input['card_expiry'] ?? ''))),
+            'card_expiry' => $cardExpiry,
+            'card_expiry_month' => $expiryMonth,
+            'card_expiry_year' => $expiryYear,
             'security_code' => trim((string) ($input['security_code'] ?? '')),
         ];
     }

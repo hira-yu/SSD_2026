@@ -18,9 +18,6 @@ class HomeController extends Controller
         $this->render('home', [
             'pageTitle' => 'トップページ',
             'appName' => (string) config('app.customer_ui.service_name', 'IPUT EC'),
-            'appEnv' => (string) config('app.env', 'local'),
-            'dbDriver' => (string) config('database.driver', 'sqlite'),
-            'plannedFeatures' => config('app.planned_features', []),
             ...$catalog,
         ]);
     }

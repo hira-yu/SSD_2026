@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" role="img" aria-labelledby="title desc">
+  <title id="title">ラベルプリンター</title>
+  <desc id="desc">ラベルプリンターのイラストです。</desc>
+  <rect width="640" height="480" rx="28" fill="#f3f7fb"/>
+  <rect x="156" y="120" width="328" height="190" rx="34" fill="#0f172a"/>
+  <rect x="190" y="154" width="120" height="72" rx="18" fill="#dbeafe"/>
+  <rect x="334" y="160" width="110" height="24" rx="12" fill="#2563eb"/>
+  <rect x="334" y="200" width="78" height="20" rx="10" fill="#93c5fd"/>
+  <path d="M240 310h160v74H240z" fill="#ffffff" stroke="#cbd5e1" stroke-width="8"/>
+  <path d="M272 338h96" stroke="#94a3b8" stroke-width="10" stroke-linecap="round"/>
+  <ellipse cx="320" cy="408" rx="142" ry="18" fill="#dbeafe"/>
+</svg>

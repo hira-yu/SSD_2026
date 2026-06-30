@@ -109,6 +109,22 @@ function e(string $value): string
     return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
 }
 
+function asset_url(string $path): string
+{
+    return '/' . ltrim($path, '/');
+}
+
+function product_image_url(?string $path): string
+{
+    $normalized = trim((string) $path);
+
+    if ($normalized === '') {
+        return asset_url('assets/img/products/placeholder.svg');
+    }
+
+    return asset_url($normalized);
+}
+
 function app_log(string $message, array $context = []): void
 {
     $logLine = sprintf(

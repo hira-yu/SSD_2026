@@ -66,6 +66,7 @@ $name = (string) ($filters['name'] ?? '');
             <table class="data-table">
                 <thead>
                     <tr>
+                        <th>画像</th>
                         <th>商品番号</th>
                         <th>商品名</th>
                         <th>単価</th>
@@ -79,6 +80,14 @@ $name = (string) ($filters['name'] ?? '');
                 <tbody>
                     <?php foreach ($products as $product): ?>
                         <tr>
+                            <td class="admin-thumb-cell">
+                                <img
+                                    class="admin-thumb"
+                                    src="<?= e((string) ($product['image_url'] ?? product_image_url((string) ($product['image_path'] ?? '')))) ?>"
+                                    alt="<?= e((string) $product['name']) ?>"
+                                    data-fallback-src="/assets/img/products/placeholder.svg"
+                                >
+                            </td>
                             <td><?= e((string) $product['product_no']) ?></td>
                             <td><?= e((string) $product['name']) ?></td>
                             <td>¥<?= number_format((int) $product['price']) ?></td>

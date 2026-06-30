@@ -6,7 +6,7 @@ declare(strict_types=1);
     <div class="panel">
         <p class="eyebrow">Receptionist Tools</p>
         <h2>電話/FAX注文登録</h2>
-        <p class="lead compact">電話またはFAXで受け付けた注文を代理登録します。複数商品の明細登録に対応しています。</p>
+        <p class="lead compact">電話またはFAXで受け付けた注文を代理登録します。必要な商品を選択し、確認画面へ進んでください。</p>
         <p><a class="text-link" href="/staff/receptionist">注文受付係トップへ戻る</a></p>
         <p><a class="text-link" href="/staff/receptionist/orders">登録済み注文一覧</a></p>
     </div>
@@ -117,6 +117,43 @@ declare(strict_types=1);
             <button class="button-link button-submit" type="submit">注文確認へ進む</button>
         </div>
     </form>
+</section>
+
+<section class="panel">
+    <div class="panel-heading-bar">
+        <h3>商品選択の参考</h3>
+    </div>
+    <div class="table-wrap">
+        <table class="data-table admin-data-table">
+            <thead>
+                <tr>
+                    <th>画像</th>
+                    <th>商品番号</th>
+                    <th>商品名</th>
+                    <th>在庫数量2</th>
+                    <th>単価</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($productOptions as $product): ?>
+                    <tr>
+                        <td class="admin-thumb-cell">
+                            <img
+                                class="admin-thumb"
+                                src="<?= e(product_image_url((string) ($product['image_path'] ?? ''))) ?>"
+                                alt="<?= e((string) $product['name']) ?>"
+                                data-fallback-src="/assets/img/products/placeholder.svg"
+                            >
+                        </td>
+                        <td><?= e((string) $product['product_no']) ?></td>
+                        <td><?= e((string) $product['name']) ?></td>
+                        <td><?= e((string) $product['stock_quantity_2']) ?></td>
+                        <td>¥<?= number_format((int) $product['price']) ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
 </section>
 
 <template id="order-item-row-template">

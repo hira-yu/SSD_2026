@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" role="img" aria-labelledby="title desc">
+  <title id="title">ワイヤレスマウス</title>
+  <desc id="desc">青いアクセントを入れたワイヤレスマウスのイラストです。</desc>
+  <rect width="640" height="480" rx="28" fill="#f8fbff"/>
+  <ellipse cx="320" cy="250" rx="150" ry="112" fill="#0f172a"/>
+  <ellipse cx="320" cy="250" rx="126" ry="92" fill="#e2e8f0"/>
+  <path d="M320 158v178" stroke="#94a3b8" stroke-width="10" stroke-linecap="round"/>
+  <path d="M302 178h36" stroke="#2563eb" stroke-width="14" stroke-linecap="round"/>
+  <ellipse cx="320" cy="396" rx="126" ry="18" fill="#dbeafe"/>
+</svg>

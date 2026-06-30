@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" role="img" aria-labelledby="title desc">
+  <title id="title">A4コピー用紙 500枚</title>
+  <desc id="desc">コピー用紙のパッケージイラストです。</desc>
+  <rect width="640" height="480" rx="28" fill="#f8fafc"/>
+  <rect x="152" y="100" width="336" height="258" rx="20" fill="#ffffff" stroke="#cbd5e1" stroke-width="10"/>
+  <rect x="188" y="142" width="264" height="70" rx="16" fill="#dbeafe"/>
+  <rect x="188" y="232" width="264" height="18" rx="9" fill="#2563eb"/>
+  <rect x="188" y="268" width="180" height="18" rx="9" fill="#94a3b8"/>
+  <rect x="188" y="304" width="228" height="18" rx="9" fill="#cbd5e1"/>
+  <path d="M488 128l-72-72" stroke="#60a5fa" stroke-width="14" stroke-linecap="round"/>
+  <ellipse cx="320" cy="400" rx="138" ry="18" fill="#e2e8f0"/>
+</svg>

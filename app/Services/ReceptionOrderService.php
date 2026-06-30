@@ -116,6 +116,8 @@ class ReceptionOrderService
                 'quantity' => $quantity,
                 'line_total' => $lineTotal,
                 'stock_quantity_2' => (int) $product['stock_quantity_2'],
+                'image_path' => (string) ($product['image_path'] ?? ''),
+                'image_url' => product_image_url((string) ($product['image_path'] ?? '')),
             ];
         }
 
@@ -286,7 +288,7 @@ class ReceptionOrderService
 
         return [
             'order' => $this->decorateOrder($order),
-            'items' => $this->orderItems->findByOrderId((int) $order['id']),
+            'items' => $this->attachProductImages($this->orderItems->findByOrderId((int) $order['id'])),
         ];
     }
 
@@ -507,5 +509,25 @@ class ReceptionOrderService
         $order['shipping_status_label'] = $this->shippingStatusLabels[$shippingStatus] ?? '不明';
 
         return $order;
+    }
+
+    /**
+     * @param array<int, array<string, mixed>> $items
+     * @return array<int, array<string, mixed>>
+     */
+    private function attachProductImages(array $items): array
+    {
+        $products = $this->products->findByIds(array_map(
+            static fn (array $item): int => (int) ($item['product_id'] ?? 0),
+            $items
+        ));
+
+        foreach ($items as $index => $item) {
+            $product = $products[(int) ($item['product_id'] ?? 0)] ?? null;
+            $items[$index]['image_path'] = (string) ($product['image_path'] ?? '');
+            $items[$index]['image_url'] = product_image_url((string) ($product['image_path'] ?? ''));
+        }
+
+        return $items;
     }
 }

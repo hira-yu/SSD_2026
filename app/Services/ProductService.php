@@ -95,6 +95,7 @@ class ProductService
             $product['is_orderable'] = $stockQuantity2 > 0;
             $product['availability_label'] = $stockQuantity2 > 0 ? '注文可能' : '在庫なし';
             $product['availability_class'] = $stockQuantity2 > 0 ? 'status-ok' : 'status-ng';
+            $product['image_url'] = product_image_url((string) ($product['image_path'] ?? ''));
 
             return $product;
         }, $products);

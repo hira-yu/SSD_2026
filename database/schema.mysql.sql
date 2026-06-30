@@ -25,6 +25,7 @@ CREATE TABLE products (
     price INT UNSIGNED NOT NULL,
     category VARCHAR(100) NOT NULL,
     maker VARCHAR(100) NOT NULL,
+    image_path VARCHAR(255) DEFAULT NULL,
     stock_quantity_1 INT NOT NULL DEFAULT 0,
     stock_quantity_2 INT NOT NULL DEFAULT 0,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
