@@ -20,9 +20,9 @@ class StaffController extends Controller
             ['title' => '支払い状態更新', 'description' => '未払い注文の支払い状態を支払済へ更新します。', 'url' => '/staff/accountant/orders'],
         ],
         'shipper' => [
-            ['title' => '未発送注文一覧', 'description' => '未発送注文の確認機能を今後追加します。', 'url' => null],
-            ['title' => '納品書・請求書表示', 'description' => '帳票表示機能を今後追加します。', 'url' => null],
-            ['title' => '発送状態更新', 'description' => '発送状態の更新機能を今後追加します。', 'url' => null],
+            ['title' => '未発送注文一覧', 'description' => '発送対象の未発送注文と支払い待ち注文を確認します。', 'url' => '/staff/shipper/orders'],
+            ['title' => '納品書・請求書表示', 'description' => '注文詳細画面で納品書情報と請求書情報を確認します。', 'url' => '/staff/shipper/orders'],
+            ['title' => '発送状態更新', 'description' => '発送完了後に発送状態を発送済へ更新します。', 'url' => '/staff/shipper/orders'],
         ],
     ];
 

@@ -512,6 +512,23 @@ code {
     background: #f8f2e8;
 }
 
+.print-block {
+    display: grid;
+    gap: 1rem;
+}
+
+.document-card {
+    padding: 1.2rem;
+    border-radius: 1rem;
+    border: 1px dashed #c7b89a;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(248, 242, 232, 0.96) 100%);
+}
+
+.document-card p {
+    margin: 0;
+    line-height: 1.8;
+}
+
 @media (max-width: 720px) {
     .site-header .container,
     .site-footer .container,
@@ -566,5 +583,9 @@ code {
     .product-meta dd {
         margin-top: 0.35rem;
         text-align: left;
+    }
+
+    .document-card {
+        padding: 1rem;
     }
 }

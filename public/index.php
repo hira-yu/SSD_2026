@@ -36,5 +36,8 @@ $router->get('/staff/accountant/orders', [AccountingController::class, 'index'])
 $router->get('/staff/accountant/orders/{order_no}', [AccountingController::class, 'show']);
 $router->post('/staff/accountant/orders/{order_no}/payment', [AccountingController::class, 'updatePayment']);
 $router->get('/staff/shipper', [StaffController::class, 'shipper']);
+$router->get('/staff/shipper/orders', [ShippingController::class, 'index']);
+$router->get('/staff/shipper/orders/{order_no}', [ShippingController::class, 'show']);
+$router->post('/staff/shipper/orders/{order_no}/ship', [ShippingController::class, 'ship']);
 $router->get('/system/db-check', [SystemController::class, 'dbCheck']);
 $router->dispatch($_SERVER['REQUEST_METHOD'] ?? 'GET', $_SERVER['REQUEST_URI'] ?? '/');
