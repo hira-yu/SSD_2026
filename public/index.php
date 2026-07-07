@@ -20,7 +20,13 @@ set_exception_handler(static function (Throwable $exception): void {
 
 $router = new Router();
 $router->get('/', [HomeController::class, 'index']);
+$router->get('/favorites', [FavoriteController::class, 'index']);
+$router->post('/favorites/add', [FavoriteController::class, 'add']);
+$router->post('/favorites/remove', [FavoriteController::class, 'remove']);
+$router->get('/sitemap', [UtilityController::class, 'sitemap']);
+$router->get('/stores', [UtilityController::class, 'stores']);
 $router->get('/products', [ProductController::class, 'index']);
+$router->get('/products/{id}', [ProductController::class, 'show']);
 $router->get('/cart', [CartController::class, 'index']);
 $router->post('/cart/add', [CartController::class, 'add']);
 $router->post('/cart/update', [CartController::class, 'update']);

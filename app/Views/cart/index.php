@@ -2,11 +2,24 @@
 
 declare(strict_types=1);
 ?>
-<section class="cart-page-shell">
-    <div class="section-intro">
-        <p class="eyebrow">Shopping Cart</p>
-        <h2>カート</h2>
-        <p>商品内容、数量、合計金額を確認してご注文手続きへ進めます。</p>
+<section class="market-order-page">
+    <div class="market-breadcrumb">
+        <a href="/">トップ</a>
+        <span>カート</span>
+    </div>
+
+    <div class="market-step-bar">
+        <div class="market-step-item is-active">1. カート</div>
+        <div class="market-step-item">2. 注文情報入力</div>
+        <div class="market-step-item">3. 注文内容確認</div>
+        <div class="market-step-item">4. 注文完了</div>
+    </div>
+
+    <div class="market-results-summary">
+        <div>
+            <h2>ショッピングカート</h2>
+            <p>商品内容、数量、合計金額を確認してご注文手続きへ進めます。</p>
+        </div>
     </div>
 
     <?php if ($successMessage): ?>
@@ -28,17 +41,17 @@ declare(strict_types=1);
     <?php endif; ?>
 
     <?php if ($items === []): ?>
-        <section class="empty-result-card">
+        <section class="market-empty-state">
             <h3>カートに商品が入っていません</h3>
             <p>商品一覧から気になる商品を追加してください。</p>
             <a class="button-link button-submit" href="/products">商品一覧へ進む</a>
         </section>
     <?php else: ?>
-        <div class="cart-layout-grid">
-            <section class="cart-item-list">
+        <div class="market-cart-layout">
+            <section class="market-cart-list">
                 <?php foreach ($items as $item): ?>
-                    <article class="cart-item-card">
-                        <div class="cart-item-image">
+                    <article class="market-cart-item">
+                        <div class="market-cart-image">
                             <img
                                 src="<?= e((string) $item['image_url']) ?>"
                                 alt="<?= e((string) $item['product_name']) ?>"
@@ -46,22 +59,22 @@ declare(strict_types=1);
                             >
                         </div>
 
-                        <div class="cart-item-main">
-                            <div class="cart-item-header">
+                        <div class="market-cart-main">
+                            <div class="market-cart-heading">
                                 <div>
-                                    <p class="product-card-meta"><?= e((string) $item['category']) ?> / <?= e((string) $item['maker']) ?></p>
-                                    <h3><?= e((string) $item['product_name']) ?></h3>
-                                    <p class="product-code"><?= e((string) $item['product_no']) ?></p>
+                                    <p class="market-product-meta"><?= e((string) $item['category']) ?> / <?= e((string) $item['maker']) ?></p>
+                                    <h3 class="market-cart-title"><?= e((string) $item['product_name']) ?></h3>
+                                    <p class="market-product-code"><?= e((string) $item['product_no']) ?></p>
                                 </div>
-                                <p class="cart-item-price">¥<?= number_format((int) $item['unit_price']) ?></p>
+                                <p class="market-price-row">¥<?= number_format((int) $item['unit_price']) ?></p>
                             </div>
 
                             <?php if (!empty($item['warning'])): ?>
-                                <p class="product-card-note status-ng"><?= e((string) $item['warning']) ?></p>
+                                <p class="market-stock-copy status-ng"><?= e((string) $item['warning']) ?></p>
                             <?php endif; ?>
 
-                            <div class="cart-item-actions">
-                                <form class="cart-quantity-form" method="post" action="/cart/update">
+                            <div class="market-cart-actions">
+                                <form class="market-cart-qty-form" method="post" action="/cart/update">
                                     <input type="hidden" name="_csrf" value="<?= e((string) $csrfToken) ?>">
                                     <input type="hidden" name="product_id" value="<?= e((string) $item['product_id']) ?>">
                                     <label for="cart-qty-<?= e((string) $item['product_id']) ?>">数量</label>
@@ -77,7 +90,7 @@ declare(strict_types=1);
                             </div>
                         </div>
 
-                        <div class="cart-item-total">
+                        <div class="market-cart-total">
                             <span>小計</span>
                             <strong>¥<?= number_format((int) $item['line_total']) ?></strong>
                         </div>
@@ -85,10 +98,10 @@ declare(strict_types=1);
                 <?php endforeach; ?>
             </section>
 
-            <aside class="cart-summary-panel">
-                <div class="summary-card">
-                    <h3>ご注文内容</h3>
-                    <dl class="summary-list">
+            <aside class="market-order-summary">
+                <div class="market-summary-card">
+                    <div class="market-panel-heading">ご注文内容</div>
+                    <dl class="market-summary-list">
                         <div>
                             <dt>商品点数</dt>
                             <dd><?= e((string) $item_count) ?>点</dd>
@@ -106,8 +119,10 @@ declare(strict_types=1);
                             <dd>¥<?= number_format((int) $total_amount) ?></dd>
                         </div>
                     </dl>
-                    <a class="button-link button-submit button-full" href="/checkout">注文へ進む</a>
-                    <a class="button-link button-secondary button-full" href="/products">買い物を続ける</a>
+                    <div class="market-summary-actions">
+                        <a class="button-link button-submit button-full" href="/checkout">注文へ進む</a>
+                        <a class="button-link button-secondary button-full" href="/products">買い物を続ける</a>
+                    </div>
                 </div>
             </aside>
         </div>

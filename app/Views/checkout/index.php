@@ -2,11 +2,25 @@
 
 declare(strict_types=1);
 ?>
-<section class="checkout-shell">
-    <div class="section-intro">
-        <p class="eyebrow">Checkout</p>
-        <h2>ご注文手続き</h2>
-        <p>お届け先とお支払い情報を入力して、内容確認へ進みます。</p>
+<section class="market-order-page">
+    <div class="market-breadcrumb">
+        <a href="/">トップ</a>
+        <a href="/cart">カート</a>
+        <span>ご注文手続き</span>
+    </div>
+
+    <div class="market-step-bar">
+        <div class="market-step-item is-done">1. カート</div>
+        <div class="market-step-item is-active">2. 注文情報入力</div>
+        <div class="market-step-item">3. 注文内容確認</div>
+        <div class="market-step-item">4. 注文完了</div>
+    </div>
+
+    <div class="market-results-summary">
+        <div>
+            <h2>ご注文手続き</h2>
+            <p>お届け先とお支払い情報を入力して、内容確認へ進みます。</p>
+        </div>
     </div>
 
     <?php if ($successMessage ?? null): ?>
@@ -26,13 +40,13 @@ declare(strict_types=1);
         </div>
     <?php endif; ?>
 
-    <div class="checkout-layout-grid">
-        <form class="checkout-form" method="post" action="/checkout/confirm">
+    <div class="market-checkout-layout">
+        <form class="market-checkout-form" method="post" action="/checkout/confirm">
             <input type="hidden" name="_csrf" value="<?= e((string) $csrfToken) ?>">
 
-            <section class="form-section-card">
-                <h3>お客様情報</h3>
-                <div class="form-grid two-column">
+            <section class="market-form-section">
+                <div class="market-panel-heading">お客様情報</div>
+                <div class="market-form-grid market-form-grid-two">
                     <div class="form-field">
                         <label for="last_name">姓</label>
                         <input id="last_name" type="text" name="last_name" value="<?= e((string) ($form['last_name'] ?? '')) ?>" autocomplete="family-name" required>
@@ -57,9 +71,9 @@ declare(strict_types=1);
                 </div>
             </section>
 
-            <section class="form-section-card" data-address-autofill-form>
-                <h3>お届け先</h3>
-                <div class="form-grid two-column">
+            <section class="market-form-section" data-address-autofill-form>
+                <div class="market-panel-heading">お届け先</div>
+                <div class="market-form-grid market-form-grid-two">
                     <div class="form-field">
                         <label for="postal_code">郵便番号</label>
                         <input id="postal_code" type="text" name="postal_code" value="<?= e((string) ($form['postal_code'] ?? '')) ?>" inputmode="numeric" maxlength="7" autocomplete="postal-code" placeholder="例: 1000001" required>
@@ -96,11 +110,11 @@ declare(strict_types=1);
                 <p class="form-help-text" data-address-autofill-status>郵便番号を入力すると、対応する住所候補を補完できます。</p>
             </section>
 
-            <section class="form-section-card">
-                <h3>お支払い情報</h3>
-                <div class="card-guidance">
+            <section class="market-form-section">
+                <div class="market-panel-heading">お支払い情報</div>
+                <div class="market-card-guidance">
                     <p><?= e((string) $demoNotice) ?></p>
-                    <p>例: <?= e((string) ($demoCardExample['number'] ?? '')) ?> / <?= e((string) ($demoCardExample['holder'] ?? '')) ?></p>
+                    <p>カード番号、有効期限、セキュリティコードをご入力ください。</p>
                 </div>
 
                 <div class="form-field">
@@ -113,7 +127,7 @@ declare(strict_types=1);
                     <input id="cardholder_name" type="text" name="cardholder_name" value="<?= e((string) ($form['cardholder_name'] ?? '')) ?>" autocomplete="cc-name" placeholder="例: TARO YAMADA" required>
                 </div>
 
-                <div class="form-grid three-column">
+                <div class="market-form-grid market-form-grid-three">
                     <div class="form-field">
                         <label for="card_expiry_month">有効期限 月</label>
                         <select id="card_expiry_month" name="card_expiry_month" autocomplete="cc-exp-month" required>
@@ -143,16 +157,16 @@ declare(strict_types=1);
                 </div>
             </section>
 
-            <div class="search-actions">
+            <div class="market-summary-actions">
                 <a class="button-link button-secondary" href="/cart">カートへ戻る</a>
                 <button class="button-link button-submit" type="submit">入力内容を確認する</button>
             </div>
         </form>
 
-        <aside class="checkout-summary-panel">
-            <div class="summary-card">
-                <h3>ご注文内容</h3>
-                <ul class="checkout-item-list">
+        <aside class="market-order-summary">
+            <div class="market-summary-card">
+                <div class="market-panel-heading">ご注文内容</div>
+                <ul class="market-summary-item-list">
                     <?php foreach (($cart['items'] ?? []) as $item): ?>
                         <li>
                             <img
@@ -168,7 +182,7 @@ declare(strict_types=1);
                     <?php endforeach; ?>
                 </ul>
 
-                <dl class="summary-list">
+                <dl class="market-summary-list">
                     <div>
                         <dt>商品小計</dt>
                         <dd>¥<?= number_format((int) ($cart['subtotal'] ?? 0)) ?></dd>

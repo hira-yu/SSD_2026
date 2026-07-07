@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 240" role="img" aria-labelledby="title desc">
+  <title id="title">服カテゴリ商品画像</title>
+  <desc id="desc">服カテゴリの商品用イラスト</desc>
+  <rect width="320" height="240" rx="24" fill="#f5efe8"/>
+  <rect x="76" y="34" width="168" height="172" rx="28" fill="#d9734e"/>
+  <path d="M120 42c8 18 24 28 40 28s32-10 40-28l30 22-18 32-18-10v106H106V86l-18 10-18-32 30-22Z" fill="#fff3ec"/>
+  <path d="M138 86h44" stroke="#d9734e" stroke-width="8" stroke-linecap="round"/>
+  <text x="160" y="223" text-anchor="middle" font-family="Noto Sans JP, sans-serif" font-size="22" font-weight="700" fill="#7e3b22">FASHION</text>
+</svg>

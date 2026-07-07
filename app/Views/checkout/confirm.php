@@ -2,18 +2,33 @@
 
 declare(strict_types=1);
 ?>
-<section class="checkout-shell">
-    <div class="section-intro">
-        <p class="eyebrow">Order Confirmation</p>
-        <h2>ご注文内容の確認</h2>
-        <p>商品、お届け先、お支払い情報をご確認のうえ、ご注文を確定してください。</p>
+<section class="market-order-page">
+    <div class="market-breadcrumb">
+        <a href="/">トップ</a>
+        <a href="/cart">カート</a>
+        <a href="/checkout">ご注文手続き</a>
+        <span>ご注文内容の確認</span>
     </div>
 
-    <div class="confirmation-grid">
-        <section class="confirmation-main">
-            <div class="confirmation-card">
-                <h3>お届け先</h3>
-                <dl class="detail-list">
+    <div class="market-step-bar">
+        <div class="market-step-item is-done">1. カート</div>
+        <div class="market-step-item is-done">2. 注文情報入力</div>
+        <div class="market-step-item is-active">3. 注文内容確認</div>
+        <div class="market-step-item">4. 注文完了</div>
+    </div>
+
+    <div class="market-results-summary">
+        <div>
+            <h2>ご注文内容の確認</h2>
+            <p>商品、お届け先、お支払い情報をご確認のうえ、ご注文を確定してください。</p>
+        </div>
+    </div>
+
+    <div class="market-confirm-layout">
+        <section class="market-confirm-main">
+            <div class="market-form-section">
+                <div class="market-panel-heading">お届け先</div>
+                <dl class="market-detail-list">
                     <div>
                         <dt>お名前</dt>
                         <dd><?= e((string) ($customerSummary['name'] ?? '')) ?></dd>
@@ -42,9 +57,9 @@ declare(strict_types=1);
                 </dl>
             </div>
 
-            <div class="confirmation-card">
-                <h3>お支払い情報</h3>
-                <dl class="detail-list">
+            <div class="market-form-section">
+                <div class="market-panel-heading">お支払い情報</div>
+                <dl class="market-detail-list">
                     <div>
                         <dt>支払い方法</dt>
                         <dd>クレジットカード</dd>
@@ -65,9 +80,9 @@ declare(strict_types=1);
                 <p class="form-help-text"><?= e((string) $demoNotice) ?></p>
             </div>
 
-            <div class="confirmation-card">
-                <h3>商品内容</h3>
-                <ul class="confirmation-item-list">
+            <div class="market-form-section">
+                <div class="market-panel-heading">商品内容</div>
+                <ul class="market-summary-item-list">
                     <?php foreach (($cart['items'] ?? []) as $item): ?>
                         <li>
                             <img
@@ -86,10 +101,10 @@ declare(strict_types=1);
             </div>
         </section>
 
-        <aside class="checkout-summary-panel">
-            <div class="summary-card">
-                <h3>お支払い金額</h3>
-                <dl class="summary-list">
+        <aside class="market-order-summary">
+            <div class="market-summary-card">
+                <div class="market-panel-heading">お支払い金額</div>
+                <dl class="market-summary-list">
                     <div>
                         <dt>商品小計</dt>
                         <dd>¥<?= number_format((int) ($cart['subtotal'] ?? 0)) ?></dd>
@@ -104,7 +119,7 @@ declare(strict_types=1);
                     </div>
                 </dl>
 
-                <div class="search-actions stacked-actions">
+                <div class="market-summary-actions">
                     <a class="button-link button-secondary button-full" href="/checkout">入力内容を修正する</a>
                     <form method="post" action="/checkout/complete">
                         <input type="hidden" name="_csrf" value="<?= e((string) $csrfToken) ?>">

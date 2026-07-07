@@ -16,6 +16,25 @@ $serviceTagline = (string) config('app.customer_ui.tagline', '');
 $shippingCopy = (string) config('app.customer_ui.shipping_copy', '');
 $supportCopy = (string) config('app.customer_ui.support_copy', '');
 $searchQuery = trim((string) ($_GET['name'] ?? ''));
+$selectedCategory = trim((string) ($_GET['category'] ?? ''));
+$headerCategoryOptions = isset($categoryOptions) && is_array($categoryOptions) ? array_slice($categoryOptions, 0, 16) : [];
+$favoriteCount = 0;
+$favoriteSessionKey = (string) config('app.online_order.favorite_session_key', 'favorite_products');
+$favoriteSessionValues = $_SESSION[$favoriteSessionKey] ?? [];
+
+if (is_array($favoriteSessionValues)) {
+    foreach ($favoriteSessionValues as $favoriteValue) {
+        if (is_int($favoriteValue) || (is_string($favoriteValue) && ctype_digit($favoriteValue))) {
+            $favoriteCount++;
+        }
+    }
+}
+
+$customerUtilityLinks = [
+    ['label' => sprintf('お気に入り商品%s', $favoriteCount > 0 ? ' (' . $favoriteCount . ')' : ''), 'url' => '/favorites'],
+    ['label' => 'サイトマップ', 'url' => '/sitemap'],
+    ['label' => '店舗のご案内', 'url' => '/stores'],
+];
 $cartCount = 0;
 $authService = new AuthService();
 $currentRole = (string) (($authUser['role'] ?? ''));
@@ -56,42 +75,58 @@ foreach ((array) ($_SESSION[(string) config('app.online_order.cart_session_key',
 <body class="<?= e($bodyClass) ?>">
 <?php if ($isCustomerArea): ?>
     <header class="site-header customer-header">
-        <div class="customer-topbar">
-            <div class="container customer-topbar-inner">
-                <p><?= e($shippingCopy) ?></p>
-                <div class="customer-topbar-links">
-                    <?php if (is_array($authUser) && !empty($authUser['authenticated'])): ?>
-                        <a href="<?= e($authService->destinationForRole((string) ($authUser['role'] ?? ''))) ?>">担当者トップ</a>
-                    <?php else: ?>
-                        <a href="/login">担当者ログイン</a>
-                    <?php endif; ?>
+        <div class="customer-utility-bar">
+            <div class="container customer-utility-inner">
+                <nav class="customer-utility-links" aria-label="補助メニュー">
+                    <?php foreach ($customerUtilityLinks as $link): ?>
+                        <a href="<?= e((string) $link['url']) ?>"><?= e((string) $link['label']) ?></a>
+                    <?php endforeach; ?>
+                </nav>
+                <div class="customer-utility-status">
+                    <span><?= e($shippingCopy) ?></span>
                 </div>
             </div>
         </div>
-        <div class="container customer-brand-row">
-            <a class="brand-block brand-link" href="/">
-                <p class="eyebrow">Online Store</p>
-                <h1><?= e($serviceName) ?></h1>
-                <p class="brand-support-copy"><?= e($serviceTagline) ?></p>
-            </a>
-            <form class="global-search-form" method="get" action="/products" role="search">
-                <label class="sr-only" for="global-search">商品検索</label>
-                <input id="global-search" type="text" name="name" value="<?= e($searchQuery) ?>" placeholder="商品名・キーワードで検索">
-                <button class="button-link button-submit" type="submit">検索</button>
-            </form>
-            <a class="customer-cart-link" href="/cart">
-                <span>カート</span>
-                <strong><?= e((string) $cartCount) ?></strong>
-            </a>
+
+        <div class="customer-search-row">
+            <div class="container customer-search-inner">
+                <a class="customer-brand-link" href="/">
+                    <strong><?= e($serviceName) ?></strong>
+                </a>
+
+                <form class="customer-search-form" method="get" action="/products" role="search">
+                    <label class="sr-only" for="header-category">カテゴリ</label>
+                    <select id="header-category" name="category" class="customer-search-category">
+                        <option value="">カテゴリ</option>
+                        <?php foreach ($headerCategoryOptions as $category): ?>
+                            <option value="<?= e((string) $category['value']) ?>" <?= $selectedCategory === (string) $category['value'] ? 'selected' : '' ?>>
+                                <?= e((string) $category['value']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+
+                    <label class="sr-only" for="global-search">商品検索</label>
+                    <input id="global-search" type="text" name="name" value="<?= e($searchQuery) ?>" placeholder="ここにキーワードを入力">
+                    <button class="button-link button-submit" type="submit">検索</button>
+                </form>
+
+                <a class="customer-cart-link" href="/cart">
+                    <span class="cart-icon" aria-hidden="true">CART</span>
+                    <span>カート</span>
+                    <strong><?= e((string) $cartCount) ?></strong>
+                </a>
+            </div>
         </div>
+
         <div class="customer-nav-wrap">
-            <div class="container">
+            <div class="container customer-nav-inner">
                 <nav class="site-nav customer-nav" aria-label="主要メニュー">
                     <a href="/">トップ</a>
                     <a href="/products">商品一覧</a>
                     <a href="/cart">カート</a>
                     <a href="/checkout">ご注文手続き</a>
                 </nav>
+                <p class="customer-speed-copy">日本全国スピードお届け実施中</p>
             </div>
         </div>
     </header>

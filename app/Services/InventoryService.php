@@ -106,6 +106,11 @@ class InventoryService
             || $stockQuantity1 < $stockQuantity2
             || $actualDifference !== $expectedReservedQuantity
         ) {
+            error_log('productId=' . $productId);
+            error_log('stock1=' . $stockQuantity1);
+            error_log('stock2=' . $stockQuantity2);
+            error_log('actualDifference=' . $actualDifference);
+            error_log('expectedReservedQuantity=' . $expectedReservedQuantity);
             throw new RuntimeException(sprintf(
                 '%s の在庫引当数量との整合性が確認できないため、発送更新を中止しました。',
                 (string) ($stockPair['name'] ?? '対象商品')

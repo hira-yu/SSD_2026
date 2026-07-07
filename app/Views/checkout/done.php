@@ -2,34 +2,47 @@
 
 declare(strict_types=1);
 ?>
-<section class="checkout-shell">
-    <div class="order-complete-card">
-        <p class="eyebrow">Order Complete</p>
+<section class="market-order-page">
+    <div class="market-breadcrumb">
+        <a href="/">トップ</a>
+        <a href="/cart">カート</a>
+        <a href="/checkout">ご注文手続き</a>
+        <span>注文完了</span>
+    </div>
+
+    <div class="market-step-bar">
+        <div class="market-step-item is-done">1. カート</div>
+        <div class="market-step-item is-done">2. 注文情報入力</div>
+        <div class="market-step-item is-done">3. 注文内容確認</div>
+        <div class="market-step-item is-active">4. 注文完了</div>
+    </div>
+
+    <div class="market-complete-box">
         <h2>ご注文が完了しました</h2>
         <p>ご注文内容を受け付けました。注文番号はお問い合わせ時にも必要になります。</p>
 
-        <div class="done-order-number">
+        <div class="market-complete-order-no">
             <span>注文番号</span>
             <strong><?= e((string) $order['order_no']) ?></strong>
         </div>
 
-        <div class="completion-status-row">
-            <div class="status-summary-box">
+        <div class="market-complete-statuses">
+            <div>
                 <span>支払い状態</span>
                 <strong class="status-ok">支払済</strong>
             </div>
-            <div class="status-summary-box">
+            <div>
                 <span>発送状態</span>
                 <strong class="status-muted">未発送</strong>
             </div>
         </div>
     </div>
 
-    <div class="confirmation-grid">
-        <section class="confirmation-main">
-            <div class="confirmation-card">
-                <h3>ご注文商品</h3>
-                <ul class="confirmation-item-list">
+    <div class="market-confirm-layout">
+        <section class="market-confirm-main">
+            <div class="market-form-section">
+                <div class="market-panel-heading">ご注文商品</div>
+                <ul class="market-summary-item-list">
                     <?php foreach ($items as $item): ?>
                         <li>
                             <img
@@ -48,10 +61,10 @@ declare(strict_types=1);
             </div>
         </section>
 
-        <aside class="checkout-summary-panel">
-            <div class="summary-card">
-                <h3>ご請求金額</h3>
-                <dl class="summary-list">
+        <aside class="market-order-summary">
+            <div class="market-summary-card">
+                <div class="market-panel-heading">ご請求金額</div>
+                <dl class="market-summary-list">
                     <div>
                         <dt>商品小計</dt>
                         <dd>¥<?= number_format((int) $order['subtotal']) ?></dd>
@@ -66,7 +79,7 @@ declare(strict_types=1);
                     </div>
                 </dl>
 
-                <div class="search-actions stacked-actions">
+                <div class="market-summary-actions">
                     <a class="button-link button-submit button-full" href="/products">商品一覧へ戻る</a>
                 </div>
             </div>

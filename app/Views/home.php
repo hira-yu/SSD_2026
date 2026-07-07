@@ -1,116 +1,222 @@
 <?php
 
 declare(strict_types=1);
+
+$headlineCategories = array_slice($categoryOptions, 0, 14);
+$headlineMakers = array_slice($makerOptions, 0, 10);
+$recentProducts = array_slice($newArrivalProducts, 0, 8);
+$recommendedProducts = $newArrivalProducts !== [] ? $newArrivalProducts : $featuredProducts;
+$spotlightProducts = $featuredProducts !== [] ? $featuredProducts : $newArrivalProducts;
+$favoriteProductIds = isset($favoriteProductIds) && is_array($favoriteProductIds) ? $favoriteProductIds : [];
+$redirectTo = $_SERVER['REQUEST_URI'] ?? '/';
 ?>
-<section class="ec-home-hero">
-    <div class="hero-copy-block">
-        <p class="eyebrow">IPUT EC</p>
-        <h2>必要な商品を、必要なときに、迷わず注文できるオンラインストア。</h2>
-        <p class="hero-description">
-            PC周辺機器から事務用品まで、価格・在庫・配送条件を確認しながらスムーズにご購入いただけます。
-        </p>
+<div class="market-breadcrumb">
+    <a href="/">トップ</a>
+    <span>IPUT EC</span>
+</div>
 
-        <form class="hero-search-form" method="get" action="/products" role="search">
-            <label class="sr-only" for="hero-search">商品検索</label>
-            <input id="hero-search" type="text" name="name" placeholder="商品名・型番・キーワードで探す">
-            <button class="button-link button-submit" type="submit">商品を探す</button>
-        </form>
+<section class="market-stage">
+    <aside class="market-category-panel">
+        <div class="market-panel-heading">カテゴリ</div>
+        <ul class="market-category-list">
+            <?php foreach ($headlineCategories as $category): ?>
+                <li>
+                    <a href="/products?category=<?= urlencode((string) $category['value']) ?>">
+                        <?= e((string) $category['value']) ?>
+                    </a>
+                    <span><?= e((string) $category['count']) ?></span>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+    </aside>
 
-        <div class="hero-actions">
-            <a class="button-link button-submit" href="/products">商品一覧を見る</a>
-            <a class="button-link button-secondary" href="/cart">カートを確認</a>
+    <div class="market-hero-column">
+        <div class="market-promo-tabs">
+            <a href="/products">季節家電</a>
+            <a href="/products">日用品まとめ買い</a>
+            <a href="/products">PC・周辺機器</a>
+            <a href="/products">数量限定SALE</a>
+            <a href="/products">新着商品</a>
         </div>
 
-        <ul class="trust-list">
-            <li>全国一律送料 660円</li>
-            <li>在庫状況を商品一覧で確認可能</li>
-            <li>担当者向け管理画面あり</li>
-        </ul>
+        <div class="market-sub-promos">
+            <a class="market-sub-promo market-sub-promo-blue" href="/products">
+                <div>
+                    <p>人気カテゴリ</p>
+                    <strong>周辺機器・事務用品をまとめて確認</strong>
+                </div>
+                <span>検索へ</span>
+            </a>
+            <a class="market-sub-promo market-sub-promo-light" href="/checkout">
+                <div>
+                    <p>ご注文手続き</p>
+                    <strong>配送先入力から確認画面までわかりやすく整理</strong>
+                </div>
+                <span>購入へ進む</span>
+            </a>
+        </div>
     </div>
 
-    <aside class="hero-side-stack">
-        <div class="hero-side-card">
-            <h3>人気カテゴリ</h3>
-            <ul class="quick-link-list">
-                <?php foreach (array_slice($categoryOptions, 0, 6) as $category): ?>
-                    <li>
-                        <a href="/products?category=<?= urlencode((string) $category['value']) ?>">
-                            <?= e((string) $category['value']) ?>
-                        </a>
-                        <span><?= e((string) $category['count']) ?>件</span>
-                    </li>
-                <?php endforeach; ?>
-            </ul>
+    <aside class="market-side-rail">
+        <div class="market-rail-card market-rail-card-alert">
+            <h3>ご案内</h3>
+            <p>日本全国へお届け</p>
+            <p>在庫状況は商品ごとに表示</p>
+            <p>ご注文前に配送先と数量をご確認ください</p>
         </div>
 
-        <div class="hero-side-card">
-            <h3>ご利用案内</h3>
-            <ul class="support-list">
-                <li>ご注文前にカートと配送先情報をご確認ください。</li>
-                <li>担当者ログインは画面右上のリンクからご利用いただけます。</li>
-                <li>学習目的の試作システムとして運用しています。</li>
+        <div class="market-rail-card">
+            <h3>人気メーカー</h3>
+            <ul class="market-mini-link-list">
+                <?php foreach ($headlineMakers as $maker): ?>
+                    <li>
+                        <a href="/products?maker=<?= urlencode((string) $maker['value']) ?>">
+                            <?= e((string) $maker['value']) ?>
+                        </a>
+                    </li>
+                <?php endforeach; ?>
             </ul>
         </div>
     </aside>
 </section>
 
-<section class="ec-section">
-    <div class="section-header">
+<section class="market-merch-section">
+    <div class="market-merch-header">
         <div>
-            <h3>おすすめ商品</h3>
-            <p>定番の周辺機器と業務で使いやすい商品をピックアップしています。</p>
+            <h3>最近チェックした商品</h3>
+            <p>いま選ばれている商品をピックアップしています。</p>
         </div>
-        <a class="text-link" href="/products">商品一覧へ</a>
+        <a href="/products">商品一覧へ</a>
     </div>
 
-    <div class="ec-product-grid">
-        <?php foreach ($featuredProducts as $product): ?>
-            <article class="ec-product-card">
-                <a class="product-image-frame" href="/products?name=<?= urlencode((string) $product['name']) ?>">
+    <div class="market-product-row">
+        <?php foreach ($recentProducts as $product): ?>
+            <article class="market-product-card">
+                <a class="market-product-thumb" href="/products/<?= e((string) $product['id']) ?>">
                     <img
                         src="<?= e((string) $product['image_url']) ?>"
                         alt="<?= e((string) $product['name']) ?>"
                         data-fallback-src="/assets/img/products/placeholder.svg"
                     >
                 </a>
-                <div class="product-card-body">
-                    <p class="product-card-meta"><?= e((string) $product['category']) ?> / <?= e((string) $product['maker']) ?></p>
-                    <h4><?= e((string) $product['name']) ?></h4>
-                    <p class="product-card-price">¥<?= number_format((int) $product['price']) ?></p>
-                    <div class="product-card-footer">
-                        <span class="stock-chip <?= e((string) $product['availability_class']) ?>">
-                            <?= e((string) $product['availability_label']) ?>
-                        </span>
-                        <span class="stock-count">在庫 <?= e((string) $product['stock_quantity_2']) ?></span>
-                    </div>
+                <div class="market-product-body">
+                    <p class="market-product-meta"><?= e((string) $product['category']) ?></p>
+                    <a class="market-product-title" href="/products/<?= e((string) $product['id']) ?>">
+                        <?= e((string) $product['name']) ?>
+                    </a>
+                    <p class="market-price-row">¥<?= number_format((int) $product['price']) ?></p>
+                    <p class="market-stock-copy <?= e((string) $product['availability_class']) ?>">
+                        <?= e((string) $product['availability_label']) ?> / 在庫 <?= e((string) $product['stock_quantity_2']) ?>
+                    </p>
+                    <form class="market-favorite-form" method="post" action="<?= in_array((int) $product['id'], $favoriteProductIds, true) ? '/favorites/remove' : '/favorites/add' ?>">
+                        <input type="hidden" name="_csrf" value="<?= e((string) $csrfToken) ?>">
+                        <input type="hidden" name="product_id" value="<?= e((string) $product['id']) ?>">
+                        <input type="hidden" name="redirect_to" value="<?= e((string) $redirectTo) ?>">
+                        <button class="button-link button-ghost button-small market-favorite-button" type="submit">
+                            <?= in_array((int) $product['id'], $favoriteProductIds, true) ? 'お気に入り解除' : 'お気に入りに追加' ?>
+                        </button>
+                    </form>
                 </div>
             </article>
         <?php endforeach; ?>
     </div>
 </section>
 
-<section class="ec-section subtle-section">
-    <div class="section-header">
+<section class="market-merch-section">
+    <div class="market-merch-header">
         <div>
-            <h3>新着商品</h3>
-            <p>商品一覧ページからカテゴリやメーカーでも絞り込めます。</p>
+            <h3>お客様へのおすすめ</h3>
+            <p>カテゴリやメーカーを絞り込んで、目的の商品を見つけやすくしました。</p>
         </div>
+        <a href="/products">条件を指定して探す</a>
     </div>
 
-    <div class="ec-product-grid compact">
-        <?php foreach ($newArrivalProducts as $product): ?>
-            <article class="ec-product-card compact-card">
-                <a class="product-image-frame compact-image" href="/products?name=<?= urlencode((string) $product['name']) ?>">
+    <div class="market-product-grid">
+        <?php foreach ($recommendedProducts as $product): ?>
+            <article class="market-product-card market-product-card-grid">
+                <a class="market-product-thumb market-product-thumb-grid" href="/products/<?= e((string) $product['id']) ?>">
                     <img
                         src="<?= e((string) $product['image_url']) ?>"
                         alt="<?= e((string) $product['name']) ?>"
                         data-fallback-src="/assets/img/products/placeholder.svg"
                     >
                 </a>
-                <div class="product-card-body">
-                    <h4><?= e((string) $product['name']) ?></h4>
-                    <p class="product-card-price">¥<?= number_format((int) $product['price']) ?></p>
-                    <a class="text-link" href="/products?name=<?= urlencode((string) $product['name']) ?>">詳細を見る</a>
+                <div class="market-product-body">
+                    <p class="market-product-meta"><?= e((string) $product['maker']) ?> / <?= e((string) $product['category']) ?></p>
+                    <a class="market-product-title" href="/products/<?= e((string) $product['id']) ?>">
+                        <?= e((string) $product['name']) ?>
+                    </a>
+                    <p class="market-price-row">¥<?= number_format((int) $product['price']) ?></p>
+                    <p class="market-stock-copy <?= e((string) $product['availability_class']) ?>">
+                        <?= e((string) $product['availability_label']) ?>
+                    </p>
+                    <form class="market-favorite-form" method="post" action="<?= in_array((int) $product['id'], $favoriteProductIds, true) ? '/favorites/remove' : '/favorites/add' ?>">
+                        <input type="hidden" name="_csrf" value="<?= e((string) $csrfToken) ?>">
+                        <input type="hidden" name="product_id" value="<?= e((string) $product['id']) ?>">
+                        <input type="hidden" name="redirect_to" value="<?= e((string) $redirectTo) ?>">
+                        <button class="button-link button-ghost button-small market-favorite-button" type="submit">
+                            <?= in_array((int) $product['id'], $favoriteProductIds, true) ? 'お気に入り解除' : 'お気に入りに追加' ?>
+                        </button>
+                    </form>
+                </div>
+            </article>
+        <?php endforeach; ?>
+    </div>
+</section>
+
+<section class="market-merch-section market-maker-section">
+    <div class="market-merch-header">
+        <div>
+            <h3>人気メーカーから探す</h3>
+            <p>メーカー別の絞り込みにも対応しています。</p>
+        </div>
+    </div>
+
+    <div class="market-maker-cloud">
+        <?php foreach ($headlineMakers as $maker): ?>
+            <a href="/products?maker=<?= urlencode((string) $maker['value']) ?>">
+                <?= e((string) $maker['value']) ?>
+                <span><?= e((string) $maker['count']) ?>件</span>
+            </a>
+        <?php endforeach; ?>
+    </div>
+</section>
+
+<section class="market-merch-section">
+    <div class="market-merch-header">
+        <div>
+            <h3>注目商品</h3>
+            <p>注文しやすさを重視して、在庫と価格を見やすく表示しています。</p>
+        </div>
+    </div>
+
+    <div class="market-product-row">
+        <?php foreach ($spotlightProducts as $product): ?>
+            <article class="market-product-card">
+                <a class="market-product-thumb" href="/products/<?= e((string) $product['id']) ?>">
+                    <img
+                        src="<?= e((string) $product['image_url']) ?>"
+                        alt="<?= e((string) $product['name']) ?>"
+                        data-fallback-src="/assets/img/products/placeholder.svg"
+                    >
+                </a>
+                <div class="market-product-body">
+                    <p class="market-product-meta"><?= e((string) $product['maker']) ?></p>
+                    <a class="market-product-title" href="/products/<?= e((string) $product['id']) ?>">
+                        <?= e((string) $product['name']) ?>
+                    </a>
+                    <p class="market-price-row">¥<?= number_format((int) $product['price']) ?></p>
+                    <p class="market-stock-copy <?= e((string) $product['availability_class']) ?>">
+                        <?= e((string) $product['availability_label']) ?> / 在庫 <?= e((string) $product['stock_quantity_2']) ?>
+                    </p>
+                    <form class="market-favorite-form" method="post" action="<?= in_array((int) $product['id'], $favoriteProductIds, true) ? '/favorites/remove' : '/favorites/add' ?>">
+                        <input type="hidden" name="_csrf" value="<?= e((string) $csrfToken) ?>">
+                        <input type="hidden" name="product_id" value="<?= e((string) $product['id']) ?>">
+                        <input type="hidden" name="redirect_to" value="<?= e((string) $redirectTo) ?>">
+                        <button class="button-link button-ghost button-small market-favorite-button" type="submit">
+                            <?= in_array((int) $product['id'], $favoriteProductIds, true) ? 'お気に入り解除' : 'お気に入りに追加' ?>
+                        </button>
+                    </form>
                 </div>
             </article>
         <?php endforeach; ?>

@@ -39,9 +39,10 @@ return [
         'shipping_status' => 'unshipped',
         'order_type' => 'online',
         'cart_session_key' => 'online_cart',
+        'favorite_session_key' => 'favorite_products',
         'checkout_draft_session_key' => 'online_checkout_draft',
         'checkout_confirmation_session_key' => 'online_checkout_confirmation',
-        'demo_notice' => 'テスト用カード番号をご利用ください。カード番号とセキュリティコードは保存されません。',
+        'demo_notice' => 'カード番号とセキュリティコードは注文確認のためにのみ使用し、保存されません。',
         'demo_card_example' => [
             'number' => '4111111111111111',
             'holder' => 'TARO YAMADA',
@@ -51,8 +52,8 @@ return [
     ],
     'customer_ui' => [
         'service_name' => 'IPUT EC',
-        'tagline' => '家電・PC周辺機器・事務用品を取り扱うオンラインストア',
-        'shipping_copy' => '在庫のある商品は通常 2-4 日で発送します。',
-        'support_copy' => 'お問い合わせ前に、ご注文内容と配送先情報をご確認ください。',
+        'tagline' => '家電・PC周辺機器・事務用品を取り扱う通販サイト',
+        'shipping_copy' => '日本全国スピードお届け実施中 | 一部地域を除き配達日時指定に対応',
+        'support_copy' => 'ご注文前に、商品内容・数量・配送先情報をご確認ください。',
     ],
 ];
