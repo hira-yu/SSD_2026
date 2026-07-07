@@ -32,11 +32,11 @@ $redirectTo = $_SERVER['REQUEST_URI'] ?? '/';
 
     <div class="market-hero-column">
         <div class="market-promo-tabs">
-            <a href="/products">季節家電</a>
-            <a href="/products">日用品まとめ買い</a>
-            <a href="/products">PC・周辺機器</a>
-            <a href="/products">数量限定SALE</a>
-            <a href="/products">新着商品</a>
+            <a href="/products"><i data-lucide="fan" aria-hidden="true"></i>季節家電</a>
+            <a href="/products"><i data-lucide="package-check" aria-hidden="true"></i>日用品まとめ買い</a>
+            <a href="/products"><i data-lucide="monitor" aria-hidden="true"></i>PC・周辺機器</a>
+            <a href="/products"><i data-lucide="badge-percent" aria-hidden="true"></i>数量限定SALE</a>
+            <a href="/products"><i data-lucide="sparkles" aria-hidden="true"></i>新着商品</a>
         </div>
 
         <div class="market-sub-promos">
@@ -45,28 +45,28 @@ $redirectTo = $_SERVER['REQUEST_URI'] ?? '/';
                     <p>人気カテゴリ</p>
                     <strong>周辺機器・事務用品をまとめて確認</strong>
                 </div>
-                <span>検索へ</span>
+                <span>検索へ<i data-lucide="arrow-right" aria-hidden="true"></i></span>
             </a>
             <a class="market-sub-promo market-sub-promo-light" href="/checkout">
                 <div>
                     <p>ご注文手続き</p>
                     <strong>配送先入力から確認画面までわかりやすく整理</strong>
                 </div>
-                <span>購入へ進む</span>
+                <span>購入へ進む<i data-lucide="arrow-right" aria-hidden="true"></i></span>
             </a>
         </div>
     </div>
 
     <aside class="market-side-rail">
         <div class="market-rail-card market-rail-card-alert">
-            <h3>ご案内</h3>
+            <h3><i data-lucide="truck" aria-hidden="true"></i>ご案内</h3>
             <p>日本全国へお届け</p>
             <p>在庫状況は商品ごとに表示</p>
             <p>ご注文前に配送先と数量をご確認ください</p>
         </div>
 
         <div class="market-rail-card">
-            <h3>人気メーカー</h3>
+            <h3><i data-lucide="factory" aria-hidden="true"></i>人気メーカー</h3>
             <ul class="market-mini-link-list">
                 <?php foreach ($headlineMakers as $maker): ?>
                     <li>
@@ -86,7 +86,7 @@ $redirectTo = $_SERVER['REQUEST_URI'] ?? '/';
             <h3>最近チェックした商品</h3>
             <p>いま選ばれている商品をピックアップしています。</p>
         </div>
-        <a href="/products">商品一覧へ</a>
+        <a href="/products">商品一覧へ<i data-lucide="arrow-right" aria-hidden="true"></i></a>
     </div>
 
     <div class="market-product-row">
@@ -113,6 +113,7 @@ $redirectTo = $_SERVER['REQUEST_URI'] ?? '/';
                         <input type="hidden" name="product_id" value="<?= e((string) $product['id']) ?>">
                         <input type="hidden" name="redirect_to" value="<?= e((string) $redirectTo) ?>">
                         <button class="button-link button-ghost button-small market-favorite-button" type="submit">
+                            <i data-lucide="<?= in_array((int) $product['id'], $favoriteProductIds, true) ? 'heart-off' : 'heart' ?>" aria-hidden="true"></i>
                             <?= in_array((int) $product['id'], $favoriteProductIds, true) ? 'お気に入り解除' : 'お気に入りに追加' ?>
                         </button>
                     </form>
@@ -128,7 +129,7 @@ $redirectTo = $_SERVER['REQUEST_URI'] ?? '/';
             <h3>お客様へのおすすめ</h3>
             <p>カテゴリやメーカーを絞り込んで、目的の商品を見つけやすくしました。</p>
         </div>
-        <a href="/products">条件を指定して探す</a>
+        <a href="/products">条件を指定して探す<i data-lucide="arrow-right" aria-hidden="true"></i></a>
     </div>
 
     <div class="market-product-grid">
@@ -155,6 +156,7 @@ $redirectTo = $_SERVER['REQUEST_URI'] ?? '/';
                         <input type="hidden" name="product_id" value="<?= e((string) $product['id']) ?>">
                         <input type="hidden" name="redirect_to" value="<?= e((string) $redirectTo) ?>">
                         <button class="button-link button-ghost button-small market-favorite-button" type="submit">
+                            <i data-lucide="<?= in_array((int) $product['id'], $favoriteProductIds, true) ? 'heart-off' : 'heart' ?>" aria-hidden="true"></i>
                             <?= in_array((int) $product['id'], $favoriteProductIds, true) ? 'お気に入り解除' : 'お気に入りに追加' ?>
                         </button>
                     </form>
@@ -214,6 +216,7 @@ $redirectTo = $_SERVER['REQUEST_URI'] ?? '/';
                         <input type="hidden" name="product_id" value="<?= e((string) $product['id']) ?>">
                         <input type="hidden" name="redirect_to" value="<?= e((string) $redirectTo) ?>">
                         <button class="button-link button-ghost button-small market-favorite-button" type="submit">
+                            <i data-lucide="<?= in_array((int) $product['id'], $favoriteProductIds, true) ? 'heart-off' : 'heart' ?>" aria-hidden="true"></i>
                             <?= in_array((int) $product['id'], $favoriteProductIds, true) ? 'お気に入り解除' : 'お気に入りに追加' ?>
                         </button>
                     </form>

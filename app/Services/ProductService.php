@@ -12,29 +12,49 @@ class ProductService
     }
 
     /**
+     * @param array<int, string>|string|null $makers
      * @return array{
-     *   filters: array{name: string, category: string, maker: string},
+     *   filters: array{name: string, category: string, makers: array<int, string>, min_price: string, max_price: string},
      *   products: array<int, array<string, mixed>>,
      *   categoryOptions: array<int, array<string, mixed>>,
      *   makerOptions: array<int, array<string, mixed>>
      * }
      */
-    public function searchPublicProducts(?string $name, ?string $category = null, ?string $maker = null): array
+    public function searchPublicProducts(?string $name, ?string $category = null, array|string|null $makers = null, mixed $minPrice = null, mixed $maxPrice = null): array
     {
         $normalizedName = trim((string) $name);
         $normalizedCategory = trim((string) $category);
-        $normalizedMaker = trim((string) $maker);
-        $products = $this->products->searchForCustomer($normalizedName, $normalizedCategory, $normalizedMaker);
+        $normalizedMakers = $this->normalizeMakerFilter($makers);
+        $normalizedMinPrice = $this->normalizePriceFilter($minPrice);
+        $normalizedMaxPrice = $this->normalizePriceFilter($maxPrice);
+        $products = $this->products->searchForCustomer(
+            $normalizedName,
+            $normalizedCategory,
+            $normalizedMakers,
+            $normalizedMinPrice,
+            $normalizedMaxPrice
+        );
         $allProducts = $this->decorateProducts($this->products->listAll());
-        $makerFacetProducts = $normalizedName !== '' || $normalizedCategory !== ''
-            ? $this->decorateProducts($this->products->searchForCustomer($normalizedName, $normalizedCategory, null))
+        $makerFacetProducts = $normalizedName !== ''
+            || $normalizedCategory !== ''
+            || $normalizedMinPrice !== null
+            || $normalizedMaxPrice !== null
+            ? $this->decorateProducts($this->products->searchForCustomer(
+                $normalizedName,
+                $normalizedCategory,
+                null,
+                $normalizedMinPrice,
+                $normalizedMaxPrice
+            ))
             : $allProducts;
 
         return [
             'filters' => [
                 'name' => $normalizedName,
                 'category' => $normalizedCategory,
-                'maker' => $normalizedMaker,
+                'makers' => $normalizedMakers,
+                'min_price' => $normalizedMinPrice === null ? '' : (string) $normalizedMinPrice,
+                'max_price' => $normalizedMaxPrice === null ? '' : (string) $normalizedMaxPrice,
             ],
             'products' => $this->decorateProducts($products),
             'categoryOptions' => $this->buildFacetOptions($allProducts, 'category'),
@@ -199,5 +219,48 @@ class ProductService
         }
 
         return $options;
+    }
+
+    /**
+     * @param array<int, string>|string|null $makers
+     * @return array<int, string>
+     */
+    private function normalizeMakerFilter(array|string|null $makers): array
+    {
+        if ($makers === null || $makers === '') {
+            return [];
+        }
+
+        $values = is_array($makers) ? $makers : [$makers];
+        $normalized = [];
+
+        foreach ($values as $maker) {
+            $maker = trim((string) $maker);
+
+            if ($maker === '') {
+                continue;
+            }
+
+            $normalized[] = $maker;
+        }
+
+        return array_values(array_unique($normalized));
+    }
+
+    private function normalizePriceFilter(mixed $price): ?int
+    {
+        $price = trim((string) $price);
+
+        if ($price === '') {
+            return null;
+        }
+
+        $price = preg_replace('/[^\d]/', '', $price) ?? '';
+
+        if ($price === '') {
+            return null;
+        }
+
+        return max(0, (int) $price);
     }
 }

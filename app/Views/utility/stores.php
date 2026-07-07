@@ -40,8 +40,14 @@ declare(strict_types=1);
                     <?php endforeach; ?>
                 </ul>
                 <div class="market-store-actions">
-                    <a class="button-link button-secondary" href="/products">商品を探す</a>
-                    <a class="button-link button-submit" href="/checkout">注文手続きへ</a>
+                    <a class="button-link button-secondary" href="/products">
+                        <i data-lucide="search" aria-hidden="true"></i>
+                        商品を探す
+                    </a>
+                    <a class="button-link button-submit" href="/checkout">
+                        <i data-lucide="clipboard-check" aria-hidden="true"></i>
+                        注文手続きへ
+                    </a>
                 </div>
             </article>
         <?php endforeach; ?>

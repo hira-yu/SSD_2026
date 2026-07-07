@@ -18,6 +18,35 @@ $supportCopy = (string) config('app.customer_ui.support_copy', '');
 $searchQuery = trim((string) ($_GET['name'] ?? ''));
 $selectedCategory = trim((string) ($_GET['category'] ?? ''));
 $headerCategoryOptions = isset($categoryOptions) && is_array($categoryOptions) ? array_slice($categoryOptions, 0, 16) : [];
+
+if ($isCustomerArea && $headerCategoryOptions === []) {
+    try {
+        $categoryCounts = [];
+
+        foreach ((new ProductRepository())->listAll() as $headerProduct) {
+            $categoryName = trim((string) ($headerProduct['category'] ?? ''));
+
+            if ($categoryName === '') {
+                continue;
+            }
+
+            $categoryCounts[$categoryName] = ($categoryCounts[$categoryName] ?? 0) + 1;
+        }
+
+        ksort($categoryCounts, SORT_NATURAL);
+
+        foreach ($categoryCounts as $categoryName => $categoryCount) {
+            $headerCategoryOptions[] = [
+                'value' => $categoryName,
+                'count' => $categoryCount,
+            ];
+        }
+
+        $headerCategoryOptions = array_slice($headerCategoryOptions, 0, 16);
+    } catch (Throwable) {
+        $headerCategoryOptions = [];
+    }
+}
 $favoriteCount = 0;
 $favoriteSessionKey = (string) config('app.online_order.favorite_session_key', 'favorite_products');
 $favoriteSessionValues = $_SESSION[$favoriteSessionKey] ?? [];
@@ -31,9 +60,9 @@ if (is_array($favoriteSessionValues)) {
 }
 
 $customerUtilityLinks = [
-    ['label' => sprintf('お気に入り商品%s', $favoriteCount > 0 ? ' (' . $favoriteCount . ')' : ''), 'url' => '/favorites'],
-    ['label' => 'サイトマップ', 'url' => '/sitemap'],
-    ['label' => '店舗のご案内', 'url' => '/stores'],
+    ['label' => sprintf('お気に入り商品%s', $favoriteCount > 0 ? ' (' . $favoriteCount . ')' : ''), 'url' => '/favorites', 'icon' => 'heart'],
+    ['label' => 'サイトマップ', 'url' => '/sitemap', 'icon' => 'map'],
+    ['label' => '店舗のご案内', 'url' => '/stores', 'icon' => 'store'],
 ];
 $cartCount = 0;
 $authService = new AuthService();
@@ -79,7 +108,11 @@ foreach ((array) ($_SESSION[(string) config('app.online_order.cart_session_key',
             <div class="container customer-utility-inner">
                 <nav class="customer-utility-links" aria-label="補助メニュー">
                     <?php foreach ($customerUtilityLinks as $link): ?>
-                        <a href="<?= e((string) $link['url']) ?>"><?= e((string) $link['label']) ?></a>
+                        <?php $isFavoriteUtilityLink = (string) $link['url'] === '/favorites'; ?>
+                        <a href="<?= e((string) $link['url']) ?>" <?= $isFavoriteUtilityLink ? 'data-favorite-link' : '' ?>>
+                            <i data-lucide="<?= e((string) $link['icon']) ?>" aria-hidden="true"></i>
+                            <span <?= $isFavoriteUtilityLink ? 'data-favorite-label' : '' ?>><?= e((string) $link['label']) ?></span>
+                        </a>
                     <?php endforeach; ?>
                 </nav>
                 <div class="customer-utility-status">
@@ -107,11 +140,14 @@ foreach ((array) ($_SESSION[(string) config('app.online_order.cart_session_key',
 
                     <label class="sr-only" for="global-search">商品検索</label>
                     <input id="global-search" type="text" name="name" value="<?= e($searchQuery) ?>" placeholder="ここにキーワードを入力">
-                    <button class="button-link button-submit" type="submit">検索</button>
+                    <button class="button-link button-submit" type="submit">
+                        <i data-lucide="search" aria-hidden="true"></i>
+                        検索
+                    </button>
                 </form>
 
                 <a class="customer-cart-link" href="/cart">
-                    <span class="cart-icon" aria-hidden="true">CART</span>
+                    <i data-lucide="shopping-cart" aria-hidden="true"></i>
                     <span>カート</span>
                     <strong><?= e((string) $cartCount) ?></strong>
                 </a>
@@ -121,10 +157,10 @@ foreach ((array) ($_SESSION[(string) config('app.online_order.cart_session_key',
         <div class="customer-nav-wrap">
             <div class="container customer-nav-inner">
                 <nav class="site-nav customer-nav" aria-label="主要メニュー">
-                    <a href="/">トップ</a>
-                    <a href="/products">商品一覧</a>
-                    <a href="/cart">カート</a>
-                    <a href="/checkout">ご注文手続き</a>
+                    <a href="/"><i data-lucide="home" aria-hidden="true"></i>トップ</a>
+                    <a href="/products"><i data-lucide="grid-3x3" aria-hidden="true"></i>商品一覧</a>
+                    <a href="/cart"><i data-lucide="shopping-cart" aria-hidden="true"></i>カート</a>
+                    <a href="/checkout"><i data-lucide="clipboard-check" aria-hidden="true"></i>ご注文手続き</a>
                 </nav>
                 <p class="customer-speed-copy">日本全国スピードお届け実施中</p>
             </div>

@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 $name = (string) ($filters['name'] ?? '');
 $selectedCategory = (string) ($filters['category'] ?? '');
-$selectedMaker = (string) ($filters['maker'] ?? '');
+$selectedMakers = isset($filters['makers']) && is_array($filters['makers']) ? $filters['makers'] : [];
+$minPrice = (string) ($filters['min_price'] ?? '');
+$maxPrice = (string) ($filters['max_price'] ?? '');
 $placeholderImage = '/assets/img/products/placeholder.svg';
 $favoriteProductIds = isset($favoriteProductIds) && is_array($favoriteProductIds) ? $favoriteProductIds : [];
 $redirectTo = $_SERVER['REQUEST_URI'] ?? '/products';
@@ -26,11 +28,16 @@ $redirectTo = $_SERVER['REQUEST_URI'] ?? '/products';
     <div class="market-catalog-layout">
         <aside class="market-filter-column">
             <section class="market-filter-panel">
-                <div class="market-panel-heading">カテゴリ</div>
+                <div class="market-panel-heading"><i data-lucide="layers" aria-hidden="true"></i>カテゴリ</div>
                 <ul class="market-filter-list">
                     <?php foreach ($categoryOptions as $option): ?>
                         <li class="<?= $selectedCategory === (string) $option['value'] ? 'active' : '' ?>">
-                            <a href="/products?name=<?= urlencode($name) ?>&category=<?= urlencode((string) $option['value']) ?>&maker=<?= urlencode($selectedMaker) ?>">
+                            <?php
+                            $categoryQuery = http_build_query([
+                                'category' => (string) $option['value'],
+                            ]);
+                            ?>
+                            <a href="/products?<?= e($categoryQuery) ?>">
                                 <?= e((string) $option['value']) ?>
                             </a>
                             <span><?= e((string) $option['count']) ?></span>
@@ -40,37 +47,48 @@ $redirectTo = $_SERVER['REQUEST_URI'] ?? '/products';
             </section>
 
             <section class="market-filter-panel">
-                <div class="market-panel-heading">メーカー</div>
-                <ul class="market-filter-list">
-                    <?php foreach ($makerOptions as $option): ?>
-                        <li class="<?= $selectedMaker === (string) $option['value'] ? 'active' : '' ?>">
-                            <a href="/products?name=<?= urlencode($name) ?>&category=<?= urlencode($selectedCategory) ?>&maker=<?= urlencode((string) $option['value']) ?>">
-                                <?= e((string) $option['value']) ?>
-                            </a>
-                            <span><?= e((string) $option['count']) ?></span>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-            </section>
-
-            <section class="market-filter-panel">
-                <div class="market-panel-heading">条件を変更する</div>
+                <div class="market-panel-heading"><i data-lucide="sliders-horizontal" aria-hidden="true"></i>条件を変更する</div>
                 <form class="market-side-filter-form" method="get" action="/products">
-                    <div class="form-field">
-                        <label for="maker">メーカー</label>
-                        <select id="maker" name="maker">
-                            <option value="">全てのメーカー</option>
-                            <?php foreach ($makerOptions as $option): ?>
-                                <option value="<?= e((string) $option['value']) ?>" <?= $selectedMaker === (string) $option['value'] ? 'selected' : '' ?>>
-                                    <?= e((string) $option['value']) ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
                     <input type="hidden" name="name" value="<?= e($name) ?>">
                     <input type="hidden" name="category" value="<?= e($selectedCategory) ?>">
-                    <button class="button-link button-secondary button-full" type="submit">条件を更新</button>
-                    <a class="button-link button-ghost button-full" href="/products">条件をクリア</a>
+
+                    <fieldset class="market-filter-fieldset">
+                        <legend><i data-lucide="factory" aria-hidden="true"></i>メーカー</legend>
+                        <div class="market-checkbox-list">
+                            <?php foreach ($makerOptions as $option): ?>
+                                <?php $makerValue = (string) $option['value']; ?>
+                                <label class="market-checkbox-option">
+                                    <input
+                                        type="checkbox"
+                                        name="maker[]"
+                                        value="<?= e($makerValue) ?>"
+                                        <?= in_array($makerValue, $selectedMakers, true) ? 'checked' : '' ?>
+                                    >
+                                    <span><?= e($makerValue) ?></span>
+                                </label>
+                            <?php endforeach; ?>
+                        </div>
+                    </fieldset>
+
+                    <div class="market-price-filter">
+                        <div class="form-field">
+                            <label for="min_price">価格下限</label>
+                            <input id="min_price" type="number" name="min_price" min="0" step="1" inputmode="numeric" value="<?= e($minPrice) ?>" placeholder="n円以上">
+                        </div>
+                        <div class="form-field">
+                            <label for="max_price">価格上限</label>
+                            <input id="max_price" type="number" name="max_price" min="0" step="1" inputmode="numeric" value="<?= e($maxPrice) ?>" placeholder="n円以下">
+                        </div>
+                    </div>
+
+                    <button class="button-link button-secondary button-full" type="submit">
+                        <i data-lucide="refresh-cw" aria-hidden="true"></i>
+                        条件を更新
+                    </button>
+                    <a class="button-link button-ghost button-full" href="/products">
+                        <i data-lucide="x" aria-hidden="true"></i>
+                        条件をクリア
+                    </a>
                 </form>
             </section>
         </aside>
@@ -116,7 +134,10 @@ $redirectTo = $_SERVER['REQUEST_URI'] ?? '/products';
                                             <label for="qty-<?= e((string) $product['id']) ?>">数量</label>
                                             <input id="qty-<?= e((string) $product['id']) ?>" type="number" name="quantity" min="1" value="1" inputmode="numeric">
                                         </div>
-                                        <button class="button-link button-submit button-full" type="submit">カートに入れる</button>
+                                        <button class="button-link button-submit button-full" type="submit">
+                                            <i data-lucide="shopping-cart" aria-hidden="true"></i>
+                                            カートに入れる
+                                        </button>
                                     </form>
                                 <?php else: ?>
                                     <p class="market-stock-copy status-ng">現在在庫がないため、カートに追加できません。</p>
@@ -127,6 +148,7 @@ $redirectTo = $_SERVER['REQUEST_URI'] ?? '/products';
                                     <input type="hidden" name="product_id" value="<?= e((string) $product['id']) ?>">
                                     <input type="hidden" name="redirect_to" value="<?= e((string) $redirectTo) ?>">
                                     <button class="button-link button-secondary button-small button-full market-favorite-button" type="submit">
+                                        <i data-lucide="<?= in_array((int) $product['id'], $favoriteProductIds, true) ? 'heart-off' : 'heart' ?>" aria-hidden="true"></i>
                                         <?= in_array((int) $product['id'], $favoriteProductIds, true) ? 'お気に入りから外す' : 'お気に入りに追加' ?>
                                     </button>
                                 </form>

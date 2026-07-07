@@ -69,7 +69,10 @@ $redirectTo = $_SERVER['REQUEST_URI'] ?? '/products/' . (string) $product['id'];
                             <label for="detail-qty">数量</label>
                             <input id="detail-qty" type="number" name="quantity" min="1" value="1" inputmode="numeric">
                         </div>
-                        <button class="button-link button-submit button-full" type="submit">ショッピングカートに入れる</button>
+                        <button class="button-link button-submit button-full" type="submit">
+                            <i data-lucide="shopping-cart" aria-hidden="true"></i>
+                            ショッピングカートに入れる
+                        </button>
                     </form>
 
                     <form class="market-favorite-form" method="post" action="<?= $isFavorite ? '/favorites/remove' : '/favorites/add' ?>">
@@ -77,18 +80,22 @@ $redirectTo = $_SERVER['REQUEST_URI'] ?? '/products/' . (string) $product['id'];
                         <input type="hidden" name="product_id" value="<?= e((string) $product['id']) ?>">
                         <input type="hidden" name="redirect_to" value="<?= e((string) $redirectTo) ?>">
                         <button class="button-link button-secondary button-full" type="submit">
+                            <i data-lucide="<?= $isFavorite ? 'heart-off' : 'heart' ?>" aria-hidden="true"></i>
                             <?= $isFavorite ? 'お気に入りから外す' : 'お気に入りに追加' ?>
                         </button>
                     </form>
 
-                    <a class="button-link button-secondary button-full" href="/cart">カートを見る</a>
+                    <a class="button-link button-secondary button-full" href="/cart">
+                        <i data-lucide="shopping-bag" aria-hidden="true"></i>
+                        カートを見る
+                    </a>
                 <?php else: ?>
                     <p class="market-stock-copy status-ng">現在在庫がないため、カートに追加できません。</p>
                 <?php endif; ?>
             </div>
 
             <div class="market-detail-note-card">
-                <h2>ご案内</h2>
+                <h2><i data-lucide="info" aria-hidden="true"></i>ご案内</h2>
                 <p>ご注文前に数量と配送先情報をご確認ください。</p>
                 <p>在庫状況はご注文時点の情報をもとにご案内しています。</p>
             </div>

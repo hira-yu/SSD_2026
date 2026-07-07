@@ -22,7 +22,9 @@ class ProductController extends Controller
         $result = $this->products->searchPublicProducts(
             $_GET['name'] ?? null,
             $_GET['category'] ?? null,
-            $_GET['maker'] ?? null
+            $_GET['maker'] ?? null,
+            $_GET['min_price'] ?? null,
+            $_GET['max_price'] ?? null
         );
 
         $this->render('products/index', [

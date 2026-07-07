@@ -35,9 +35,10 @@ class ProductRepository
     }
 
     /**
+     * @param array<int, string>|string|null $makers
      * @return array<int, array<string, mixed>>
      */
-    public function searchForCustomer(?string $name = null, ?string $category = null, ?string $maker = null): array
+    public function searchForCustomer(?string $name = null, ?string $category = null, array|string|null $makers = null, ?int $minPrice = null, ?int $maxPrice = null): array
     {
         $sql = sprintf(
             <<<'SQL'
@@ -69,9 +70,28 @@ class ProductRepository
             $params['category'] = $category;
         }
 
-        if ($maker !== null && $maker !== '') {
-            $conditions[] = 'maker = :maker';
-            $params['maker'] = $maker;
+        $makerValues = $this->normalizeMakers($makers);
+
+        if ($makerValues !== []) {
+            $makerPlaceholders = [];
+
+            foreach ($makerValues as $index => $maker) {
+                $placeholder = 'maker_' . $index;
+                $makerPlaceholders[] = ':' . $placeholder;
+                $params[$placeholder] = $maker;
+            }
+
+            $conditions[] = 'maker IN (' . implode(', ', $makerPlaceholders) . ')';
+        }
+
+        if ($minPrice !== null) {
+            $conditions[] = 'price >= :min_price';
+            $params['min_price'] = $minPrice;
+        }
+
+        if ($maxPrice !== null) {
+            $conditions[] = 'price <= :max_price';
+            $params['max_price'] = $maxPrice;
         }
 
         if ($conditions !== []) {
@@ -84,6 +104,32 @@ class ProductRepository
         $statement->execute($params);
 
         return $statement->fetchAll() ?: [];
+    }
+
+    /**
+     * @param array<int, string>|string|null $makers
+     * @return array<int, string>
+     */
+    private function normalizeMakers(array|string|null $makers): array
+    {
+        if ($makers === null || $makers === '') {
+            return [];
+        }
+
+        $values = is_array($makers) ? $makers : [$makers];
+        $normalized = [];
+
+        foreach ($values as $maker) {
+            $maker = trim((string) $maker);
+
+            if ($maker === '') {
+                continue;
+            }
+
+            $normalized[] = $maker;
+        }
+
+        return array_values(array_unique($normalized));
     }
 
     /**

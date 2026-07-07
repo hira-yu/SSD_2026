@@ -35,7 +35,10 @@ $placeholderImage = '/assets/img/products/placeholder.svg';
         <section class="market-empty-state market-empty-state-soft">
             <h2>お気に入り商品はまだ登録されていません</h2>
             <p>商品一覧やトップページから「お気に入りに追加」を押すと、ここに保存されます。</p>
-            <a class="button-link button-submit" href="/products">商品を探す</a>
+            <a class="button-link button-submit" href="/products">
+                <i data-lucide="search" aria-hidden="true"></i>
+                商品を探す
+            </a>
         </section>
     <?php else: ?>
         <section class="market-product-grid market-product-grid-catalog">
@@ -66,7 +69,10 @@ $placeholderImage = '/assets/img/products/placeholder.svg';
                                     <label for="favorite-qty-<?= e((string) $product['id']) ?>">数量</label>
                                     <input id="favorite-qty-<?= e((string) $product['id']) ?>" type="number" name="quantity" min="1" value="1" inputmode="numeric">
                                 </div>
-                                <button class="button-link button-submit button-full" type="submit">カートに入れる</button>
+                                <button class="button-link button-submit button-full" type="submit">
+                                    <i data-lucide="shopping-cart" aria-hidden="true"></i>
+                                    カートに入れる
+                                </button>
                             </form>
                         <?php endif; ?>
 
@@ -75,6 +81,7 @@ $placeholderImage = '/assets/img/products/placeholder.svg';
                             <input type="hidden" name="product_id" value="<?= e((string) $product['id']) ?>">
                             <input type="hidden" name="redirect_to" value="/favorites">
                             <button class="button-link button-secondary button-small button-full market-favorite-button" type="submit">
+                                <i data-lucide="heart-off" aria-hidden="true"></i>
                                 お気に入りから外す
                             </button>
                         </form>

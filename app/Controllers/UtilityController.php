@@ -56,21 +56,21 @@ class UtilityController extends Controller
 
         $stores = [
             [
-                'name' => 'IPUT EC 新宿ストア',
-                'address' => '東京都新宿区西新宿1-1-1',
-                'hours' => '10:00-21:00',
+                'name' => 'IPUT EC 東京',
+                'address' => '東京都新宿区西新宿1丁目7-3',
+                'hours' => '8:00-22:00',
                 'services' => ['店頭受け取り', '修理相談', '法人見積もり'],
             ],
             [
-                'name' => 'IPUT EC 横浜ストア',
-                'address' => '神奈川県横浜市西区みなとみらい2-2-2',
-                'hours' => '10:00-20:00',
+                'name' => 'IPUT EC 名古屋',
+                'address' => '愛知県名古屋市中村区名駅4丁目27番1号',
+                'hours' => '9:00-20:00',
                 'services' => ['配送相談', '家電設置相談', 'ギフト包装'],
             ],
             [
-                'name' => 'IPUT EC 大阪なんばストア',
-                'address' => '大阪府大阪市中央区難波3-3-3',
-                'hours' => '10:00-21:00',
+                'name' => 'IPUT EC 大阪',
+                'address' => '大阪府大阪市北区梅田3丁目3番1号',
+                'hours' => '8:30-21:30',
                 'services' => ['即日受け取り', '法人窓口', 'アクセサリ相談'],
             ],
         ];

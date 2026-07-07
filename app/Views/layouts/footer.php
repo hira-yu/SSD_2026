@@ -124,6 +124,7 @@ $footerPolicyLinks = [
         <?php endif; ?>
     </div>
 </footer>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
 <script src="/assets/js/app.js"></script>
 <script src="/assets/js/address-autofill.js"></script>
 </body>

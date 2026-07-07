@@ -33,42 +33,39 @@ class FavoriteController extends Controller
     public function add(): void
     {
         if (!verify_csrf_token((string) ($_POST['_csrf'] ?? ''))) {
-            flash('error', '不正なリクエストです。');
-            $this->redirect($this->redirectTarget());
+            $this->finish(false, '不正なリクエストです。', $this->redirectTarget(), 422);
+            return;
         }
 
         $productId = (string) ($_POST['product_id'] ?? '');
 
         if (!ctype_digit($productId) || (int) $productId < 1) {
-            flash('error', '商品の指定が不正です。');
-            $this->redirect($this->redirectTarget());
+            $this->finish(false, '商品の指定が不正です。', $this->redirectTarget(), 422);
+            return;
         }
 
         try {
-            flash('success', $this->favorites->add((int) $productId));
+            $this->finish(true, $this->favorites->add((int) $productId), $this->redirectTarget(), 200, (int) $productId);
         } catch (RuntimeException $exception) {
-            flash('error', $exception->getMessage());
+            $this->finish(false, $exception->getMessage(), $this->redirectTarget(), 422, (int) $productId);
         }
-
-        $this->redirect($this->redirectTarget());
     }
 
     public function remove(): void
     {
         if (!verify_csrf_token((string) ($_POST['_csrf'] ?? ''))) {
-            flash('error', '不正なリクエストです。');
-            $this->redirect($this->redirectTarget('/favorites'));
+            $this->finish(false, '不正なリクエストです。', $this->redirectTarget('/favorites'), 422);
+            return;
         }
 
         $productId = (string) ($_POST['product_id'] ?? '');
 
         if (!ctype_digit($productId) || (int) $productId < 1) {
-            flash('error', '商品の指定が不正です。');
-            $this->redirect($this->redirectTarget('/favorites'));
+            $this->finish(false, '商品の指定が不正です。', $this->redirectTarget('/favorites'), 422);
+            return;
         }
 
-        flash('success', $this->favorites->remove((int) $productId));
-        $this->redirect($this->redirectTarget('/favorites'));
+        $this->finish(true, $this->favorites->remove((int) $productId), $this->redirectTarget('/favorites'), 200, (int) $productId);
     }
 
     private function redirectTarget(string $default = '/products'): string
@@ -80,5 +77,31 @@ class FavoriteController extends Controller
         }
 
         return $path;
+    }
+
+    private function finish(bool $ok, string $message, string $redirectTarget, int $statusCode = 200, ?int $productId = null): void
+    {
+        if ($this->expectsJson()) {
+            http_response_code($statusCode);
+            header('Content-Type: application/json; charset=UTF-8');
+            echo json_encode([
+                'ok' => $ok,
+                'message' => $message,
+                'favorite_count' => $this->favorites->itemCount(),
+                'is_favorite' => $productId === null ? false : $this->favorites->has($productId),
+            ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+            return;
+        }
+
+        flash($ok ? 'success' : 'error', $message);
+        $this->redirect($redirectTarget);
+    }
+
+    private function expectsJson(): bool
+    {
+        $accept = (string) ($_SERVER['HTTP_ACCEPT'] ?? '');
+        $requestedWith = (string) ($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '');
+
+        return str_contains($accept, 'application/json') || strtolower($requestedWith) === 'xmlhttprequest';
     }
 }
