@@ -22,6 +22,7 @@ class Router
     public function dispatch(string $method, string $uri): void
     {
         $path = $this->normalizePath(parse_url($uri, PHP_URL_PATH) ?: '/');
+        $path = $this->stripBasePath($path);
         $action = $this->routes[$method][$path] ?? null;
 
         if ($action !== null) {
@@ -58,6 +59,19 @@ class Router
         }
 
         return '/' . trim($path, '/');
+    }
+
+    private function stripBasePath(string $path): string
+    {
+        $basePath = function_exists('app_base_path') ? app_base_path() : '';
+
+        if ($basePath === '' || ($path !== $basePath && !str_starts_with($path, $basePath . '/'))) {
+            return $path;
+        }
+
+        $path = substr($path, strlen($basePath));
+
+        return $path === '' ? '/' : $this->normalizePath($path);
     }
 
     /**

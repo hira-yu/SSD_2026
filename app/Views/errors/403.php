@@ -16,5 +16,5 @@ declare(strict_types=1);
             <dd><?= e((string) $currentRoleLabel) ?></dd>
         </div>
     </dl>
-    <p><a class="button-link" href="/">トップへ戻る</a></p>
+    <p><a class="button-link" href="<?= e(app_path('/')) ?>">トップへ戻る</a></p>
 </section>

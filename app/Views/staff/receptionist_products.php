@@ -12,8 +12,8 @@ $name = (string) ($filters['name'] ?? '');
         <p class="lead compact">
             商品番号と商品名で検索できます。両方指定した場合は AND 条件で絞り込みます。
         </p>
-        <p><a class="text-link" href="/staff/receptionist">注文受付係トップへ戻る</a></p>
-        <p><a class="text-link" href="/staff/receptionist/orders">登録済み注文一覧</a></p>
+        <p><a class="text-link" href="<?= e(app_path('/staff/receptionist')) ?>">注文受付係トップへ戻る</a></p>
+        <p><a class="text-link" href="<?= e(app_path('/staff/receptionist/orders')) ?>">登録済み注文一覧</a></p>
     </div>
 
     <aside class="status-card">
@@ -28,7 +28,7 @@ $name = (string) ($filters['name'] ?? '');
                 <dd><?= e((string) $roleLabel) ?></dd>
             </div>
         </dl>
-        <form method="post" action="/logout" class="logout-form">
+        <form method="post" action="<?= e(app_path('/logout')) ?>" class="logout-form">
             <input type="hidden" name="_csrf" value="<?= e((string) $csrfToken) ?>">
             <button class="button-link button-submit" type="submit">ログアウト</button>
         </form>
@@ -39,7 +39,7 @@ $name = (string) ($filters['name'] ?? '');
     <div class="panel-heading-bar">
         <h3>検索条件</h3>
     </div>
-    <form class="search-form receptionist-search-form" method="get" action="/staff/receptionist/products">
+    <form class="search-form receptionist-search-form" method="get" action="<?= e(app_path('/staff/receptionist/products')) ?>">
         <div class="form-field">
             <label for="product_no">商品番号</label>
             <input id="product_no" type="text" name="product_no" value="<?= e($productNo) ?>" placeholder="例: PRD-001">
@@ -50,7 +50,7 @@ $name = (string) ($filters['name'] ?? '');
         </div>
         <div class="search-actions">
             <button class="button-link button-submit" type="submit">検索</button>
-            <a class="button-link button-secondary" href="/staff/receptionist/products">条件クリア</a>
+            <a class="button-link button-secondary" href="<?= e(app_path('/staff/receptionist/products')) ?>">条件クリア</a>
         </div>
     </form>
 </section>
@@ -85,7 +85,7 @@ $name = (string) ($filters['name'] ?? '');
                                     class="admin-thumb"
                                     src="<?= e((string) ($product['image_url'] ?? product_image_url((string) ($product['image_path'] ?? '')))) ?>"
                                     alt="<?= e((string) $product['name']) ?>"
-                                    data-fallback-src="/assets/img/products/placeholder.svg"
+                                    data-fallback-src="<?= e(product_image_url('')) ?>"
                                 >
                             </td>
                             <td><?= e((string) $product['product_no']) ?></td>

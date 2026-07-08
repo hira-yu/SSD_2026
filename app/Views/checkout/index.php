@@ -4,8 +4,8 @@ declare(strict_types=1);
 ?>
 <section class="market-order-page">
     <div class="market-breadcrumb">
-        <a href="/">トップ</a>
-        <a href="/cart">カート</a>
+        <a href="<?= e(app_path('/')) ?>">トップ</a>
+        <a href="<?= e(app_path('/cart')) ?>">カート</a>
         <span>ご注文手続き</span>
     </div>
 
@@ -41,7 +41,7 @@ declare(strict_types=1);
     <?php endif; ?>
 
     <div class="market-checkout-layout">
-        <form class="market-checkout-form" method="post" action="/checkout/confirm">
+        <form class="market-checkout-form" method="post" action="<?= e(app_path('/checkout/confirm')) ?>">
             <input type="hidden" name="_csrf" value="<?= e((string) $csrfToken) ?>">
 
             <section class="market-form-section">
@@ -158,7 +158,7 @@ declare(strict_types=1);
             </section>
 
             <div class="market-summary-actions">
-                <a class="button-link button-secondary" href="/cart">カートへ戻る</a>
+                <a class="button-link button-secondary" href="<?= e(app_path('/cart')) ?>">カートへ戻る</a>
                 <button class="button-link button-submit" type="submit">入力内容を確認する</button>
             </div>
         </form>
@@ -172,7 +172,7 @@ declare(strict_types=1);
                             <img
                                 src="<?= e((string) $item['image_url']) ?>"
                                 alt="<?= e((string) $item['product_name']) ?>"
-                                data-fallback-src="/assets/img/products/placeholder.svg"
+                                data-fallback-src="<?= e(product_image_url('')) ?>"
                             >
                             <div>
                                 <strong><?= e((string) $item['product_name']) ?></strong>

@@ -4,7 +4,7 @@ declare(strict_types=1);
 ?>
 <section class="market-utility-page">
     <div class="market-breadcrumb">
-        <a href="/">トップ</a>
+        <a href="<?= e(app_path('/')) ?>">トップ</a>
         <span>サイトマップ</span>
     </div>
 
@@ -26,7 +26,7 @@ declare(strict_types=1);
                 <h2><?= e((string) $section['heading']) ?></h2>
                 <ul class="market-sitemap-links">
                     <?php foreach ($section['links'] as $link): ?>
-                        <li><a href="<?= e((string) $link['url']) ?>"><?= e((string) $link['label']) ?></a></li>
+                        <li><a href="<?= e(app_path((string) $link['url'])) ?>"><?= e((string) $link['label']) ?></a></li>
                     <?php endforeach; ?>
                 </ul>
             </section>
@@ -37,7 +37,7 @@ declare(strict_types=1);
             <ul class="market-sitemap-links">
                 <?php foreach (array_slice($categoryOptions, 0, 12) as $category): ?>
                     <li>
-                        <a href="/products?category=<?= urlencode((string) $category['value']) ?>">
+                        <a href="<?= e(app_path('/products')) ?>?category=<?= urlencode((string) $category['value']) ?>">
                             <?= e((string) $category['value']) ?>
                         </a>
                     </li>

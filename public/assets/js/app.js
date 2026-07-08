@@ -1,6 +1,23 @@
 document.documentElement.classList.add('js-ready');
 
 document.addEventListener('DOMContentLoaded', function () {
+    const appBasePath = document.body ? (document.body.dataset.appBasePath || '') : '';
+    const appPath = function (path) {
+        if (!path || /^https?:\/\//i.test(path)) {
+            return path;
+        }
+
+        if (!path.startsWith('/')) {
+            return path;
+        }
+
+        if (appBasePath && (path === appBasePath || path.startsWith(`${appBasePath}/`))) {
+            return path;
+        }
+
+        return `${appBasePath}${path}`.replace(/\/{2,}/g, '/');
+    };
+
     if (window.lucide && typeof window.lucide.createIcons === 'function') {
         window.lucide.createIcons({
             attrs: {
@@ -13,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const images = document.querySelectorAll('img[data-fallback-src]');
 
     images.forEach(function (image) {
-        const fallbackSrc = image.getAttribute('data-fallback-src');
+        const fallbackSrc = appPath(image.getAttribute('data-fallback-src') || '');
 
         if (!fallbackSrc) {
             return;
@@ -102,15 +119,25 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             try {
-                const response = await fetch(form.action, {
+                const action = appPath(form.getAttribute('action') || form.action);
+                const response = await fetch(action, {
                     method: 'POST',
                     body: new FormData(form),
                     credentials: 'same-origin',
+                    cache: 'no-store',
                     headers: {
                         Accept: 'application/json',
+                        'Cache-Control': 'no-cache',
                         'X-Requested-With': 'XMLHttpRequest',
                     },
                 });
+                const contentType = response.headers.get('content-type') || '';
+
+                if (!contentType.includes('application/json')) {
+                    form.submit();
+                    return;
+                }
+
                 const payload = await response.json();
 
                 if (!response.ok || !payload.ok) {
@@ -118,7 +145,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
 
                 const isFavorite = Boolean(payload.is_favorite);
-                form.action = isFavorite ? '/favorites/remove' : '/favorites/add';
+                form.action = appPath(isFavorite ? '/favorites/remove' : '/favorites/add');
                 updateFavoriteCount(payload.favorite_count);
 
                 if (button) {
@@ -128,7 +155,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     button.innerHTML = `<i data-lucide="${icon}" aria-hidden="true"></i>${label}`;
                 }
 
-                if (window.location.pathname === '/favorites' && !isFavorite) {
+                if (window.location.pathname === appPath('/favorites') && !isFavorite) {
                     const card = form.closest('.market-product-card');
 
                     if (card) {

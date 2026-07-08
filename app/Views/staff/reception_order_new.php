@@ -7,8 +7,8 @@ declare(strict_types=1);
         <p class="eyebrow">Receptionist Tools</p>
         <h2>電話/FAX注文登録</h2>
         <p class="lead compact">電話またはFAXで受け付けた注文を代理登録します。必要な商品を選択し、確認画面へ進んでください。</p>
-        <p><a class="text-link" href="/staff/receptionist">注文受付係トップへ戻る</a></p>
-        <p><a class="text-link" href="/staff/receptionist/orders">登録済み注文一覧</a></p>
+        <p><a class="text-link" href="<?= e(app_path('/staff/receptionist')) ?>">注文受付係トップへ戻る</a></p>
+        <p><a class="text-link" href="<?= e(app_path('/staff/receptionist/orders')) ?>">登録済み注文一覧</a></p>
     </div>
 
     <aside class="status-card">
@@ -23,7 +23,7 @@ declare(strict_types=1);
                 <dd><?= e((string) $roleLabel) ?></dd>
             </div>
         </dl>
-        <form method="post" action="/logout" class="logout-form">
+        <form method="post" action="<?= e(app_path('/logout')) ?>" class="logout-form">
             <input type="hidden" name="_csrf" value="<?= e((string) $csrfToken) ?>">
             <button class="button-link button-submit" type="submit">ログアウト</button>
         </form>
@@ -42,7 +42,7 @@ declare(strict_types=1);
         </div>
     <?php endif; ?>
 
-    <form method="post" action="/staff/receptionist/orders/confirm" class="reception-order-form">
+    <form method="post" action="<?= e(app_path('/staff/receptionist/orders/confirm')) ?>" class="reception-order-form">
         <input type="hidden" name="_csrf" value="<?= e((string) $csrfToken) ?>">
 
         <div class="form-grid">
@@ -142,7 +142,7 @@ declare(strict_types=1);
                                 class="admin-thumb"
                                 src="<?= e(product_image_url((string) ($product['image_path'] ?? ''))) ?>"
                                 alt="<?= e((string) $product['name']) ?>"
-                                data-fallback-src="/assets/img/products/placeholder.svg"
+                                data-fallback-src="<?= e(product_image_url('')) ?>"
                             >
                         </td>
                         <td><?= e((string) $product['product_no']) ?></td>

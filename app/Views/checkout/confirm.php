@@ -4,9 +4,9 @@ declare(strict_types=1);
 ?>
 <section class="market-order-page">
     <div class="market-breadcrumb">
-        <a href="/">トップ</a>
-        <a href="/cart">カート</a>
-        <a href="/checkout">ご注文手続き</a>
+        <a href="<?= e(app_path('/')) ?>">トップ</a>
+        <a href="<?= e(app_path('/cart')) ?>">カート</a>
+        <a href="<?= e(app_path('/checkout')) ?>">ご注文手続き</a>
         <span>ご注文内容の確認</span>
     </div>
 
@@ -88,7 +88,7 @@ declare(strict_types=1);
                             <img
                                 src="<?= e((string) $item['image_url']) ?>"
                                 alt="<?= e((string) $item['product_name']) ?>"
-                                data-fallback-src="/assets/img/products/placeholder.svg"
+                                data-fallback-src="<?= e(product_image_url('')) ?>"
                             >
                             <div>
                                 <strong><?= e((string) $item['product_name']) ?></strong>
@@ -120,8 +120,8 @@ declare(strict_types=1);
                 </dl>
 
                 <div class="market-summary-actions">
-                    <a class="button-link button-secondary button-full" href="/checkout">入力内容を修正する</a>
-                    <form method="post" action="/checkout/complete">
+                    <a class="button-link button-secondary button-full" href="<?= e(app_path('/checkout')) ?>">入力内容を修正する</a>
+                    <form method="post" action="<?= e(app_path('/checkout/complete')) ?>">
                         <input type="hidden" name="_csrf" value="<?= e((string) $csrfToken) ?>">
                         <button class="button-link button-submit button-full" type="submit">注文を確定する</button>
                     </form>

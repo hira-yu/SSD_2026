@@ -7,8 +7,8 @@ declare(strict_types=1);
         <p class="eyebrow">Receptionist Tools</p>
         <h2>注文登録が完了しました</h2>
         <p class="lead compact">電話/FAX注文を登録し、在庫数量2の更新まで完了しました。</p>
-        <p><a class="text-link" href="/staff/receptionist/orders/new">続けて新しい注文を登録する</a></p>
-        <p><a class="text-link" href="/staff/receptionist/orders/<?= e((string) $order['order_no']) ?>">注文詳細を確認</a></p>
+        <p><a class="text-link" href="<?= e(app_path('/staff/receptionist/orders/new')) ?>">続けて新しい注文を登録する</a></p>
+        <p><a class="text-link" href="<?= e(app_path('/staff/receptionist/orders/' . (string) $order['order_no'])) ?>">注文詳細を確認</a></p>
     </div>
 
     <aside class="status-card">

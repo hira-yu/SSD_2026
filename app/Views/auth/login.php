@@ -23,7 +23,7 @@ declare(strict_types=1);
             </div>
         <?php endif; ?>
 
-        <form class="auth-form" method="post" action="/login">
+        <form class="auth-form" method="post" action="<?= e(app_path('/login')) ?>">
             <input type="hidden" name="_csrf" value="<?= e((string) $csrfToken) ?>">
 
             <label class="form-field">

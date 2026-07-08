@@ -7,7 +7,7 @@ declare(strict_types=1);
         <p class="eyebrow">Receptionist Console</p>
         <h2>注文受付係向け注文詳細</h2>
         <p class="lead compact">注文内容の参照専用画面です。購入者情報と明細を確認できます。</p>
-        <p><a class="text-link" href="/staff/receptionist/orders">登録済み注文一覧へ戻る</a></p>
+        <p><a class="text-link" href="<?= e(app_path('/staff/receptionist/orders')) ?>">登録済み注文一覧へ戻る</a></p>
     </div>
 
     <aside class="status-card">
@@ -88,7 +88,7 @@ declare(strict_types=1);
                                     class="admin-thumb"
                                     src="<?= e((string) ($item['image_url'] ?? product_image_url((string) ($item['image_path'] ?? '')))) ?>"
                                     alt="<?= e((string) $item['product_name']) ?>"
-                                    data-fallback-src="/assets/img/products/placeholder.svg"
+                                    data-fallback-src="<?= e(product_image_url('')) ?>"
                                 >
                             </td>
                             <td><?= e((string) $item['product_no']) ?></td>

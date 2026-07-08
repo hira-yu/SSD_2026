@@ -206,14 +206,17 @@ sh scripts/dev.sh
 
 ### 表示項目
 
-- 購入者向け: 商品画像、商品名、単価、商品カテゴリ、メーカー名、在庫数量2、注文可能状態
+- 購入者向け: 商品画像、商品名、単価、商品カテゴリ、メーカー名、在庫状態ラベル、注文可能状態
 - 注文受付係向け: 商品画像、商品番号、商品名、単価、商品カテゴリ、メーカー名、在庫数量1、在庫数量2、注文可能状態
 
 ### 商品画像
 
 - `products.image_path` カラムで商品画像パスを管理します
 - 画像ファイルは `public/assets/img/products/` 配下に配置します
-- 初期データでは `product-001.svg` から `product-005.svg` を使用します
+- 商品管理担当者は商品追加・編集時に画像をアップロードできます
+- アップロード画像は WebP に変換し、推測されにくい SHA-256 形式のファイル名で `public/assets/img/products/generated/` に保存します
+- 画像アップロードには PHP の GD 拡張と WebP 対応が必要です
+- 初期データの商品画像は `public/assets/img/products/generated/` 配下を参照します
 - 画像未設定またはパス不正時は `public/assets/img/products/placeholder.svg` を表示します
 - 既存DBへ列追加だけ行う場合は `php scripts/migrate_add_product_images.php` を使います
 
@@ -528,6 +531,8 @@ php scripts/quickwbs_seed_tasks.php <parent_task_id> --execute
 
 - Web 公開対象は `public` 配下のみにしてください
 - ルート直下にある `.env` は公開領域の外に置くか、直接アクセスできないようにしてください
+- 学内デモ用途で `public_html/ec` 配下にアプリ一式を置く場合、`APP_URL` は公開URLに合わせて `https://example.com/ec` のように設定してください
+- `/ec` のようなサブディレクトリ配下でも、画面内リンク・リダイレクト・CSS/JS/商品画像は実行時の配置パスから補正されます
 - MariaDB 接続情報はサーバ発行の情報に差し替えてください
 - `logs` と `storage` に PHP が書き込みできる権限を付与してください
 - `.htaccess` によるルーティングが有効か事前に確認してください

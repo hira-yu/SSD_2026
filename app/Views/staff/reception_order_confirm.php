@@ -82,7 +82,7 @@ declare(strict_types=1);
 
     <p class="help-text"><?= e((string) $paymentGuide) ?></p>
 
-    <form method="post" action="/staff/receptionist/orders" class="search-actions">
+    <form method="post" action="<?= e(app_path('/staff/receptionist/orders')) ?>" class="search-actions">
         <input type="hidden" name="_csrf" value="<?= e((string) $csrfToken) ?>">
         <input type="hidden" name="customer_name" value="<?= e((string) $form['customer_name']) ?>">
         <input type="hidden" name="customer_contact" value="<?= e((string) $form['customer_contact']) ?>">

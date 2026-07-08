@@ -28,7 +28,7 @@ declare(strict_types=1);
                 <dd><?= e((string) $roleLabel) ?></dd>
             </div>
         </dl>
-        <form method="post" action="/logout" class="logout-form">
+        <form method="post" action="<?= e(app_path('/logout')) ?>" class="logout-form">
             <input type="hidden" name="_csrf" value="<?= e((string) $csrfToken) ?>">
             <button class="button-link button-submit" type="submit">ログアウト</button>
         </form>

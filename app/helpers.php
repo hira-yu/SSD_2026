@@ -111,7 +111,35 @@ function e(string $value): string
 
 function asset_url(string $path): string
 {
-    return '/' . ltrim($path, '/');
+    return app_path($path);
+}
+
+function app_base_path(): string
+{
+    $scriptName = (string) ($_SERVER['SCRIPT_NAME'] ?? '');
+    $directory = str_replace('\\', '/', dirname($scriptName));
+
+    if ($directory === '/' || $directory === '.' || $directory === '') {
+        return '';
+    }
+
+    return '/' . trim($directory, '/');
+}
+
+function app_path(string $path): string
+{
+    if (preg_match('/^(https?:)?\/\//i', $path) === 1) {
+        return $path;
+    }
+
+    $path = '/' . ltrim($path, '/');
+    $basePath = app_base_path();
+
+    if ($basePath !== '' && ($path === $basePath || str_starts_with($path, $basePath . '/'))) {
+        return $path;
+    }
+
+    return $basePath === '' ? $path : $basePath . $path;
 }
 
 function product_image_url(?string $path): string
@@ -236,13 +264,24 @@ function app_log(string $message, array $context = []): void
 function current_path(): string
 {
     $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
+    $path = '/' . trim($path, '/');
+    $basePath = app_base_path();
+
+    if ($path === '//') {
+        return '/';
+    }
+
+    if ($basePath !== '' && ($path === $basePath || str_starts_with($path, $basePath . '/'))) {
+        $path = substr($path, strlen($basePath));
+        return $path === '' ? '/' : $path;
+    }
 
     return $path === '' ? '/' : $path;
 }
 
 function redirect(string $path): never
 {
-    header('Location: ' . $path, true, 302);
+    header('Location: ' . app_path($path), true, 302);
     exit;
 }
 

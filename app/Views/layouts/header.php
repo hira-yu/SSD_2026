@@ -113,9 +113,9 @@ if ($isCustomerArea && $cartCount > 0) {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800&family=Noto+Serif+JP:wght@600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="<?= e(app_path('/assets/css/style.css')) ?>">
 </head>
-<body class="<?= e($bodyClass) ?>">
+<body class="<?= e($bodyClass) ?>" data-app-base-path="<?= e(app_base_path()) ?>">
 <?php if ($isCustomerArea): ?>
     <header class="site-header customer-header">
         <div class="customer-utility-bar">
@@ -123,7 +123,7 @@ if ($isCustomerArea && $cartCount > 0) {
                 <nav class="customer-utility-links" aria-label="補助メニュー">
                     <?php foreach ($customerUtilityLinks as $link): ?>
                         <?php $isFavoriteUtilityLink = (string) $link['url'] === '/favorites'; ?>
-                        <a href="<?= e((string) $link['url']) ?>" <?= $isFavoriteUtilityLink ? 'data-favorite-link' : '' ?>>
+                        <a href="<?= e(app_path((string) $link['url'])) ?>" <?= $isFavoriteUtilityLink ? 'data-favorite-link' : '' ?>>
                             <i data-lucide="<?= e((string) $link['icon']) ?>" aria-hidden="true"></i>
                             <span <?= $isFavoriteUtilityLink ? 'data-favorite-label' : '' ?>><?= e((string) $link['label']) ?></span>
                         </a>
@@ -137,11 +137,11 @@ if ($isCustomerArea && $cartCount > 0) {
 
         <div class="customer-search-row">
             <div class="container customer-search-inner">
-                <a class="customer-brand-link" href="/">
+                <a class="customer-brand-link" href="<?= e(app_path('/')) ?>">
                     <strong><?= e($serviceName) ?></strong>
                 </a>
 
-                <form class="customer-search-form" method="get" action="/products" role="search">
+                <form class="customer-search-form" method="get" action="<?= e(app_path('/products')) ?>" role="search">
                     <label class="sr-only" for="header-category">カテゴリ</label>
                     <select id="header-category" name="category" class="customer-search-category">
                         <option value="">カテゴリ</option>
@@ -160,7 +160,7 @@ if ($isCustomerArea && $cartCount > 0) {
                     </button>
                 </form>
 
-                <a class="customer-cart-link" href="/cart">
+                <a class="customer-cart-link" href="<?= e(app_path('/cart')) ?>">
                     <i data-lucide="shopping-cart" aria-hidden="true"></i>
                     <strong><?= e((string) $cartCount) ?></strong>
                     <?= $cartCount > 0 ? '<span>¥' . number_format((int) $subtotal) . '</span>' : '' ?>
@@ -171,10 +171,10 @@ if ($isCustomerArea && $cartCount > 0) {
         <div class="customer-nav-wrap">
             <div class="container customer-nav-inner">
                 <nav class="site-nav customer-nav" aria-label="主要メニュー">
-                    <a href="/"><i data-lucide="home" aria-hidden="true"></i>トップ</a>
-                    <a href="/products"><i data-lucide="grid-3x3" aria-hidden="true"></i>商品一覧</a>
-                    <a href="/cart"><i data-lucide="shopping-cart" aria-hidden="true"></i>カート</a>
-                    <a href="/checkout"><i data-lucide="clipboard-check" aria-hidden="true"></i>ご注文手続き</a>
+                    <a href="<?= e(app_path('/')) ?>"><i data-lucide="home" aria-hidden="true"></i>トップ</a>
+                    <a href="<?= e(app_path('/products')) ?>"><i data-lucide="grid-3x3" aria-hidden="true"></i>商品一覧</a>
+                    <a href="<?= e(app_path('/cart')) ?>"><i data-lucide="shopping-cart" aria-hidden="true"></i>カート</a>
+                    <a href="<?= e(app_path('/checkout')) ?>"><i data-lucide="clipboard-check" aria-hidden="true"></i>ご注文手続き</a>
                 </nav>
                 <p class="customer-speed-copy">日本全国スピードお届け実施中</p>
             </div>
@@ -194,7 +194,7 @@ if ($isCustomerArea && $cartCount > 0) {
                             <span>ログイン中: <?= e((string) ($authUser['user_name'] ?? '')) ?></span>
                             <span>ロール: <?= e($authService->roleLabel($currentRole)) ?></span>
                         </div>
-                        <form method="post" action="/logout" class="header-logout-form">
+                        <form method="post" action="<?= e(app_path('/logout')) ?>" class="header-logout-form">
                             <input type="hidden" name="_csrf" value="<?= e((string) csrf_token()) ?>">
                             <button class="button-link button-secondary button-small" type="submit">ログアウト</button>
                         </form>
@@ -209,10 +209,10 @@ if ($isCustomerArea && $cartCount > 0) {
         <div class="admin-header-nav-wrap">
             <div class="container">
                 <nav class="site-nav admin-nav" aria-label="業務メニュー">
-                    <a href="/">購入者画面</a>
-                    <a href="/system/db-check">DB接続確認</a>
+                    <a href="<?= e(app_path('/')) ?>">購入者画面</a>
+                    <a href="<?= e(app_path('/system/db-check')) ?>">DB接続確認</a>
                     <?php foreach (($adminMenu[$currentRole] ?? []) as $menuItem): ?>
-                        <a href="<?= e((string) $menuItem['url']) ?>"><?= e((string) $menuItem['label']) ?></a>
+                        <a href="<?= e(app_path((string) $menuItem['url'])) ?>"><?= e((string) $menuItem['label']) ?></a>
                     <?php endforeach; ?>
                 </nav>
             </div>

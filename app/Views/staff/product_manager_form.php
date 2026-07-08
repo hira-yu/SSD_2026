@@ -13,7 +13,7 @@ $action = $isEdit ? '/staff/product-manager/products/' . $productId : '/staff/pr
         <p class="eyebrow">Product Management</p>
         <h2><?= $isEdit ? '商品編集' : '商品新規追加' ?></h2>
         <p>商品情報、在庫、セール価格、期間限定販売を設定します。</p>
-        <p><a class="text-link" href="/staff/product-manager/products">商品一覧へ戻る</a></p>
+        <p><a class="text-link" href="<?= e(app_path('/staff/product-manager/products')) ?>">商品一覧へ戻る</a></p>
     </div>
     <div class="panel">
         <h3>ログイン情報</h3>
@@ -41,7 +41,7 @@ $action = $isEdit ? '/staff/product-manager/products/' . $productId : '/staff/pr
 <?php endif; ?>
 
 <section class="panel">
-    <form class="staff-product-form" method="post" action="<?= e($action) ?>">
+    <form class="staff-product-form" method="post" action="<?= e(app_path($action)) ?>" enctype="multipart/form-data">
         <input type="hidden" name="_csrf" value="<?= e((string) $csrfToken) ?>">
         <div class="staff-form-grid">
             <label class="form-field">
@@ -65,18 +65,21 @@ $action = $isEdit ? '/staff/product-manager/products/' . $productId : '/staff/pr
                 <input type="text" name="maker" value="<?= e((string) ($form['maker'] ?? '')) ?>" required>
             </label>
             <label class="form-field">
-                <span>画像パス</span>
-                <input type="text" name="image_path" value="<?= e((string) ($form['image_path'] ?? '')) ?>" placeholder="assets/img/products/generated/PRD-001.webp">
-            </label>
-            <label class="form-field">
-                <span>在庫1</span>
-                <input type="number" name="stock_quantity_1" min="0" step="1" value="<?= e((string) ($form['stock_quantity_1'] ?? '0')) ?>" required>
-            </label>
-            <label class="form-field">
-                <span>在庫2</span>
-                <input type="number" name="stock_quantity_2" min="0" step="1" value="<?= e((string) ($form['stock_quantity_2'] ?? '0')) ?>" required>
+                <span>商品画像</span>
+                <input type="file" name="product_image" accept="image/png,image/jpeg,image/webp,image/gif">
             </label>
         </div>
+
+        <?php if ($isEdit && !empty($form['image_path'])): ?>
+            <div class="staff-current-image">
+                <img src="<?= e(product_image_url((string) $form['image_path'])) ?>" alt="現在の商品画像" data-fallback-src="<?= e(product_image_url('')) ?>">
+                <div>
+                    <strong>現在の画像</strong>
+                    <p><?= e((string) $form['image_path']) ?></p>
+                    <p>新しい画像を選択した場合のみ差し替えます。</p>
+                </div>
+            </div>
+        <?php endif; ?>
 
         <div class="staff-form-grid">
             <label class="form-field">
@@ -85,25 +88,27 @@ $action = $isEdit ? '/staff/product-manager/products/' . $productId : '/staff/pr
             </label>
             <label class="form-field">
                 <span>セール開始</span>
-                <input type="datetime-local" name="sale_starts_at" value="<?= e((string) ($form['sale_starts_at'] ?? '')) ?>">
+                <input type="text" name="sale_starts_at" value="<?= e((string) ($form['sale_starts_at'] ?? '')) ?>" placeholder="2026/07/08 09:00">
+                <small class="form-help-text">24時間表記で入力します。</small>
             </label>
             <label class="form-field">
                 <span>セール終了</span>
-                <input type="datetime-local" name="sale_ends_at" value="<?= e((string) ($form['sale_ends_at'] ?? '')) ?>">
+                <input type="text" name="sale_ends_at" value="<?= e((string) ($form['sale_ends_at'] ?? '')) ?>" placeholder="2026/07/08 21:00">
             </label>
             <label class="form-field">
                 <span>販売開始</span>
-                <input type="datetime-local" name="available_from" value="<?= e((string) ($form['available_from'] ?? '')) ?>">
+                <input type="text" name="available_from" value="<?= e((string) ($form['available_from'] ?? '')) ?>" placeholder="2026/07/08 09:00">
+                <small class="form-help-text">空欄の場合は期間制限なしです。</small>
             </label>
             <label class="form-field">
                 <span>販売終了</span>
-                <input type="datetime-local" name="available_until" value="<?= e((string) ($form['available_until'] ?? '')) ?>">
+                <input type="text" name="available_until" value="<?= e((string) ($form['available_until'] ?? '')) ?>" placeholder="2026/07/08 21:00">
             </label>
         </div>
 
         <div class="search-actions">
             <button class="button-link button-submit" type="submit"><?= $isEdit ? '商品情報を更新' : '商品を登録' ?></button>
-            <a class="button-link button-secondary" href="/staff/product-manager/products">キャンセル</a>
+            <a class="button-link button-secondary" href="<?= e(app_path('/staff/product-manager/products')) ?>">キャンセル</a>
         </div>
     </form>
 </section>
@@ -112,12 +117,32 @@ $action = $isEdit ? '/staff/product-manager/products/' . $productId : '/staff/pr
     <section class="panel">
         <div class="section-heading">
             <div>
+                <p class="eyebrow">Current Stock</p>
+                <h3>現在の在庫状況</h3>
+            </div>
+        </div>
+        <dl class="definition-list">
+            <div>
+                <dt>在庫1</dt>
+                <dd><?= e((string) ($product['stock_quantity_1'] ?? 0)) ?></dd>
+            </div>
+            <div>
+                <dt>在庫2</dt>
+                <dd><?= e((string) ($product['stock_quantity_2'] ?? 0)) ?></dd>
+            </div>
+        </dl>
+        <p class="form-help-text">在庫2は在庫1と発送待ち数量から定まるため、直接編集せず、仕入れ入庫で増加させます。</p>
+    </section>
+
+    <section class="panel">
+        <div class="section-heading">
+            <div>
                 <p class="eyebrow">Stock Receiving</p>
                 <h3>仕入れ入庫</h3>
             </div>
         </div>
         <p>入庫数量を入力すると、在庫1・在庫2の両方へ加算します。</p>
-        <form class="search-form" method="post" action="/staff/product-manager/products/<?= e((string) $productId) ?>/stock">
+        <form class="search-form" method="post" action="<?= e(app_path('/staff/product-manager/products/' . $productId . '/stock')) ?>">
             <input type="hidden" name="_csrf" value="<?= e((string) $csrfToken) ?>">
             <label class="form-field">
                 <span>入庫数量</span>

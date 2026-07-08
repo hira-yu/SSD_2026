@@ -39,16 +39,16 @@ $footerInformationColumns = [
         'heading' => 'はじめてのお客様へ',
         'links' => [
             ['label' => 'お買い物の流れ', 'url' => '/checkout'],
-            ['label' => '配送・納期', 'url' => '/stores'],
+            ['label' => '配送・納期', 'url' => '/shipping-guide'],
             ['label' => '商品を探す', 'url' => '/products'],
         ],
     ],
     [
         'heading' => 'アフターサービス',
         'links' => [
-            ['label' => '修理', 'url' => '/stores'],
-            ['label' => '返品・交換', 'url' => '/stores'],
-            ['label' => '配送設置サービス', 'url' => '/stores'],
+            ['label' => '修理', 'url' => '/after-service'],
+            ['label' => '返品・交換', 'url' => '/returns'],
+            ['label' => '配送設置サービス', 'url' => '/shipping-guide'],
         ],
     ],
     [
@@ -71,10 +71,12 @@ $footerInformationColumns = [
 $footerPolicyLinks = [
     ['label' => 'お客様サポートトップ', 'url' => '/'],
     ['label' => '店舗のご案内', 'url' => '/stores'],
-    ['label' => 'ご利用規約', 'url' => '/sitemap'],
-    ['label' => '個人情報保護方針', 'url' => '/sitemap'],
-    ['label' => '特定商取引法に基づく表示', 'url' => '/sitemap'],
+    ['label' => 'ご利用規約', 'url' => '/terms'],
+    ['label' => '個人情報保護方針', 'url' => '/privacy'],
+    ['label' => '特定商取引法に基づく表示', 'url' => '/commercial-transactions'],
 ];
+$appJsVersion = is_file(base_path('public/assets/js/app.js')) ? (string) filemtime(base_path('public/assets/js/app.js')) : '1';
+$addressJsVersion = is_file(base_path('public/assets/js/address-autofill.js')) ? (string) filemtime(base_path('public/assets/js/address-autofill.js')) : '1';
 ?>
 </main>
 <footer class="site-footer">
@@ -91,7 +93,7 @@ $footerPolicyLinks = [
                             </h3>
                             <ul>
                                 <?php foreach ($column as $label): ?>
-                                    <li><a href="/products?category=<?= urlencode($label) ?>"><?= e($label) ?></a></li>
+                                    <li><a href="<?= e(app_path('/products')) ?>?category=<?= urlencode($label) ?>"><?= e($label) ?></a></li>
                                 <?php endforeach; ?>
                             </ul>
                         </section>
@@ -104,7 +106,7 @@ $footerPolicyLinks = [
                             <h3><?= e((string) $column['heading']) ?></h3>
                             <ul>
                                 <?php foreach ($column['links'] as $link): ?>
-                                    <li><a href="<?= e((string) $link['url']) ?>"><?= e((string) $link['label']) ?></a></li>
+                                    <li><a href="<?= e(app_path((string) $link['url'])) ?>"><?= e((string) $link['label']) ?></a></li>
                                 <?php endforeach; ?>
                             </ul>
                         </section>
@@ -116,7 +118,7 @@ $footerPolicyLinks = [
                 <div class="customer-footer-brand">IPUT EC</div>
                 <nav class="customer-footer-policy-links" aria-label="フッターリンク">
                     <?php foreach ($footerPolicyLinks as $link): ?>
-                        <a href="<?= e((string) $link['url']) ?>"><?= e((string) $link['label']) ?></a>
+                        <a href="<?= e(app_path((string) $link['url'])) ?>"><?= e((string) $link['label']) ?></a>
                     <?php endforeach; ?>
                 </nav>
                 <p>Copyright (C) IPUT EC All Rights Reserved.</p>
@@ -125,7 +127,7 @@ $footerPolicyLinks = [
     </div>
 </footer>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
-<script src="/assets/js/app.js"></script>
-<script src="/assets/js/address-autofill.js"></script>
+<script src="<?= e(app_path('/assets/js/app.js')) ?>?v=<?= e($appJsVersion) ?>"></script>
+<script src="<?= e(app_path('/assets/js/address-autofill.js')) ?>?v=<?= e($addressJsVersion) ?>"></script>
 </body>
 </html>
