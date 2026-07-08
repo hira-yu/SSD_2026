@@ -13,6 +13,7 @@ class AuthService
         'receptionist' => '注文受付係',
         'accountant' => '会計係',
         'shipper' => '商品発送係',
+        'product_manager' => '商品管理担当',
     ];
 
     /**
@@ -22,6 +23,7 @@ class AuthService
         'receptionist' => '/staff/receptionist',
         'accountant' => '/staff/accountant',
         'shipper' => '/staff/shipper',
+        'product_manager' => '/staff/product-manager',
     ];
 
     public function __construct()

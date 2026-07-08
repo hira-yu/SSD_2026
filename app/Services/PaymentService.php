@@ -48,7 +48,7 @@ class PaymentService
         }
 
         if (!$this->isValidExpiry($card['card_expiry'])) {
-            $errors[] = '有効期限は MM/YY または MM/YYYY 形式で入力してください。';
+            $errors[] = '有効期限を正しく入力してください。';
         }
 
         if (!preg_match('/^\d{3,4}$/', $card['security_code'])) {

@@ -60,9 +60,10 @@ $redirectTo = $_SERVER['REQUEST_URI'] ?? '/';
     <aside class="market-side-rail">
         <div class="market-rail-card market-rail-card-alert">
             <h3><i data-lucide="truck" aria-hidden="true"></i>ご案内</h3>
-            <p>日本全国へお届け</p>
-            <p>在庫状況は商品ごとに表示</p>
-            <p>ご注文前に配送先と数量をご確認ください</p>
+            <p>IPUT ECは</p>
+            <p>家電製品、ＰＣ、日用品、</p>
+            <p>食品飲料、電子部品まで</p>
+            <p>幅広い商品を豊富に取揃え</p>
         </div>
 
         <div class="market-rail-card">
@@ -104,9 +105,15 @@ $redirectTo = $_SERVER['REQUEST_URI'] ?? '/';
                     <a class="market-product-title" href="/products/<?= e((string) $product['id']) ?>">
                         <?= e((string) $product['name']) ?>
                     </a>
-                    <p class="market-price-row">¥<?= number_format((int) $product['price']) ?></p>
+                    <p class="market-price-row">
+                        <?php if (!empty($product['is_on_sale'])): ?>
+                            <span class="market-regular-price">¥<?= number_format((int) $product['regular_price']) ?></span>
+                            <span class="market-sale-badge">SALE</span>
+                        <?php endif; ?>
+                        ¥<?= number_format((int) $product['price']) ?>
+                    </p>
                     <p class="market-stock-copy <?= e((string) $product['availability_class']) ?>">
-                        <?= e((string) $product['availability_label']) ?> / 在庫 <?= e((string) $product['stock_quantity_2']) ?>
+                        <?= e((string) $product['availability_label']) ?>
                     </p>
                     <form class="market-favorite-form" method="post" action="<?= in_array((int) $product['id'], $favoriteProductIds, true) ? '/favorites/remove' : '/favorites/add' ?>">
                         <input type="hidden" name="_csrf" value="<?= e((string) $csrfToken) ?>">
@@ -147,7 +154,13 @@ $redirectTo = $_SERVER['REQUEST_URI'] ?? '/';
                     <a class="market-product-title" href="/products/<?= e((string) $product['id']) ?>">
                         <?= e((string) $product['name']) ?>
                     </a>
-                    <p class="market-price-row">¥<?= number_format((int) $product['price']) ?></p>
+                    <p class="market-price-row">
+                        <?php if (!empty($product['is_on_sale'])): ?>
+                            <span class="market-regular-price">¥<?= number_format((int) $product['regular_price']) ?></span>
+                            <span class="market-sale-badge">SALE</span>
+                        <?php endif; ?>
+                        ¥<?= number_format((int) $product['price']) ?>
+                    </p>
                     <p class="market-stock-copy <?= e((string) $product['availability_class']) ?>">
                         <?= e((string) $product['availability_label']) ?>
                     </p>
@@ -207,9 +220,15 @@ $redirectTo = $_SERVER['REQUEST_URI'] ?? '/';
                     <a class="market-product-title" href="/products/<?= e((string) $product['id']) ?>">
                         <?= e((string) $product['name']) ?>
                     </a>
-                    <p class="market-price-row">¥<?= number_format((int) $product['price']) ?></p>
+                    <p class="market-price-row">
+                        <?php if (!empty($product['is_on_sale'])): ?>
+                            <span class="market-regular-price">¥<?= number_format((int) $product['regular_price']) ?></span>
+                            <span class="market-sale-badge">SALE</span>
+                        <?php endif; ?>
+                        ¥<?= number_format((int) $product['price']) ?>
+                    </p>
                     <p class="market-stock-copy <?= e((string) $product['availability_class']) ?>">
-                        <?= e((string) $product['availability_label']) ?> / 在庫 <?= e((string) $product['stock_quantity_2']) ?>
+                        <?= e((string) $product['availability_label']) ?>
                     </p>
                     <form class="market-favorite-form" method="post" action="<?= in_array((int) $product['id'], $favoriteProductIds, true) ? '/favorites/remove' : '/favorites/add' ?>">
                         <input type="hidden" name="_csrf" value="<?= e((string) $csrfToken) ?>">

@@ -69,7 +69,7 @@ class CheckoutService
             }
 
             $errors[] = sprintf(
-                '%s は在庫数量2を超えているため、数量を見直してください。',
+                '%s は在庫数を超えるため、数量を見直してください。',
                 (string) $item['product_name']
             );
         }
@@ -149,7 +149,7 @@ class CheckoutService
             }
 
             $errors[] = sprintf(
-                '%s は在庫数量2を超えているため、注文を確定できません。',
+                '%s は在庫数を超えるため、注文を確定できません。',
                 (string) $item['product_name']
             );
         }

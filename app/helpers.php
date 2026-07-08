@@ -125,6 +125,99 @@ function product_image_url(?string $path): string
     return asset_url($normalized);
 }
 
+function product_period_active(?string $startsAt, ?string $endsAt, ?DateTimeImmutable $now = null): bool
+{
+    $now ??= new DateTimeImmutable('now');
+    $startsAt = trim((string) $startsAt);
+    $endsAt = trim((string) $endsAt);
+
+    if ($startsAt !== '' && $now < new DateTimeImmutable($startsAt)) {
+        return false;
+    }
+
+    if ($endsAt !== '' && $now > new DateTimeImmutable($endsAt)) {
+        return false;
+    }
+
+    return true;
+}
+
+function product_sale_active(array $product, ?DateTimeImmutable $now = null): bool
+{
+    $salePrice = (int) ($product['sale_price'] ?? 0);
+    $regularPrice = (int) ($product['price'] ?? 0);
+
+    return $salePrice > 0
+        && $salePrice < $regularPrice
+        && product_period_active(
+            (string) ($product['sale_starts_at'] ?? ''),
+            (string) ($product['sale_ends_at'] ?? ''),
+            $now
+        );
+}
+
+function product_effective_price(array $product): int
+{
+    return product_sale_active($product) ? (int) $product['sale_price'] : (int) ($product['price'] ?? 0);
+}
+
+/**
+ * @return array{is_orderable: bool, label: string, class: string, period_label: string}
+ */
+function product_availability(array $product): array
+{
+    $stockQuantity = (int) ($product['stock_quantity_2'] ?? 0);
+    $availableFrom = trim((string) ($product['available_from'] ?? ''));
+    $availableUntil = trim((string) ($product['available_until'] ?? ''));
+    $periodActive = product_period_active($availableFrom, $availableUntil);
+    $periodLabel = '';
+
+    if ($availableFrom !== '' || $availableUntil !== '') {
+        $periodLabel = trim(sprintf(
+            '%s%s%s',
+            $availableFrom === '' ? '' : date('Y/m/d', strtotime($availableFrom)) . 'から',
+            $availableFrom !== '' && $availableUntil !== '' ? ' ' : '',
+            $availableUntil === '' ? '' : date('Y/m/d', strtotime($availableUntil)) . 'まで'
+        ));
+    }
+
+    if (!$periodActive) {
+        $now = new DateTimeImmutable('now');
+
+        return [
+            'is_orderable' => false,
+            'label' => $availableFrom !== '' && $now < new DateTimeImmutable($availableFrom) ? '販売開始前' : '販売期間終了',
+            'class' => 'status-ng',
+            'period_label' => $periodLabel,
+        ];
+    }
+
+    if ($stockQuantity < 1) {
+        return [
+            'is_orderable' => false,
+            'label' => '在庫なし',
+            'class' => 'status-ng',
+            'period_label' => $periodLabel,
+        ];
+    }
+
+    if ($stockQuantity <= 5) {
+        return [
+            'is_orderable' => true,
+            'label' => '在庫残少 ご注文はお早めに！',
+            'class' => 'status-low',
+            'period_label' => $periodLabel,
+        ];
+    }
+
+    return [
+        'is_orderable' => true,
+        'label' => '在庫あり',
+        'class' => 'status-ok',
+        'period_label' => $periodLabel,
+    ];
+}
+
 function app_log(string $message, array $context = []): void
 {
     $logLine = sprintf(

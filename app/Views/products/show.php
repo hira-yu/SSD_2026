@@ -32,10 +32,19 @@ $redirectTo = $_SERVER['REQUEST_URI'] ?? '/products/' . (string) $product['id'];
 
             <div class="market-detail-price-box">
                 <p class="market-detail-price-label">販売価格</p>
-                <p class="market-detail-price">¥<?= number_format((int) $product['price']) ?></p>
-                <p class="market-detail-delivery <?= e((string) $product['availability_class']) ?>">
-                    <?= e((string) $product['availability_label']) ?> / 在庫 <?= e((string) $product['stock_quantity_2']) ?>
+                <p class="market-detail-price">
+                    <?php if (!empty($product['is_on_sale'])): ?>
+                        <span class="market-regular-price">¥<?= number_format((int) $product['regular_price']) ?></span>
+                        <span class="market-sale-badge">SALE</span>
+                    <?php endif; ?>
+                    ¥<?= number_format((int) $product['price']) ?>
                 </p>
+                <p class="market-detail-delivery <?= e((string) $product['availability_class']) ?>">
+                    <?= e((string) $product['availability_label']) ?>
+                </p>
+                <?php if (!empty($product['sales_period_label'])): ?>
+                    <p class="market-detail-delivery-note">販売期間: <?= e((string) $product['sales_period_label']) ?></p>
+                <?php endif; ?>
                 <p class="market-detail-delivery-note"><?= e((string) $deliverySummary) ?></p>
             </div>
 
@@ -125,9 +134,15 @@ $redirectTo = $_SERVER['REQUEST_URI'] ?? '/products/' . (string) $product['id'];
                         <a class="market-product-title" href="/products/<?= e((string) $relatedProduct['id']) ?>">
                             <?= e((string) $relatedProduct['name']) ?>
                         </a>
-                        <p class="market-price-row">¥<?= number_format((int) $relatedProduct['price']) ?></p>
+                        <p class="market-price-row">
+                            <?php if (!empty($relatedProduct['is_on_sale'])): ?>
+                                <span class="market-regular-price">¥<?= number_format((int) $relatedProduct['regular_price']) ?></span>
+                                <span class="market-sale-badge">SALE</span>
+                            <?php endif; ?>
+                            ¥<?= number_format((int) $relatedProduct['price']) ?>
+                        </p>
                         <p class="market-stock-copy <?= e((string) $relatedProduct['availability_class']) ?>">
-                            <?= e((string) $relatedProduct['availability_label']) ?> / 在庫 <?= e((string) $relatedProduct['stock_quantity_2']) ?>
+                            <?= e((string) $relatedProduct['availability_label']) ?>
                         </p>
                     </div>
                 </article>
@@ -159,9 +174,15 @@ $redirectTo = $_SERVER['REQUEST_URI'] ?? '/products/' . (string) $product['id'];
                             <a class="market-product-title" href="/products/<?= e((string) $makerProduct['id']) ?>">
                                 <?= e((string) $makerProduct['name']) ?>
                             </a>
-                            <p class="market-price-row">¥<?= number_format((int) $makerProduct['price']) ?></p>
+                            <p class="market-price-row">
+                                <?php if (!empty($makerProduct['is_on_sale'])): ?>
+                                    <span class="market-regular-price">¥<?= number_format((int) $makerProduct['regular_price']) ?></span>
+                                    <span class="market-sale-badge">SALE</span>
+                                <?php endif; ?>
+                                ¥<?= number_format((int) $makerProduct['price']) ?>
+                            </p>
                             <p class="market-stock-copy <?= e((string) $makerProduct['availability_class']) ?>">
-                                <?= e((string) $makerProduct['availability_label']) ?> / 在庫 <?= e((string) $makerProduct['stock_quantity_2']) ?>
+                                <?= e((string) $makerProduct['availability_label']) ?>
                             </p>
                         </div>
                     </article>

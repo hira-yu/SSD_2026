@@ -171,6 +171,7 @@ mysql -u root -p tsuhan_system < database/seed.mysql.sql
 - 注文受付係: `reception01` / `reception123`
 - 会計係: `account01` / `account123`
 - 商品発送係: `shipper01` / `shipper123`
+- 商品管理担当: `product01` / `product123`
 
 ### ロールごとの遷移先
 

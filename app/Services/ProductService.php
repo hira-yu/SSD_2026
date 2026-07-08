@@ -181,10 +181,18 @@ class ProductService
      */
     private function decorateProduct(array $product): array
     {
-        $stockQuantity2 = (int) ($product['stock_quantity_2'] ?? 0);
-        $product['is_orderable'] = $stockQuantity2 > 0;
-        $product['availability_label'] = $stockQuantity2 > 0 ? '注文可能' : '在庫なし';
-        $product['availability_class'] = $stockQuantity2 > 0 ? 'status-ok' : 'status-ng';
+        $availability = product_availability($product);
+        $regularPrice = (int) ($product['price'] ?? 0);
+        $effectivePrice = product_effective_price($product);
+        $product['regular_price'] = $regularPrice;
+        $product['display_price'] = $effectivePrice;
+        $product['price'] = $effectivePrice;
+        $product['is_on_sale'] = $effectivePrice < $regularPrice;
+        $product['sale_badge_label'] = $product['is_on_sale'] ? 'SALE' : '';
+        $product['is_orderable'] = $availability['is_orderable'];
+        $product['availability_label'] = $availability['label'];
+        $product['availability_class'] = $availability['class'];
+        $product['sales_period_label'] = $availability['period_label'];
         $product['image_url'] = product_image_url((string) ($product['image_path'] ?? ''));
 
         return $product;

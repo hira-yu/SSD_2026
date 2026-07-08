@@ -23,8 +23,10 @@ class CartService
             throw new RuntimeException('選択した商品が見つかりませんでした。');
         }
 
-        if ((int) $product['stock_quantity_2'] < 1) {
-            throw new RuntimeException(sprintf('%s は在庫切れのため追加できません。', (string) $product['name']));
+        $availability = product_availability($product);
+
+        if (!$availability['is_orderable']) {
+            throw new RuntimeException(sprintf('%s は%sのため追加できません。', (string) $product['name'], (string) $availability['label']));
         }
 
         $cart = $this->cartQuantities();
@@ -33,7 +35,7 @@ class CartService
 
         if ($cart[$productId] > (int) $product['stock_quantity_2']) {
             return sprintf(
-                '%s をカートに追加しました。在庫数量2を超えているため、注文確定前に数量をご確認ください。',
+                '%s をカートに追加しました。在庫数を超えるため、注文確定前に数量をご確認ください。',
                 (string) $product['name']
             );
         }
@@ -69,7 +71,7 @@ class CartService
 
         if ($quantity > (int) $product['stock_quantity_2']) {
             return sprintf(
-                '%s の数量を更新しました。在庫数量2を超えているため、注文確定前に数量をご確認ください。',
+                '%s の数量を更新しました。在庫数を超えるため、注文確定前に数量をご確認ください。',
                 (string) $product['name']
             );
         }
@@ -175,13 +177,18 @@ class CartService
                 continue;
             }
 
-            $lineTotal = (int) $product['price'] * $quantity;
+            $unitPrice = product_effective_price($product);
+            $lineTotal = $unitPrice * $quantity;
             $subtotal += $lineTotal;
             $stockQuantity2 = (int) $product['stock_quantity_2'];
+            $availability = product_availability($product);
             $warning = null;
 
-            if ($quantity > $stockQuantity2) {
-                $warning = sprintf('在庫数量2は %d 個です。注文確定前に数量を調整してください。', $stockQuantity2);
+            if (!$availability['is_orderable']) {
+                $warning = sprintf('%sのため、注文を確定できません。', (string) $availability['label']);
+                $warnings[] = (string) $product['name'] . ': ' . $warning;
+            } elseif ($quantity > $stockQuantity2) {
+                $warning = '在庫数を超えています。注文確定前に数量を調整してください。';
                 $warnings[] = (string) $product['name'] . ': ' . $warning;
             }
 
@@ -189,7 +196,9 @@ class CartService
                 'product_id' => (int) $product['id'],
                 'product_no' => (string) $product['product_no'],
                 'product_name' => (string) $product['name'],
-                'unit_price' => (int) $product['price'],
+                'unit_price' => $unitPrice,
+                'regular_price' => (int) ($product['price'] ?? 0),
+                'is_on_sale' => $unitPrice < (int) ($product['price'] ?? 0),
                 'image_path' => (string) ($product['image_path'] ?? ''),
                 'image_url' => product_image_url((string) ($product['image_path'] ?? '')),
                 'category' => (string) ($product['category'] ?? ''),
@@ -197,6 +206,8 @@ class CartService
                 'quantity' => $quantity,
                 'line_total' => $lineTotal,
                 'stock_quantity_2' => $stockQuantity2,
+                'availability_label' => (string) $availability['label'],
+                'availability_class' => (string) $availability['class'],
                 'warning' => $warning,
             ];
         }

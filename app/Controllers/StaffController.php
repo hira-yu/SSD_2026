@@ -24,6 +24,11 @@ class StaffController extends Controller
             ['title' => '納品書・請求書表示', 'description' => '注文詳細画面で納品書情報と請求書情報を確認します。', 'url' => '/staff/shipper/orders'],
             ['title' => '発送状態更新', 'description' => '発送完了後に発送状態を発送済へ更新します。', 'url' => '/staff/shipper/orders'],
         ],
+        'product_manager' => [
+            ['title' => '商品一覧・編集', 'description' => '商品情報、価格、販売期間、セール設定を編集します。', 'url' => '/staff/product-manager/products'],
+            ['title' => '商品新規追加', 'description' => '新しい商品を追加し、初期在庫を設定します。', 'url' => '/staff/product-manager/products/new'],
+            ['title' => '仕入れ入庫', 'description' => '仕入れに伴う在庫数量を商品ごとに加算します。', 'url' => '/staff/product-manager/products'],
+        ],
     ];
 
     public function __construct()
@@ -44,6 +49,11 @@ class StaffController extends Controller
     public function shipper(): void
     {
         $this->renderStaffHome('shipper');
+    }
+
+    public function productManager(): void
+    {
+        $this->renderStaffHome('product_manager');
     }
 
     private function renderStaffHome(string $role): void

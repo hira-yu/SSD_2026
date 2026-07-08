@@ -15,7 +15,7 @@ CREATE TABLE users (
     name VARCHAR(100) NOT NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT chk_users_role CHECK (role IN ('receptionist', 'accountant', 'shipper'))
+    CONSTRAINT chk_users_role CHECK (role IN ('receptionist', 'accountant', 'shipper', 'product_manager'))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE products (
@@ -26,6 +26,11 @@ CREATE TABLE products (
     category VARCHAR(100) NOT NULL,
     maker VARCHAR(100) NOT NULL,
     image_path VARCHAR(255) DEFAULT NULL,
+    sale_price INT UNSIGNED DEFAULT NULL,
+    sale_starts_at DATETIME DEFAULT NULL,
+    sale_ends_at DATETIME DEFAULT NULL,
+    available_from DATETIME DEFAULT NULL,
+    available_until DATETIME DEFAULT NULL,
     stock_quantity_1 INT NOT NULL DEFAULT 0,
     stock_quantity_2 INT NOT NULL DEFAULT 0,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,

@@ -440,11 +440,8 @@ body.public-page .customer-search-form input::placeholder {
     justify-content: center;
     min-width: 1.8rem;
     min-height: 1.5rem;
-    padding: 0 0.3rem;
-    border-radius: 999px;
-    background: #e63a22;
-    color: #fff;
-    font-size: 0.82rem;
+    color: #e63a22;
+    font-size: 1.4em;
 }
 
 .customer-nav-wrap {
@@ -1513,6 +1510,12 @@ code {
     }
 }
 
+@media (max-width: 767px) {
+    .staff-form-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 @media (min-width: 1024px) {
     .ec-product-grid {
         grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1993,8 +1996,35 @@ body.public-page .market-complete-box {
     background: #edf8f0;
 }
 
+.market-stock-copy.status-low,
+.market-detail-delivery.status-low {
+    background: #fff7df;
+    color: #a15c00;
+}
+
 .market-stock-copy.status-ng {
     background: #fff0f0;
+}
+
+.market-regular-price {
+    margin-right: 0.35rem;
+    color: #777;
+    font-size: 0.78em;
+    font-weight: 600;
+    text-decoration: line-through;
+}
+
+.market-sale-badge {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 0.35rem;
+    padding: 0.08rem 0.35rem;
+    border-radius: 999px;
+    background: #e63a22;
+    color: #fff;
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
 }
 
 .market-maker-cloud {
@@ -2204,6 +2234,18 @@ body.public-page .market-complete-box {
 .market-favorite-form.is-updating button {
     opacity: 0.68;
     pointer-events: none;
+}
+
+.staff-form-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.staff-product-form {
+    display: grid;
+    gap: 1rem;
 }
 
 .market-quantity-inline,
