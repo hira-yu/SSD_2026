@@ -13,6 +13,7 @@ $name = (string) ($filters['name'] ?? '');
             商品番号と商品名で検索できます。両方指定した場合は AND 条件で絞り込みます。
         </p>
         <p><a class="text-link" href="/staff/receptionist">注文受付係トップへ戻る</a></p>
+        <p><a class="text-link" href="/staff/receptionist/orders">登録済み注文一覧</a></p>
     </div>
 
     <aside class="status-card">
@@ -34,7 +35,10 @@ $name = (string) ($filters['name'] ?? '');
     </aside>
 </section>
 
-<section class="panel search-panel">
+<section class="panel search-panel admin-search-panel">
+    <div class="panel-heading-bar">
+        <h3>検索条件</h3>
+    </div>
     <form class="search-form receptionist-search-form" method="get" action="/staff/receptionist/products">
         <div class="form-field">
             <label for="product_no">商品番号</label>
@@ -45,13 +49,16 @@ $name = (string) ($filters['name'] ?? '');
             <input id="name" type="text" name="name" value="<?= e($name) ?>" placeholder="例: マウス">
         </div>
         <div class="search-actions">
-            <button class="button-link button-submit" type="submit">検索する</button>
-            <a class="button-link button-secondary" href="/staff/receptionist/products">条件をクリア</a>
+            <button class="button-link button-submit" type="submit">検索</button>
+            <a class="button-link button-secondary" href="/staff/receptionist/products">条件クリア</a>
         </div>
     </form>
 </section>
 
 <section class="panel">
+    <div class="panel-heading-bar">
+        <h3>商品検索結果</h3>
+    </div>
     <?php if ($products === []): ?>
         <p class="empty-state">該当する商品がありません。</p>
     <?php else: ?>
@@ -59,6 +66,7 @@ $name = (string) ($filters['name'] ?? '');
             <table class="data-table">
                 <thead>
                     <tr>
+                        <th>画像</th>
                         <th>商品番号</th>
                         <th>商品名</th>
                         <th>単価</th>
@@ -72,6 +80,14 @@ $name = (string) ($filters['name'] ?? '');
                 <tbody>
                     <?php foreach ($products as $product): ?>
                         <tr>
+                            <td class="admin-thumb-cell">
+                                <img
+                                    class="admin-thumb"
+                                    src="<?= e((string) ($product['image_url'] ?? product_image_url((string) ($product['image_path'] ?? '')))) ?>"
+                                    alt="<?= e((string) $product['name']) ?>"
+                                    data-fallback-src="/assets/img/products/placeholder.svg"
+                                >
+                            </td>
                             <td><?= e((string) $product['product_no']) ?></td>
                             <td><?= e((string) $product['name']) ?></td>
                             <td>¥<?= number_format((int) $product['price']) ?></td>

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 240" role="img" aria-labelledby="title desc">
+  <title id="title">事務用品カテゴリ商品画像</title>
+  <desc id="desc">事務用品カテゴリの商品用イラスト</desc>
+  <rect width="320" height="240" rx="24" fill="#f3f5fa"/>
+  <rect x="76" y="42" width="112" height="144" rx="12" fill="#ffffff" stroke="#b9c4d8" stroke-width="6"/>
+  <path d="M98 84h68M98 108h68M98 132h68M98 156h48" stroke="#7f92b7" stroke-width="8" stroke-linecap="round"/>
+  <path d="M210 58l34 34-74 74-38 8 8-38 70-78Z" fill="#f2a444"/>
+  <path d="M210 58l16-18 36 36-18 16-34-34Z" fill="#4d5f85"/>
+  <text x="160" y="223" text-anchor="middle" font-family="Noto Sans JP, sans-serif" font-size="22" font-weight="700" fill="#4d5f85">OFFICE</text>
+</svg>

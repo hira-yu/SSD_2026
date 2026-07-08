@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 240" role="img" aria-labelledby="title desc">
+  <title id="title">飲み物カテゴリ商品画像</title>
+  <desc id="desc">飲み物カテゴリの商品用イラスト</desc>
+  <rect width="320" height="240" rx="24" fill="#eef8fb"/>
+  <path d="M118 44h84l-8 118c-1 17-15 30-32 30h-4c-17 0-31-13-32-30l-8-118Z" fill="#7ed0db"/>
+  <path d="M132 54h56l-6 95c-1 10-9 18-20 18h-4c-11 0-19-8-20-18l-6-95Z" fill="#ffffff" opacity=".9"/>
+  <path d="M216 70c22 0 36 14 36 32s-14 32-36 32" fill="none" stroke="#3aa9bb" stroke-width="12" stroke-linecap="round"/>
+  <text x="160" y="223" text-anchor="middle" font-family="Noto Sans JP, sans-serif" font-size="22" font-weight="700" fill="#2c8190">DRINK</text>
+</svg>

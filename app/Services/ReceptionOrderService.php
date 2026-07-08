@@ -9,6 +9,32 @@ class ReceptionOrderService
     private OrderItemRepository $orderItems;
     private InventoryService $inventory;
 
+    /**
+     * @var array<string, string>
+     */
+    private array $paymentLabels = [
+        'bank' => '銀行振込',
+        'convenience' => 'コンビニ決済',
+        'cod' => '代金引換',
+        'credit' => 'クレジットカード',
+    ];
+
+    /**
+     * @var array<string, string>
+     */
+    private array $paymentStatusLabels = [
+        'unpaid' => '未払い',
+        'paid' => '支払済',
+    ];
+
+    /**
+     * @var array<string, string>
+     */
+    private array $shippingStatusLabels = [
+        'unshipped' => '未発送',
+        'shipped' => '発送済',
+    ];
+
     public function __construct()
     {
         $this->products = new ProductRepository();
@@ -90,6 +116,8 @@ class ReceptionOrderService
                 'quantity' => $quantity,
                 'line_total' => $lineTotal,
                 'stock_quantity_2' => (int) $product['stock_quantity_2'],
+                'image_path' => (string) ($product['image_path'] ?? ''),
+                'image_url' => product_image_url((string) ($product['image_path'] ?? '')),
             ];
         }
 
@@ -204,6 +232,63 @@ class ReceptionOrderService
             'items' => $items,
             'paymentLabel' => $this->paymentLabel((string) $order['payment_method']),
             'paymentGuide' => $this->paymentGuide((string) $order['payment_method']),
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function searchOrders(array $input): array
+    {
+        $filters = [
+            'order_no' => trim((string) ($input['order_no'] ?? '')),
+            'order_date' => trim((string) ($input['order_date'] ?? '')),
+            'customer_name' => trim((string) ($input['customer_name'] ?? '')),
+            'payment_method' => trim((string) ($input['payment_method'] ?? '')),
+            'payment_status' => trim((string) ($input['payment_status'] ?? '')),
+            'shipping_status' => trim((string) ($input['shipping_status'] ?? '')),
+        ];
+
+        if (!array_key_exists($filters['payment_method'], $this->paymentMethodOptions())) {
+            $filters['payment_method'] = '';
+        }
+
+        if (!array_key_exists($filters['payment_status'], $this->paymentStatusOptions())) {
+            $filters['payment_status'] = '';
+        }
+
+        if (!array_key_exists($filters['shipping_status'], $this->shippingStatusOptions())) {
+            $filters['shipping_status'] = '';
+        }
+
+        $orders = array_map(
+            fn (array $order): array => $this->decorateOrder($order),
+            $this->orders->search($filters)
+        );
+
+        return [
+            'filters' => $filters,
+            'orders' => $orders,
+            'paymentMethodOptions' => $this->paymentMethodOptions(),
+            'paymentStatusOptions' => $this->paymentStatusOptions(),
+            'shippingStatusOptions' => $this->shippingStatusOptions(),
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>|null
+     */
+    public function findOrderDetailViewData(string $orderNo): ?array
+    {
+        $order = $this->orders->findByOrderNo($orderNo);
+
+        if ($order === null) {
+            return null;
+        }
+
+        return [
+            'order' => $this->decorateOrder($order),
+            'items' => $this->attachProductImages($this->orderItems->findByOrderId((int) $order['id'])),
         ];
     }
 
@@ -383,5 +468,66 @@ class ReceptionOrderService
             'cod' => '代金引換として、発送時に配達業者が代金を回収します。',
             default => '支払い方法に応じた案内を購入者へ通知してください。',
         };
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function paymentMethodOptions(): array
+    {
+        return ['' => '指定なし'] + $this->paymentLabels;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function paymentStatusOptions(): array
+    {
+        return ['' => '指定なし'] + $this->paymentStatusLabels;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function shippingStatusOptions(): array
+    {
+        return ['' => '指定なし'] + $this->shippingStatusLabels;
+    }
+
+    /**
+     * @param array<string, mixed> $order
+     * @return array<string, mixed>
+     */
+    private function decorateOrder(array $order): array
+    {
+        $paymentMethod = (string) ($order['payment_method'] ?? '');
+        $paymentStatus = (string) ($order['payment_status'] ?? '');
+        $shippingStatus = (string) ($order['shipping_status'] ?? '');
+
+        $order['payment_method_label'] = $this->paymentLabels[$paymentMethod] ?? '不明';
+        $order['payment_status_label'] = $this->paymentStatusLabels[$paymentStatus] ?? '不明';
+        $order['shipping_status_label'] = $this->shippingStatusLabels[$shippingStatus] ?? '不明';
+
+        return $order;
+    }
+
+    /**
+     * @param array<int, array<string, mixed>> $items
+     * @return array<int, array<string, mixed>>
+     */
+    private function attachProductImages(array $items): array
+    {
+        $products = $this->products->findByIds(array_map(
+            static fn (array $item): int => (int) ($item['product_id'] ?? 0),
+            $items
+        ));
+
+        foreach ($items as $index => $item) {
+            $product = $products[(int) ($item['product_id'] ?? 0)] ?? null;
+            $items[$index]['image_path'] = (string) ($product['image_path'] ?? '');
+            $items[$index]['image_url'] = product_image_url((string) ($product['image_path'] ?? ''));
+        }
+
+        return $items;
     }
 }

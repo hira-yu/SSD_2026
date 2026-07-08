@@ -36,7 +36,10 @@ declare(strict_types=1);
     <div class="alert alert-error"><?= e((string) $errorMessage) ?></div>
 <?php endif; ?>
 
-<section class="panel search-panel">
+<section class="panel search-panel admin-search-panel">
+    <div class="panel-heading-bar">
+        <h3>検索条件</h3>
+    </div>
     <form class="search-form accountant-search-form" method="get" action="/staff/accountant/orders">
         <div class="form-field">
             <label for="order_no">注文番号</label>
@@ -61,13 +64,16 @@ declare(strict_types=1);
             </select>
         </div>
         <div class="search-actions">
-            <button class="button-link button-submit" type="submit">検索する</button>
-            <a class="button-link button-secondary" href="/staff/accountant/orders">条件をクリア</a>
+            <button class="button-link button-submit" type="submit">検索</button>
+            <a class="button-link button-secondary" href="/staff/accountant/orders">条件クリア</a>
         </div>
     </form>
 </section>
 
 <section class="panel">
+    <div class="panel-heading-bar">
+        <h3>注文一覧</h3>
+    </div>
     <?php if ($orders === []): ?>
         <p class="empty-state">該当する注文がありません。</p>
     <?php else: ?>

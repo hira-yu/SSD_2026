@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 class ProductRepository
 {
+    private ?bool $hasImagePathColumn = null;
+
     /**
      * @return array<int, array<string, mixed>>
      */
     public function listAll(): array
     {
         $statement = db_connection()->query(
-            <<<'SQL'
+            sprintf(
+                <<<'SQL'
                 SELECT
                     id,
                     product_no,
@@ -18,22 +21,27 @@ class ProductRepository
                     price,
                     category,
                     maker,
+                    %s,
                     stock_quantity_1,
                     stock_quantity_2
                 FROM products
                 ORDER BY product_no ASC
-            SQL
+            SQL,
+                $this->imagePathSelectExpression()
+            )
         );
 
         return $statement->fetchAll() ?: [];
     }
 
     /**
+     * @param array<int, string>|string|null $makers
      * @return array<int, array<string, mixed>>
      */
-    public function searchForCustomer(?string $name = null): array
+    public function searchForCustomer(?string $name = null, ?string $category = null, array|string|null $makers = null, ?int $minPrice = null, ?int $maxPrice = null): array
     {
-        $sql = <<<'SQL'
+        $sql = sprintf(
+            <<<'SQL'
             SELECT
                 id,
                 product_no,
@@ -41,10 +49,13 @@ class ProductRepository
                 price,
                 category,
                 maker,
+                %s,
                 stock_quantity_1,
                 stock_quantity_2
             FROM products
-        SQL;
+        SQL,
+            $this->imagePathSelectExpression()
+        );
 
         $conditions = [];
         $params = [];
@@ -52,6 +63,35 @@ class ProductRepository
         if ($name !== null && $name !== '') {
             $conditions[] = 'name LIKE :name';
             $params['name'] = '%' . $name . '%';
+        }
+
+        if ($category !== null && $category !== '') {
+            $conditions[] = 'category = :category';
+            $params['category'] = $category;
+        }
+
+        $makerValues = $this->normalizeMakers($makers);
+
+        if ($makerValues !== []) {
+            $makerPlaceholders = [];
+
+            foreach ($makerValues as $index => $maker) {
+                $placeholder = 'maker_' . $index;
+                $makerPlaceholders[] = ':' . $placeholder;
+                $params[$placeholder] = $maker;
+            }
+
+            $conditions[] = 'maker IN (' . implode(', ', $makerPlaceholders) . ')';
+        }
+
+        if ($minPrice !== null) {
+            $conditions[] = 'price >= :min_price';
+            $params['min_price'] = $minPrice;
+        }
+
+        if ($maxPrice !== null) {
+            $conditions[] = 'price <= :max_price';
+            $params['max_price'] = $maxPrice;
         }
 
         if ($conditions !== []) {
@@ -67,11 +107,38 @@ class ProductRepository
     }
 
     /**
+     * @param array<int, string>|string|null $makers
+     * @return array<int, string>
+     */
+    private function normalizeMakers(array|string|null $makers): array
+    {
+        if ($makers === null || $makers === '') {
+            return [];
+        }
+
+        $values = is_array($makers) ? $makers : [$makers];
+        $normalized = [];
+
+        foreach ($values as $maker) {
+            $maker = trim((string) $maker);
+
+            if ($maker === '') {
+                continue;
+            }
+
+            $normalized[] = $maker;
+        }
+
+        return array_values(array_unique($normalized));
+    }
+
+    /**
      * @return array<int, array<string, mixed>>
      */
     public function searchForReceptionist(?string $productNo = null, ?string $name = null): array
     {
-        $sql = <<<'SQL'
+        $sql = sprintf(
+            <<<'SQL'
             SELECT
                 id,
                 product_no,
@@ -79,10 +146,13 @@ class ProductRepository
                 price,
                 category,
                 maker,
+                %s,
                 stock_quantity_1,
                 stock_quantity_2
             FROM products
-        SQL;
+        SQL,
+            $this->imagePathSelectExpression()
+        );
 
         $conditions = [];
         $params = [];
@@ -130,12 +200,14 @@ class ProductRepository
                     price,
                     category,
                     maker,
+                    %s,
                     stock_quantity_1,
                     stock_quantity_2
                 FROM products
                 WHERE id IN (%s)
                 ORDER BY product_no ASC
             SQL,
+            $this->imagePathSelectExpression(),
             $placeholders
         ));
         $statement->execute($ids);
@@ -181,12 +253,14 @@ class ProductRepository
                     price,
                     category,
                     maker,
+                    %s,
                     stock_quantity_1,
                     stock_quantity_2
                 FROM products
                 WHERE id IN (%s)
                 ORDER BY id ASC
             SQL,
+            $this->imagePathSelectExpression(),
             $placeholders
         );
 
@@ -304,5 +378,39 @@ class ProductRepository
     private function usesRowLevelLocking(): bool
     {
         return (string) config('database.driver', 'sqlite') === 'mysql';
+    }
+
+    private function imagePathSelectExpression(): string
+    {
+        return $this->hasImagePathColumn() ? 'image_path' : "'' AS image_path";
+    }
+
+    private function hasImagePathColumn(): bool
+    {
+        if ($this->hasImagePathColumn !== null) {
+            return $this->hasImagePathColumn;
+        }
+
+        $driver = (string) config('database.driver', 'sqlite');
+        $connection = db_connection();
+
+        if ($driver === 'sqlite') {
+            $columns = $connection->query('PRAGMA table_info(products)')->fetchAll() ?: [];
+
+            foreach ($columns as $column) {
+                if ((string) ($column['name'] ?? '') === 'image_path') {
+                    return $this->hasImagePathColumn = true;
+                }
+            }
+
+            return $this->hasImagePathColumn = false;
+        }
+
+        if ($driver === 'mysql') {
+            $statement = $connection->query("SHOW COLUMNS FROM products LIKE 'image_path'");
+            return $this->hasImagePathColumn = (($statement->fetch() ?: false) !== false);
+        }
+
+        return $this->hasImagePathColumn = false;
     }
 }

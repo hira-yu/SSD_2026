@@ -2,81 +2,87 @@
 
 declare(strict_types=1);
 ?>
-<section class="panel checkout-done-panel">
-    <p class="eyebrow">Order Complete</p>
-    <h2>ご注文ありがとうございました</h2>
-    <p class="lead">ネット注文を受け付けました。これはデモ用の疑似決済による注文です。</p>
-
-    <div class="done-order-number">
-        <span>注文番号</span>
-        <strong><?= e((string) $order['order_no']) ?></strong>
+<section class="market-order-page">
+    <div class="market-breadcrumb">
+        <a href="/">トップ</a>
+        <a href="/cart">カート</a>
+        <a href="/checkout">ご注文手続き</a>
+        <span>注文完了</span>
     </div>
 
-    <div class="detail-split">
-        <div class="detail-card">
-            <h3>注文状態</h3>
-            <dl class="detail-list">
-                <div>
-                    <dt>支払い状態</dt>
-                    <dd class="status-ok">支払済</dd>
-                </div>
-                <div>
-                    <dt>発送状態</dt>
-                    <dd class="status-muted">未発送</dd>
-                </div>
-                <div>
-                    <dt>注文日時</dt>
-                    <dd><?= e((string) $order['order_date']) ?></dd>
-                </div>
-            </dl>
+    <div class="market-step-bar">
+        <div class="market-step-item is-done">1. カート</div>
+        <div class="market-step-item is-done">2. 注文情報入力</div>
+        <div class="market-step-item is-done">3. 注文内容確認</div>
+        <div class="market-step-item is-active">4. 注文完了</div>
+    </div>
+
+    <div class="market-complete-box">
+        <h2>ご注文が完了しました</h2>
+        <p>ご注文内容を受け付けました。注文番号はお問い合わせ時にも必要になります。</p>
+
+        <div class="market-complete-order-no">
+            <span>注文番号</span>
+            <strong><?= e((string) $order['order_no']) ?></strong>
         </div>
 
-        <div class="detail-card">
-            <h3>ご請求金額</h3>
-            <dl class="detail-list">
-                <div>
-                    <dt>商品小計</dt>
-                    <dd>¥<?= number_format((int) $order['subtotal']) ?></dd>
-                </div>
-                <div>
-                    <dt>配送料</dt>
-                    <dd>¥<?= number_format((int) $order['shipping_fee']) ?></dd>
-                </div>
-                <div class="total-row">
-                    <dt>合計金額</dt>
-                    <dd>¥<?= number_format((int) $order['total_amount']) ?></dd>
-                </div>
-            </dl>
+        <div class="market-complete-statuses">
+            <div>
+                <span>支払い状態</span>
+                <strong class="status-ok">支払済</strong>
+            </div>
+            <div>
+                <span>発送状態</span>
+                <strong class="status-muted">未発送</strong>
+            </div>
         </div>
     </div>
 
-    <div class="table-wrap">
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>商品番号</th>
-                    <th>商品名</th>
-                    <th>単価</th>
-                    <th>数量</th>
-                    <th>小計</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($items as $item): ?>
-                    <tr>
-                        <td><?= e((string) $item['product_no']) ?></td>
-                        <td><?= e((string) $item['product_name']) ?></td>
-                        <td>¥<?= number_format((int) $item['unit_price']) ?></td>
-                        <td><?= e((string) $item['quantity']) ?></td>
-                        <td>¥<?= number_format((int) $item['line_total']) ?></td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    </div>
+    <div class="market-confirm-layout">
+        <section class="market-confirm-main">
+            <div class="market-form-section">
+                <div class="market-panel-heading">ご注文商品</div>
+                <ul class="market-summary-item-list">
+                    <?php foreach ($items as $item): ?>
+                        <li>
+                            <img
+                                src="<?= e((string) ($item['image_url'] ?? product_image_url((string) ($item['image_path'] ?? '')))) ?>"
+                                alt="<?= e((string) $item['product_name']) ?>"
+                                data-fallback-src="/assets/img/products/placeholder.svg"
+                            >
+                            <div>
+                                <strong><?= e((string) $item['product_name']) ?></strong>
+                                <span><?= e((string) $item['quantity']) ?>点 / 単価 ¥<?= number_format((int) $item['unit_price']) ?></span>
+                            </div>
+                            <strong>¥<?= number_format((int) $item['line_total']) ?></strong>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        </section>
 
-    <div class="search-actions">
-        <a class="button-link" href="/products">商品一覧へ戻る</a>
-        <a class="button-link button-secondary" href="/cart">カートを見る</a>
+        <aside class="market-order-summary">
+            <div class="market-summary-card">
+                <div class="market-panel-heading">ご請求金額</div>
+                <dl class="market-summary-list">
+                    <div>
+                        <dt>商品小計</dt>
+                        <dd>¥<?= number_format((int) $order['subtotal']) ?></dd>
+                    </div>
+                    <div>
+                        <dt>送料</dt>
+                        <dd>¥<?= number_format((int) $order['shipping_fee']) ?></dd>
+                    </div>
+                    <div class="total-row">
+                        <dt>合計</dt>
+                        <dd>¥<?= number_format((int) $order['total_amount']) ?></dd>
+                    </div>
+                </dl>
+
+                <div class="market-summary-actions">
+                    <a class="button-link button-submit button-full" href="/products">商品一覧へ戻る</a>
+                </div>
+            </div>
+        </aside>
     </div>
 </section>

@@ -81,34 +81,39 @@ class InventoryService
             }
         }
 
-        $reservedQuantities = $this->orders->getUnshippedItemQuantitiesByProduct();
-
         foreach (array_keys($normalizedItems) as $productId) {
-            $stockPair = $this->products->getStockPair($productId);
+            $this->assertProductStockMatchesUnshippedReservations($productId);
+        }
+    }
 
-            if ($stockPair === null) {
-                throw new RuntimeException('対象商品の在庫確認に失敗しました。');
-            }
+    public function assertProductStockMatchesUnshippedReservations(int $productId): void
+    {
+        $stockPair = $this->products->getStockPair($productId);
 
-            $expectedReservedQuantity = $reservedQuantities[$productId] ?? 0;
-            $actualDifference = (int) $stockPair['stock_quantity_1'] - (int) $stockPair['stock_quantity_2'];
+        if ($stockPair === null) {
+            throw new RuntimeException('対象商品の在庫確認に失敗しました。');
+        }
 
-            if ($actualDifference === $expectedReservedQuantity) {
-                continue;
-            }
+        $stockQuantity1 = (int) $stockPair['stock_quantity_1'];
+        $stockQuantity2 = (int) $stockPair['stock_quantity_2'];
+        $reservedQuantities = $this->orders->getUnshippedItemQuantitiesByProduct();
+        $expectedReservedQuantity = $reservedQuantities[$productId] ?? 0;
+        $actualDifference = $stockQuantity1 - $stockQuantity2;
 
-            $productName = (string) ($stockPair['name'] ?? '対象商品');
-
-            if ($expectedReservedQuantity === 0) {
-                throw new RuntimeException(sprintf(
-                    '%s の在庫数量1と在庫数量2が一致しないため、発送更新を中止しました。',
-                    $productName
-                ));
-            }
-
+        if (
+            $stockQuantity1 < 0
+            || $stockQuantity2 < 0
+            || $stockQuantity1 < $stockQuantity2
+            || $actualDifference !== $expectedReservedQuantity
+        ) {
+            error_log('productId=' . $productId);
+            error_log('stock1=' . $stockQuantity1);
+            error_log('stock2=' . $stockQuantity2);
+            error_log('actualDifference=' . $actualDifference);
+            error_log('expectedReservedQuantity=' . $expectedReservedQuantity);
             throw new RuntimeException(sprintf(
-                '%s の在庫整合性が崩れたため、発送更新を中止しました。',
-                $productName
+                '%s の在庫引当数量との整合性が確認できないため、発送更新を中止しました。',
+                (string) ($stockPair['name'] ?? '対象商品')
             ));
         }
     }

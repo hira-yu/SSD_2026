@@ -7,7 +7,7 @@ declare(strict_types=1);
         <p class="eyebrow">Staff Sign In</p>
         <h2>担当者ログイン</h2>
         <p class="lead compact">
-            注文受付係、会計係、商品発送係の担当者専用画面です。
+            注文受付係、会計係、商品発送係の担当者専用ログインです。
         </p>
 
         <?php if (!empty($errorMessage)): ?>
