@@ -7,7 +7,7 @@ declare(strict_types=1);
         <p class="eyebrow">Accounting Workspace</p>
         <h2>会計係向け注文詳細</h2>
         <p class="lead compact">注文内容を確認し、未払いの場合は支払い状態を支払済へ更新できます。</p>
-        <p><a class="text-link" href="/staff/accountant/orders">注文検索へ戻る</a></p>
+        <p><a class="text-link" href="<?= e(app_path('/staff/accountant/orders')) ?>">注文検索へ戻る</a></p>
     </div>
 
     <aside class="status-card">
@@ -121,7 +121,7 @@ declare(strict_types=1);
     </div>
 
     <?php if (!empty($order['can_update_payment'])): ?>
-        <form method="post" action="/staff/accountant/orders/<?= e((string) $order['order_no']) ?>/payment" class="search-actions">
+        <form method="post" action="<?= e(app_path('/staff/accountant/orders/' . (string) $order['order_no'] . '/payment')) ?>" class="search-actions">
             <input type="hidden" name="_csrf" value="<?= e((string) $csrfToken) ?>">
             <button class="button-link button-submit" type="submit">支払済へ更新</button>
         </form>

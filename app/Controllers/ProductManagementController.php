@@ -82,7 +82,7 @@ class ProductManagementController extends Controller
             return;
         }
 
-        $result = $this->products->updateProduct((int) $product['id'], $_POST);
+        $result = $this->products->updateProduct((int) $product['id'], $_POST, $product);
 
         if (($result['ok'] ?? false) !== true) {
             $this->renderForm('edit', $_POST, $result['errors'] ?? [], $product);

@@ -7,7 +7,7 @@ declare(strict_types=1);
         <p class="eyebrow">Shipping Workspace</p>
         <h2>商品発送係向け未発送注文一覧</h2>
         <p class="lead compact">発送可能な注文と、まだ支払い待ちの注文を確認できます。</p>
-        <p><a class="text-link" href="/staff/shipper">商品発送係トップへ戻る</a></p>
+        <p><a class="text-link" href="<?= e(app_path('/staff/shipper')) ?>">商品発送係トップへ戻る</a></p>
     </div>
 
     <aside class="status-card">
@@ -22,7 +22,7 @@ declare(strict_types=1);
                 <dd><?= e((string) $roleLabel) ?></dd>
             </div>
         </dl>
-        <form method="post" action="/logout" class="logout-form">
+        <form method="post" action="<?= e(app_path('/logout')) ?>" class="logout-form">
             <input type="hidden" name="_csrf" value="<?= e((string) $csrfToken) ?>">
             <button class="button-link button-submit" type="submit">ログアウト</button>
         </form>
@@ -69,7 +69,7 @@ declare(strict_types=1);
                             <td><?= e((string) $order['shipping_status_label']) ?></td>
                             <td>¥<?= number_format((int) $order['total_amount']) ?></td>
                             <td class="status-ok"><?= e((string) $order['shipping_eligibility']['label']) ?></td>
-                            <td><a class="text-link" href="/staff/shipper/orders/<?= e((string) $order['order_no']) ?>">詳細</a></td>
+                            <td><a class="text-link" href="<?= e(app_path('/staff/shipper/orders/' . (string) $order['order_no'])) ?>">詳細</a></td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
@@ -111,7 +111,7 @@ declare(strict_types=1);
                             <td><?= e((string) $order['shipping_status_label']) ?></td>
                             <td>¥<?= number_format((int) $order['total_amount']) ?></td>
                             <td class="status-muted"><?= e((string) $order['shipping_eligibility']['label']) ?></td>
-                            <td><a class="text-link" href="/staff/shipper/orders/<?= e((string) $order['order_no']) ?>">詳細</a></td>
+                            <td><a class="text-link" href="<?= e(app_path('/staff/shipper/orders/' . (string) $order['order_no'])) ?>">詳細</a></td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>

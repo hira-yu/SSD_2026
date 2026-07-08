@@ -4,9 +4,9 @@ declare(strict_types=1);
 ?>
 <section class="market-order-page">
     <div class="market-breadcrumb">
-        <a href="/">トップ</a>
-        <a href="/cart">カート</a>
-        <a href="/checkout">ご注文手続き</a>
+        <a href="<?= e(app_path('/')) ?>">トップ</a>
+        <a href="<?= e(app_path('/cart')) ?>">カート</a>
+        <a href="<?= e(app_path('/checkout')) ?>">ご注文手続き</a>
         <span>注文完了</span>
     </div>
 
@@ -48,7 +48,7 @@ declare(strict_types=1);
                             <img
                                 src="<?= e((string) ($item['image_url'] ?? product_image_url((string) ($item['image_path'] ?? '')))) ?>"
                                 alt="<?= e((string) $item['product_name']) ?>"
-                                data-fallback-src="/assets/img/products/placeholder.svg"
+                                data-fallback-src="<?= e(product_image_url('')) ?>"
                             >
                             <div>
                                 <strong><?= e((string) $item['product_name']) ?></strong>
@@ -80,7 +80,7 @@ declare(strict_types=1);
                 </dl>
 
                 <div class="market-summary-actions">
-                    <a class="button-link button-submit button-full" href="/products">商品一覧へ戻る</a>
+                    <a class="button-link button-submit button-full" href="<?= e(app_path('/products')) ?>">商品一覧へ戻る</a>
                 </div>
             </div>
         </aside>

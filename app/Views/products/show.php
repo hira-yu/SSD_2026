@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-$placeholderImage = '/assets/img/products/placeholder.svg';
+$placeholderImage = product_image_url('');
 $favoriteProductIds = isset($favoriteProductIds) && is_array($favoriteProductIds) ? $favoriteProductIds : [];
 $isFavorite = in_array((int) $product['id'], $favoriteProductIds, true);
 $redirectTo = $_SERVER['REQUEST_URI'] ?? '/products/' . (string) $product['id'];
 ?>
 <section class="market-product-detail-page">
     <div class="market-breadcrumb">
-        <a href="/">トップ</a>
-        <a href="/products">商品一覧</a>
+        <a href="<?= e(app_path('/')) ?>">トップ</a>
+        <a href="<?= e(app_path('/products')) ?>">商品一覧</a>
         <span><?= e((string) $product['name']) ?></span>
     </div>
 
@@ -71,7 +71,7 @@ $redirectTo = $_SERVER['REQUEST_URI'] ?? '/products/' . (string) $product['id'];
         <aside class="market-detail-buy-rail">
             <div class="market-detail-buy-card">
                 <?php if (!empty($product['is_orderable'])): ?>
-                    <form class="market-detail-buy-form" method="post" action="/cart/add">
+                    <form class="market-detail-buy-form" method="post" action="<?= e(app_path('/cart/add')) ?>">
                         <input type="hidden" name="_csrf" value="<?= e((string) $csrfToken) ?>">
                         <input type="hidden" name="product_id" value="<?= e((string) $product['id']) ?>">
                         <div class="form-field">
@@ -84,7 +84,7 @@ $redirectTo = $_SERVER['REQUEST_URI'] ?? '/products/' . (string) $product['id'];
                         </button>
                     </form>
 
-                    <form class="market-favorite-form" method="post" action="<?= $isFavorite ? '/favorites/remove' : '/favorites/add' ?>">
+                    <form class="market-favorite-form" method="post" action="<?= e(app_path($isFavorite ? '/favorites/remove' : '/favorites/add')) ?>">
                         <input type="hidden" name="_csrf" value="<?= e((string) $csrfToken) ?>">
                         <input type="hidden" name="product_id" value="<?= e((string) $product['id']) ?>">
                         <input type="hidden" name="redirect_to" value="<?= e((string) $redirectTo) ?>">
@@ -94,7 +94,7 @@ $redirectTo = $_SERVER['REQUEST_URI'] ?? '/products/' . (string) $product['id'];
                         </button>
                     </form>
 
-                    <a class="button-link button-secondary button-full" href="/cart">
+                    <a class="button-link button-secondary button-full" href="<?= e(app_path('/cart')) ?>">
                         <i data-lucide="shopping-bag" aria-hidden="true"></i>
                         カートを見る
                     </a>
@@ -122,7 +122,7 @@ $redirectTo = $_SERVER['REQUEST_URI'] ?? '/products/' . (string) $product['id'];
         <div class="market-product-row">
             <?php foreach ($relatedProducts as $relatedProduct): ?>
                 <article class="market-product-card">
-                    <a class="market-product-thumb" href="/products/<?= e((string) $relatedProduct['id']) ?>">
+                    <a class="market-product-thumb" href="<?= e(app_path('/products/' . (string) $relatedProduct['id'])) ?>">
                         <img
                             src="<?= e((string) $relatedProduct['image_url']) ?>"
                             alt="<?= e((string) $relatedProduct['name']) ?>"
@@ -131,7 +131,7 @@ $redirectTo = $_SERVER['REQUEST_URI'] ?? '/products/' . (string) $product['id'];
                     </a>
                     <div class="market-product-body">
                         <p class="market-product-meta"><?= e((string) $relatedProduct['maker']) ?></p>
-                        <a class="market-product-title" href="/products/<?= e((string) $relatedProduct['id']) ?>">
+                        <a class="market-product-title" href="<?= e(app_path('/products/' . (string) $relatedProduct['id'])) ?>">
                             <?= e((string) $relatedProduct['name']) ?>
                         </a>
                         <p class="market-price-row">
@@ -162,7 +162,7 @@ $redirectTo = $_SERVER['REQUEST_URI'] ?? '/products/' . (string) $product['id'];
             <div class="market-product-row">
                 <?php foreach ($sameMakerProducts as $makerProduct): ?>
                     <article class="market-product-card">
-                        <a class="market-product-thumb" href="/products/<?= e((string) $makerProduct['id']) ?>">
+                        <a class="market-product-thumb" href="<?= e(app_path('/products/' . (string) $makerProduct['id'])) ?>">
                             <img
                                 src="<?= e((string) $makerProduct['image_url']) ?>"
                                 alt="<?= e((string) $makerProduct['name']) ?>"
@@ -171,7 +171,7 @@ $redirectTo = $_SERVER['REQUEST_URI'] ?? '/products/' . (string) $product['id'];
                         </a>
                         <div class="market-product-body">
                             <p class="market-product-meta"><?= e((string) $makerProduct['category']) ?></p>
-                            <a class="market-product-title" href="/products/<?= e((string) $makerProduct['id']) ?>">
+                            <a class="market-product-title" href="<?= e(app_path('/products/' . (string) $makerProduct['id'])) ?>">
                                 <?= e((string) $makerProduct['name']) ?>
                             </a>
                             <p class="market-price-row">

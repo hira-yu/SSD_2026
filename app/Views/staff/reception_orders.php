@@ -7,7 +7,7 @@ declare(strict_types=1);
         <p class="eyebrow">Receptionist Console</p>
         <h2>注文受付係向け注文一覧</h2>
         <p class="lead compact">登録済み注文を検索して、購入者情報と注文明細を確認できます。</p>
-        <p><a class="text-link" href="/staff/receptionist">注文受付係トップへ戻る</a></p>
+        <p><a class="text-link" href="<?= e(app_path('/staff/receptionist')) ?>">注文受付係トップへ戻る</a></p>
     </div>
 
     <aside class="status-card">
@@ -22,7 +22,7 @@ declare(strict_types=1);
                 <dd><?= e((string) $roleLabel) ?></dd>
             </div>
         </dl>
-        <form method="post" action="/logout" class="logout-form">
+        <form method="post" action="<?= e(app_path('/logout')) ?>" class="logout-form">
             <input type="hidden" name="_csrf" value="<?= e((string) $csrfToken) ?>">
             <button class="button-link button-submit" type="submit">ログアウト</button>
         </form>
@@ -33,7 +33,7 @@ declare(strict_types=1);
     <div class="panel-heading-bar">
         <h3>検索条件</h3>
     </div>
-    <form class="search-form receptionist-order-search-form" method="get" action="/staff/receptionist/orders">
+    <form class="search-form receptionist-order-search-form" method="get" action="<?= e(app_path('/staff/receptionist/orders')) ?>">
         <div class="form-field">
             <label for="order_no">注文番号</label>
             <input id="order_no" type="text" name="order_no" value="<?= e((string) $filters['order_no']) ?>">
@@ -78,7 +78,7 @@ declare(strict_types=1);
         </div>
         <div class="search-actions">
             <button class="button-link button-submit" type="submit">検索</button>
-            <a class="button-link button-secondary" href="/staff/receptionist/orders">条件クリア</a>
+            <a class="button-link button-secondary" href="<?= e(app_path('/staff/receptionist/orders')) ?>">条件クリア</a>
         </div>
     </form>
 </section>
@@ -114,7 +114,7 @@ declare(strict_types=1);
                             <td><span class="admin-status-chip"><?= e((string) $order['payment_status_label']) ?></span></td>
                             <td><span class="admin-status-chip muted"><?= e((string) $order['shipping_status_label']) ?></span></td>
                             <td>¥<?= number_format((int) $order['total_amount']) ?></td>
-                            <td><a class="text-link" href="/staff/receptionist/orders/<?= e((string) $order['order_no']) ?>">注文詳細を確認</a></td>
+                            <td><a class="text-link" href="<?= e(app_path('/staff/receptionist/orders/' . (string) $order['order_no'])) ?>">注文詳細を確認</a></td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>

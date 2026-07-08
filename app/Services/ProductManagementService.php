@@ -45,8 +45,6 @@ class ProductManagementService
             'category' => '',
             'maker' => '',
             'image_path' => '',
-            'stock_quantity_1' => '0',
-            'stock_quantity_2' => '0',
             'sale_price' => '',
             'sale_starts_at' => '',
             'sale_ends_at' => '',
@@ -85,9 +83,15 @@ class ProductManagementService
     public function createProduct(array $input): array
     {
         [$data, $errors] = $this->normalizeProductInput($input);
+        [$imagePath, $imageErrors] = $this->storeUploadedImage($_FILES['product_image'] ?? null);
+        $errors = array_merge($errors, $imageErrors);
 
         if ($errors !== []) {
             return ['ok' => false, 'errors' => $errors];
+        }
+
+        if ($imagePath !== null) {
+            $data['image_path'] = $imagePath;
         }
 
         try {
@@ -104,12 +108,18 @@ class ProductManagementService
      * @param array<string, mixed> $input
      * @return array{ok: bool, errors: array<int, string>}
      */
-    public function updateProduct(int $productId, array $input): array
+    public function updateProduct(int $productId, array $input, array $currentProduct): array
     {
-        [$data, $errors] = $this->normalizeProductInput($input);
+        [$data, $errors] = $this->normalizeProductInput($input, $currentProduct);
+        [$imagePath, $imageErrors] = $this->storeUploadedImage($_FILES['product_image'] ?? null);
+        $errors = array_merge($errors, $imageErrors);
 
         if ($errors !== []) {
             return ['ok' => false, 'errors' => $errors];
+        }
+
+        if ($imagePath !== null) {
+            $data['image_path'] = $imagePath;
         }
 
         try {
@@ -145,7 +155,7 @@ class ProductManagementService
      * @param array<string, mixed> $input
      * @return array{0: array<string, mixed>, 1: array<int, string>}
      */
-    public function normalizeProductInput(array $input): array
+    public function normalizeProductInput(array $input, ?array $currentProduct = null): array
     {
         $data = [
             'product_no' => trim((string) ($input['product_no'] ?? '')),
@@ -153,9 +163,9 @@ class ProductManagementService
             'price' => $this->integerInput($input['price'] ?? ''),
             'category' => trim((string) ($input['category'] ?? '')),
             'maker' => trim((string) ($input['maker'] ?? '')),
-            'image_path' => trim((string) ($input['image_path'] ?? '')),
-            'stock_quantity_1' => $this->integerInput($input['stock_quantity_1'] ?? ''),
-            'stock_quantity_2' => $this->integerInput($input['stock_quantity_2'] ?? ''),
+            'image_path' => trim((string) ($currentProduct['image_path'] ?? '')),
+            'stock_quantity_1' => (int) ($currentProduct['stock_quantity_1'] ?? 0),
+            'stock_quantity_2' => (int) ($currentProduct['stock_quantity_2'] ?? 0),
             'sale_price' => $this->nullableIntegerInput($input['sale_price'] ?? ''),
             'sale_starts_at' => $this->normalizeDateTime($input['sale_starts_at'] ?? ''),
             'sale_ends_at' => $this->normalizeDateTime($input['sale_ends_at'] ?? ''),
@@ -174,10 +184,6 @@ class ProductManagementService
             $errors[] = '価格は0以上で入力してください。';
         }
 
-        if ($data['stock_quantity_1'] < 0 || $data['stock_quantity_2'] < 0) {
-            $errors[] = '在庫数は0以上で入力してください。';
-        }
-
         if ($data['sale_price'] !== null && $data['sale_price'] >= $data['price']) {
             $errors[] = 'セール価格は通常価格より低い金額を入力してください。';
         }
@@ -190,7 +196,65 @@ class ProductManagementService
             $errors[] = '販売期間の開始日時は終了日時以前にしてください。';
         }
 
+        foreach (['sale_starts_at' => 'セール開始', 'sale_ends_at' => 'セール終了', 'available_from' => '販売開始', 'available_until' => '販売終了'] as $field => $label) {
+            if ($data[$field] !== null && !$this->isValidDateTime((string) $data[$field])) {
+                $errors[] = $label . 'は 2026/07/08 09:00 の形式で入力してください。';
+            }
+        }
+
         return [$data, array_values(array_unique($errors))];
+    }
+
+    /**
+     * @param array<string, mixed>|null $file
+     * @return array{0: string|null, 1: array<int, string>}
+     */
+    private function storeUploadedImage(?array $file): array
+    {
+        if ($file === null || (int) ($file['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
+            return [null, []];
+        }
+
+        if ((int) ($file['error'] ?? UPLOAD_ERR_OK) !== UPLOAD_ERR_OK) {
+            return [null, ['画像アップロードに失敗しました。ファイルサイズや形式をご確認ください。']];
+        }
+
+        $tmpName = (string) ($file['tmp_name'] ?? '');
+
+        if ($tmpName === '' || !is_uploaded_file($tmpName)) {
+            return [null, ['アップロード画像を確認できませんでした。']];
+        }
+
+        $binary = file_get_contents($tmpName);
+
+        if ($binary === false) {
+            return [null, ['アップロード画像を読み込めませんでした。']];
+        }
+
+        if (!function_exists('imagecreatefromstring') || !function_exists('imagewebp')) {
+            return [null, ['このPHP環境では商品画像のWebP変換に対応していません。']];
+        }
+
+        $image = @imagecreatefromstring($binary);
+
+        if ($image === false) {
+            return [null, ['商品画像はPNG、JPEG、WebPなどの画像ファイルを選択してください。']];
+        }
+
+        $directory = base_path('public/assets/img/products/generated');
+
+        if (!is_dir($directory) && !mkdir($directory, 0775, true) && !is_dir($directory)) {
+            return [null, ['商品画像の保存先を作成できませんでした。']];
+        }
+
+        $fileName = hash('sha256', $binary . random_bytes(16)) . '.webp';
+        $path = $directory . DIRECTORY_SEPARATOR . $fileName;
+
+        if (!imagewebp($image, $path, 82)) {
+            return [null, ['商品画像をWebP形式で保存できませんでした。']];
+        }
+
+        return ['assets/img/products/generated/' . $fileName, []];
     }
 
     private function integerInput(mixed $value): int
@@ -215,7 +279,15 @@ class ProductManagementService
             return null;
         }
 
-        $value = str_replace('T', ' ', $value);
+        $value = str_replace(['T', '/'], [' ', '-'], $value);
+
+        if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $value) === 1) {
+            return $value . ' 00:00:00';
+        }
+
+        if (preg_match('/^(\d{4}-\d{2}-\d{2}) (\d{1,2}):(\d{2})$/', $value, $matches) === 1) {
+            return sprintf('%s %02d:%s:00', $matches[1], (int) $matches[2], $matches[3]);
+        }
 
         if (preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/', $value) === 1) {
             return $value . ':00';
@@ -232,7 +304,9 @@ class ProductManagementService
             return '';
         }
 
-        return str_replace(' ', 'T', substr($value, 0, 16));
+        $value = substr($value, 0, 16);
+
+        return str_replace('-', '/', $value);
     }
 
     private function validDateRange(?string $startsAt, ?string $endsAt): bool
@@ -241,6 +315,20 @@ class ProductManagementService
             return true;
         }
 
+        if (!$this->isValidDateTime($startsAt) || !$this->isValidDateTime($endsAt)) {
+            return true;
+        }
+
         return new DateTimeImmutable($startsAt) <= new DateTimeImmutable($endsAt);
+    }
+
+    private function isValidDateTime(string $value): bool
+    {
+        $dateTime = DateTimeImmutable::createFromFormat('!Y-m-d H:i:s', $value);
+        $errors = DateTimeImmutable::getLastErrors();
+
+        return $dateTime instanceof DateTimeImmutable
+            && ($errors === false || ((int) $errors['warning_count'] === 0 && (int) $errors['error_count'] === 0))
+            && $dateTime->format('Y-m-d H:i:s') === $value;
     }
 }

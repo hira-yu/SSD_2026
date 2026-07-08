@@ -9,7 +9,7 @@ $eligibility = $order['shipping_eligibility'] ?? ['status' => '', 'label' => '',
         <p class="eyebrow">Shipping Workspace</p>
         <h2>商品発送係向け注文詳細</h2>
         <p class="lead compact"><?= e((string) $eligibility['message']) ?></p>
-        <p><a class="text-link" href="/staff/shipper/orders">未発送注文一覧へ戻る</a></p>
+        <p><a class="text-link" href="<?= e(app_path('/staff/shipper/orders')) ?>">未発送注文一覧へ戻る</a></p>
     </div>
 
     <aside class="status-card">
@@ -147,7 +147,7 @@ $eligibility = $order['shipping_eligibility'] ?? ['status' => '', 'label' => '',
 </section>
 
 <?php if (($eligibility['status'] ?? '') === 'shippable'): ?>
-    <form method="post" action="/staff/shipper/orders/<?= e((string) $order['order_no']) ?>/ship" class="search-actions">
+    <form method="post" action="<?= e(app_path('/staff/shipper/orders/' . (string) $order['order_no'] . '/ship')) ?>" class="search-actions">
         <input type="hidden" name="_csrf" value="<?= e((string) $csrfToken) ?>">
         <button class="button-link button-submit" type="submit">発送済へ更新</button>
     </form>

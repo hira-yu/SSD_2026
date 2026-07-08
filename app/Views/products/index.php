@@ -7,13 +7,13 @@ $selectedCategory = (string) ($filters['category'] ?? '');
 $selectedMakers = isset($filters['makers']) && is_array($filters['makers']) ? $filters['makers'] : [];
 $minPrice = (string) ($filters['min_price'] ?? '');
 $maxPrice = (string) ($filters['max_price'] ?? '');
-$placeholderImage = '/assets/img/products/placeholder.svg';
+$placeholderImage = product_image_url('');
 $favoriteProductIds = isset($favoriteProductIds) && is_array($favoriteProductIds) ? $favoriteProductIds : [];
 $redirectTo = $_SERVER['REQUEST_URI'] ?? '/products';
 ?>
 <section class="market-catalog-page">
     <div class="market-breadcrumb">
-        <a href="/">トップ</a>
+        <a href="<?= e(app_path('/')) ?>">トップ</a>
         <span>商品一覧</span>
     </div>
 
@@ -37,7 +37,7 @@ $redirectTo = $_SERVER['REQUEST_URI'] ?? '/products';
                                 'category' => (string) $option['value'],
                             ]);
                             ?>
-                            <a href="/products?<?= e($categoryQuery) ?>">
+                            <a href="<?= e(app_path('/products')) ?>?<?= e($categoryQuery) ?>">
                                 <?= e((string) $option['value']) ?>
                             </a>
                             <span><?= e((string) $option['count']) ?></span>
@@ -48,7 +48,7 @@ $redirectTo = $_SERVER['REQUEST_URI'] ?? '/products';
 
             <section class="market-filter-panel">
                 <div class="market-panel-heading"><i data-lucide="sliders-horizontal" aria-hidden="true"></i>条件を変更する</div>
-                <form class="market-side-filter-form" method="get" action="/products">
+                <form class="market-side-filter-form" method="get" action="<?= e(app_path('/products')) ?>">
                     <input type="hidden" name="name" value="<?= e($name) ?>">
                     <input type="hidden" name="category" value="<?= e($selectedCategory) ?>">
 
@@ -85,7 +85,7 @@ $redirectTo = $_SERVER['REQUEST_URI'] ?? '/products';
                         <i data-lucide="refresh-cw" aria-hidden="true"></i>
                         条件を更新
                     </button>
-                    <a class="button-link button-ghost button-full" href="/products">
+                    <a class="button-link button-ghost button-full" href="<?= e(app_path('/products')) ?>">
                         <i data-lucide="x" aria-hidden="true"></i>
                         条件をクリア
                     </a>
@@ -108,7 +108,7 @@ $redirectTo = $_SERVER['REQUEST_URI'] ?? '/products';
                 <section class="market-product-grid market-product-grid-catalog">
                     <?php foreach ($products as $product): ?>
                         <article class="market-product-card market-product-card-grid market-grid-card">
-                            <a class="market-product-thumb market-product-thumb-grid" href="/products/<?= e((string) $product['id']) ?>">
+                            <a class="market-product-thumb market-product-thumb-grid" href="<?= e(app_path('/products/' . (string) $product['id'])) ?>">
                                 <img
                                     src="<?= e((string) $product['image_url']) ?>"
                                     alt="<?= e((string) $product['name']) ?>"
@@ -117,7 +117,7 @@ $redirectTo = $_SERVER['REQUEST_URI'] ?? '/products';
                             </a>
                             <div class="market-product-body">
                                 <p class="market-product-meta"><?= e((string) $product['category']) ?> / <?= e((string) $product['maker']) ?></p>
-                                <a class="market-product-title" href="/products/<?= e((string) $product['id']) ?>">
+                                <a class="market-product-title" href="<?= e(app_path('/products/' . (string) $product['id'])) ?>">
                                     <?= e((string) $product['name']) ?>
                                 </a>
                                 <p class="market-price-row">
@@ -133,7 +133,7 @@ $redirectTo = $_SERVER['REQUEST_URI'] ?? '/products';
                                 <p class="market-product-code"><?= e((string) $product['product_no']) ?></p>
 
                                 <?php if (!empty($product['is_orderable'])): ?>
-                                    <form class="market-grid-actions" method="post" action="/cart/add">
+                                    <form class="market-grid-actions" method="post" action="<?= e(app_path('/cart/add')) ?>">
                                         <input type="hidden" name="_csrf" value="<?= e((string) $csrfToken) ?>">
                                         <input type="hidden" name="product_id" value="<?= e((string) $product['id']) ?>">
                                         <div class="market-quantity-inline">
@@ -149,7 +149,7 @@ $redirectTo = $_SERVER['REQUEST_URI'] ?? '/products';
                                     <p class="market-stock-copy status-ng">現在在庫がないため、カートに追加できません。</p>
                                 <?php endif; ?>
 
-                                <form class="market-favorite-form" method="post" action="<?= in_array((int) $product['id'], $favoriteProductIds, true) ? '/favorites/remove' : '/favorites/add' ?>">
+                                <form class="market-favorite-form" method="post" action="<?= e(app_path(in_array((int) $product['id'], $favoriteProductIds, true) ? '/favorites/remove' : '/favorites/add')) ?>">
                                     <input type="hidden" name="_csrf" value="<?= e((string) $csrfToken) ?>">
                                     <input type="hidden" name="product_id" value="<?= e((string) $product['id']) ?>">
                                     <input type="hidden" name="redirect_to" value="<?= e((string) $redirectTo) ?>">

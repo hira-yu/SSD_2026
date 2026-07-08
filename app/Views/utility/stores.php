@@ -4,7 +4,7 @@ declare(strict_types=1);
 ?>
 <section class="market-utility-page">
     <div class="market-breadcrumb">
-        <a href="/">トップ</a>
+        <a href="<?= e(app_path('/')) ?>">トップ</a>
         <span>店舗のご案内</span>
     </div>
 
@@ -40,11 +40,11 @@ declare(strict_types=1);
                     <?php endforeach; ?>
                 </ul>
                 <div class="market-store-actions">
-                    <a class="button-link button-secondary" href="/products">
+                    <a class="button-link button-secondary" href="<?= e(app_path('/products')) ?>">
                         <i data-lucide="search" aria-hidden="true"></i>
                         商品を探す
                     </a>
-                    <a class="button-link button-submit" href="/checkout">
+                    <a class="button-link button-submit" href="<?= e(app_path('/checkout')) ?>">
                         <i data-lucide="clipboard-check" aria-hidden="true"></i>
                         注文手続きへ
                     </a>

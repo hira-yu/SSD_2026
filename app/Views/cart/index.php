@@ -4,7 +4,7 @@ declare(strict_types=1);
 ?>
 <section class="market-order-page">
     <div class="market-breadcrumb">
-        <a href="/">トップ</a>
+        <a href="<?= e(app_path('/')) ?>">トップ</a>
         <span>カート</span>
     </div>
 
@@ -44,7 +44,7 @@ declare(strict_types=1);
         <section class="market-empty-state">
             <h3>カートに商品が入っていません</h3>
             <p>商品一覧から気になる商品を追加してください。</p>
-            <a class="button-link button-submit" href="/products">商品一覧へ進む</a>
+            <a class="button-link button-submit" href="<?= e(app_path('/products')) ?>">商品一覧へ進む</a>
         </section>
     <?php else: ?>
         <div class="market-cart-layout">
@@ -55,7 +55,7 @@ declare(strict_types=1);
                             <img
                                 src="<?= e((string) $item['image_url']) ?>"
                                 alt="<?= e((string) $item['product_name']) ?>"
-                                data-fallback-src="/assets/img/products/placeholder.svg"
+                                data-fallback-src="<?= e(product_image_url('')) ?>"
                             >
                         </div>
 
@@ -74,7 +74,7 @@ declare(strict_types=1);
                             <?php endif; ?>
 
                             <div class="market-cart-actions">
-                                <form class="market-cart-qty-form" method="post" action="/cart/update">
+                                <form class="market-cart-qty-form" method="post" action="<?= e(app_path('/cart/update')) ?>">
                                     <input type="hidden" name="_csrf" value="<?= e((string) $csrfToken) ?>">
                                     <input type="hidden" name="product_id" value="<?= e((string) $item['product_id']) ?>">
                                     <label for="cart-qty-<?= e((string) $item['product_id']) ?>">数量</label>
@@ -82,7 +82,7 @@ declare(strict_types=1);
                                     <button class="button-link button-secondary button-small" type="submit">数量を更新</button>
                                 </form>
 
-                                <form method="post" action="/cart/remove">
+                                <form method="post" action="<?= e(app_path('/cart/remove')) ?>">
                                     <input type="hidden" name="_csrf" value="<?= e((string) $csrfToken) ?>">
                                     <input type="hidden" name="product_id" value="<?= e((string) $item['product_id']) ?>">
                                     <button class="button-link button-ghost button-small" type="submit">削除</button>
@@ -120,8 +120,8 @@ declare(strict_types=1);
                         </div>
                     </dl>
                     <div class="market-summary-actions">
-                        <a class="button-link button-submit button-full" href="/checkout">注文へ進む</a>
-                        <a class="button-link button-secondary button-full" href="/products">買い物を続ける</a>
+                        <a class="button-link button-submit button-full" href="<?= e(app_path('/checkout')) ?>">注文へ進む</a>
+                        <a class="button-link button-secondary button-full" href="<?= e(app_path('/products')) ?>">買い物を続ける</a>
                     </div>
                 </div>
             </aside>

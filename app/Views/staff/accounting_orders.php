@@ -7,7 +7,7 @@ declare(strict_types=1);
         <p class="eyebrow">Accounting Workspace</p>
         <h2>会計係向け注文検索</h2>
         <p class="lead compact">注文番号、注文日、購入者氏名、支払い状態で注文を検索し、未払い注文を支払済へ更新できます。</p>
-        <p><a class="text-link" href="/staff/accountant">会計係トップへ戻る</a></p>
+        <p><a class="text-link" href="<?= e(app_path('/staff/accountant')) ?>">会計係トップへ戻る</a></p>
     </div>
 
     <aside class="status-card">
@@ -22,7 +22,7 @@ declare(strict_types=1);
                 <dd><?= e((string) $roleLabel) ?></dd>
             </div>
         </dl>
-        <form method="post" action="/logout" class="logout-form">
+        <form method="post" action="<?= e(app_path('/logout')) ?>" class="logout-form">
             <input type="hidden" name="_csrf" value="<?= e((string) $csrfToken) ?>">
             <button class="button-link button-submit" type="submit">ログアウト</button>
         </form>
@@ -40,7 +40,7 @@ declare(strict_types=1);
     <div class="panel-heading-bar">
         <h3>検索条件</h3>
     </div>
-    <form class="search-form accountant-search-form" method="get" action="/staff/accountant/orders">
+    <form class="search-form accountant-search-form" method="get" action="<?= e(app_path('/staff/accountant/orders')) ?>">
         <div class="form-field">
             <label for="order_no">注文番号</label>
             <input id="order_no" type="text" name="order_no" value="<?= e((string) $filters['order_no']) ?>" placeholder="例: ORD202606230001">
@@ -65,7 +65,7 @@ declare(strict_types=1);
         </div>
         <div class="search-actions">
             <button class="button-link button-submit" type="submit">検索</button>
-            <a class="button-link button-secondary" href="/staff/accountant/orders">条件クリア</a>
+            <a class="button-link button-secondary" href="<?= e(app_path('/staff/accountant/orders')) ?>">条件クリア</a>
         </div>
     </form>
 </section>
@@ -97,7 +97,7 @@ declare(strict_types=1);
                 <tbody>
                     <?php foreach ($orders as $order): ?>
                         <tr>
-                            <td><a class="text-link" href="/staff/accountant/orders/<?= e((string) $order['order_no']) ?>"><?= e((string) $order['order_no']) ?></a></td>
+                            <td><a class="text-link" href="<?= e(app_path('/staff/accountant/orders/' . (string) $order['order_no'])) ?>"><?= e((string) $order['order_no']) ?></a></td>
                             <td><?= e(substr((string) $order['order_date'], 0, 10)) ?></td>
                             <td><?= e((string) $order['customer_name']) ?></td>
                             <td><?= e((string) $order['payment_method_label']) ?></td>
@@ -109,9 +109,9 @@ declare(strict_types=1);
                             <td>¥<?= number_format((int) $order['total_amount']) ?></td>
                             <td>
                                 <div class="inline-actions">
-                                    <a class="text-link" href="/staff/accountant/orders/<?= e((string) $order['order_no']) ?>">詳細</a>
+                                    <a class="text-link" href="<?= e(app_path('/staff/accountant/orders/' . (string) $order['order_no'])) ?>">詳細</a>
                                     <?php if (!empty($order['can_update_payment'])): ?>
-                                        <form method="post" action="/staff/accountant/orders/<?= e((string) $order['order_no']) ?>/payment">
+                                        <form method="post" action="<?= e(app_path('/staff/accountant/orders/' . (string) $order['order_no'] . '/payment')) ?>">
                                             <input type="hidden" name="_csrf" value="<?= e((string) $csrfToken) ?>">
                                             <button class="button-link button-submit button-small" type="submit">支払済へ更新</button>
                                         </form>

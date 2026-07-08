@@ -2248,6 +2248,31 @@ body.public-page .market-complete-box {
     gap: 1rem;
 }
 
+.staff-current-image {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.85rem;
+    border: 1px solid #d9e0ea;
+    border-radius: 1rem;
+    background: #f8fafc;
+}
+
+.staff-current-image img {
+    width: 92px;
+    height: 92px;
+    object-fit: contain;
+    border: 1px solid #e5e9f0;
+    border-radius: 0.85rem;
+    background: #fff;
+}
+
+.staff-current-image p {
+    margin: 0.2rem 0 0;
+    color: #526173;
+    font-size: 0.82rem;
+}
+
 .market-quantity-inline,
 .market-cart-qty-form,
 .market-cart-actions {

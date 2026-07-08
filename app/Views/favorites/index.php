@@ -3,11 +3,11 @@
 declare(strict_types=1);
 
 $favoriteProductIds = isset($favoriteProductIds) && is_array($favoriteProductIds) ? $favoriteProductIds : [];
-$placeholderImage = '/assets/img/products/placeholder.svg';
+$placeholderImage = product_image_url('');
 ?>
 <section class="market-utility-page">
     <div class="market-breadcrumb">
-        <a href="/">トップ</a>
+        <a href="<?= e(app_path('/')) ?>">トップ</a>
         <span>お気に入り商品</span>
     </div>
 
@@ -35,7 +35,7 @@ $placeholderImage = '/assets/img/products/placeholder.svg';
         <section class="market-empty-state market-empty-state-soft">
             <h2>お気に入り商品はまだ登録されていません</h2>
             <p>商品一覧やトップページから「お気に入りに追加」を押すと、ここに保存されます。</p>
-            <a class="button-link button-submit" href="/products">
+            <a class="button-link button-submit" href="<?= e(app_path('/products')) ?>">
                 <i data-lucide="search" aria-hidden="true"></i>
                 商品を探す
             </a>
@@ -44,7 +44,7 @@ $placeholderImage = '/assets/img/products/placeholder.svg';
         <section class="market-product-grid market-product-grid-catalog">
             <?php foreach ($items as $product): ?>
                 <article class="market-product-card market-product-card-grid market-grid-card">
-                    <a class="market-product-thumb market-product-thumb-grid" href="/products/<?= e((string) $product['id']) ?>">
+                    <a class="market-product-thumb market-product-thumb-grid" href="<?= e(app_path('/products/' . (string) $product['id'])) ?>">
                         <img
                             src="<?= e((string) $product['image_url']) ?>"
                             alt="<?= e((string) $product['name']) ?>"
@@ -53,7 +53,7 @@ $placeholderImage = '/assets/img/products/placeholder.svg';
                     </a>
                     <div class="market-product-body">
                         <p class="market-product-meta"><?= e((string) $product['maker']) ?> / <?= e((string) $product['category']) ?></p>
-                        <a class="market-product-title" href="/products/<?= e((string) $product['id']) ?>">
+                        <a class="market-product-title" href="<?= e(app_path('/products/' . (string) $product['id'])) ?>">
                             <?= e((string) $product['name']) ?>
                         </a>
                         <p class="market-price-row">
@@ -68,7 +68,7 @@ $placeholderImage = '/assets/img/products/placeholder.svg';
                         </p>
 
                         <?php if (!empty($product['is_orderable'])): ?>
-                            <form class="market-grid-actions" method="post" action="/cart/add">
+                            <form class="market-grid-actions" method="post" action="<?= e(app_path('/cart/add')) ?>">
                                 <input type="hidden" name="_csrf" value="<?= e((string) $csrfToken) ?>">
                                 <input type="hidden" name="product_id" value="<?= e((string) $product['id']) ?>">
                                 <div class="market-quantity-inline">
@@ -82,10 +82,10 @@ $placeholderImage = '/assets/img/products/placeholder.svg';
                             </form>
                         <?php endif; ?>
 
-                        <form class="market-favorite-form" method="post" action="/favorites/remove">
+                        <form class="market-favorite-form" method="post" action="<?= e(app_path('/favorites/remove')) ?>">
                             <input type="hidden" name="_csrf" value="<?= e((string) $csrfToken) ?>">
                             <input type="hidden" name="product_id" value="<?= e((string) $product['id']) ?>">
-                            <input type="hidden" name="redirect_to" value="/favorites">
+                            <input type="hidden" name="redirect_to" value="<?= e(app_path('/favorites')) ?>">
                             <button class="button-link button-secondary button-small button-full market-favorite-button" type="submit">
                                 <i data-lucide="heart-off" aria-hidden="true"></i>
                                 お気に入りから外す
