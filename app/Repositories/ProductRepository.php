@@ -22,6 +22,11 @@ class ProductRepository
                     category,
                     maker,
                     %s,
+                    sale_price,
+                    sale_starts_at,
+                    sale_ends_at,
+                    available_from,
+                    available_until,
                     stock_quantity_1,
                     stock_quantity_2
                 FROM products
@@ -50,6 +55,11 @@ class ProductRepository
                 category,
                 maker,
                 %s,
+                sale_price,
+                sale_starts_at,
+                sale_ends_at,
+                available_from,
+                available_until,
                 stock_quantity_1,
                 stock_quantity_2
             FROM products
@@ -147,6 +157,11 @@ class ProductRepository
                 category,
                 maker,
                 %s,
+                sale_price,
+                sale_starts_at,
+                sale_ends_at,
+                available_from,
+                available_until,
                 stock_quantity_1,
                 stock_quantity_2
             FROM products
@@ -201,6 +216,11 @@ class ProductRepository
                     category,
                     maker,
                     %s,
+                    sale_price,
+                    sale_starts_at,
+                    sale_ends_at,
+                    available_from,
+                    available_until,
                     stock_quantity_1,
                     stock_quantity_2
                 FROM products
@@ -224,6 +244,104 @@ class ProductRepository
     public function findById(int $productId): ?array
     {
         return $this->findByIds([$productId])[$productId] ?? null;
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     */
+    public function create(array $data): int
+    {
+        $statement = db_connection()->prepare(
+            <<<'SQL'
+                INSERT INTO products (
+                    product_no,
+                    name,
+                    price,
+                    category,
+                    maker,
+                    image_path,
+                    sale_price,
+                    sale_starts_at,
+                    sale_ends_at,
+                    available_from,
+                    available_until,
+                    stock_quantity_1,
+                    stock_quantity_2
+                ) VALUES (
+                    :product_no,
+                    :name,
+                    :price,
+                    :category,
+                    :maker,
+                    :image_path,
+                    :sale_price,
+                    :sale_starts_at,
+                    :sale_ends_at,
+                    :available_from,
+                    :available_until,
+                    :stock_quantity_1,
+                    :stock_quantity_2
+                )
+            SQL
+        );
+        $statement->execute($this->productWriteParams($data));
+
+        return (int) db_connection()->lastInsertId();
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     */
+    public function update(int $productId, array $data): bool
+    {
+        $params = $this->productWriteParams($data);
+        $params['id'] = $productId;
+        $statement = db_connection()->prepare(
+            <<<'SQL'
+                UPDATE products
+                SET product_no = :product_no,
+                    name = :name,
+                    price = :price,
+                    category = :category,
+                    maker = :maker,
+                    image_path = :image_path,
+                    sale_price = :sale_price,
+                    sale_starts_at = :sale_starts_at,
+                    sale_ends_at = :sale_ends_at,
+                    available_from = :available_from,
+                    available_until = :available_until,
+                    stock_quantity_1 = :stock_quantity_1,
+                    stock_quantity_2 = :stock_quantity_2,
+                    updated_at = CURRENT_TIMESTAMP
+                WHERE id = :id
+            SQL
+        );
+        $statement->execute($params);
+
+        return $statement->rowCount() >= 0;
+    }
+
+    public function receiveStock(int $productId, int $quantity): bool
+    {
+        if ($quantity < 1) {
+            return false;
+        }
+
+        $statement = db_connection()->prepare(
+            <<<'SQL'
+                UPDATE products
+                SET stock_quantity_1 = stock_quantity_1 + :quantity,
+                    stock_quantity_2 = stock_quantity_2 + :quantity,
+                    updated_at = CURRENT_TIMESTAMP
+                WHERE id = :id
+            SQL
+        );
+        $statement->execute([
+            'id' => $productId,
+            'quantity' => $quantity,
+        ]);
+
+        return $statement->rowCount() === 1;
     }
 
     public function findByIdForUpdate(int $productId): ?array
@@ -254,6 +372,11 @@ class ProductRepository
                     category,
                     maker,
                     %s,
+                    sale_price,
+                    sale_starts_at,
+                    sale_ends_at,
+                    available_from,
+                    available_until,
                     stock_quantity_1,
                     stock_quantity_2
                 FROM products
@@ -378,6 +501,36 @@ class ProductRepository
     private function usesRowLevelLocking(): bool
     {
         return (string) config('database.driver', 'sqlite') === 'mysql';
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
+    private function productWriteParams(array $data): array
+    {
+        return [
+            'product_no' => (string) $data['product_no'],
+            'name' => (string) $data['name'],
+            'price' => (int) $data['price'],
+            'category' => (string) $data['category'],
+            'maker' => (string) $data['maker'],
+            'image_path' => $this->nullableString($data['image_path'] ?? null),
+            'sale_price' => $data['sale_price'] === null ? null : (int) $data['sale_price'],
+            'sale_starts_at' => $this->nullableString($data['sale_starts_at'] ?? null),
+            'sale_ends_at' => $this->nullableString($data['sale_ends_at'] ?? null),
+            'available_from' => $this->nullableString($data['available_from'] ?? null),
+            'available_until' => $this->nullableString($data['available_until'] ?? null),
+            'stock_quantity_1' => (int) $data['stock_quantity_1'],
+            'stock_quantity_2' => (int) $data['stock_quantity_2'],
+        ];
+    }
+
+    private function nullableString(mixed $value): ?string
+    {
+        $value = trim((string) $value);
+
+        return $value === '' ? null : $value;
     }
 
     private function imagePathSelectExpression(): string

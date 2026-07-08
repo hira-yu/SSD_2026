@@ -56,9 +56,15 @@ $placeholderImage = '/assets/img/products/placeholder.svg';
                         <a class="market-product-title" href="/products/<?= e((string) $product['id']) ?>">
                             <?= e((string) $product['name']) ?>
                         </a>
-                        <p class="market-price-row">¥<?= number_format((int) $product['price']) ?></p>
+                        <p class="market-price-row">
+                            <?php if (!empty($product['is_on_sale'])): ?>
+                                <span class="market-regular-price">¥<?= number_format((int) $product['regular_price']) ?></span>
+                                <span class="market-sale-badge">SALE</span>
+                            <?php endif; ?>
+                            ¥<?= number_format((int) $product['price']) ?>
+                        </p>
                         <p class="market-stock-copy <?= e((string) $product['availability_class']) ?>">
-                            <?= e((string) $product['availability_label']) ?> / 在庫 <?= e((string) $product['stock_quantity_2']) ?>
+                            <?= e((string) $product['availability_label']) ?>
                         </p>
 
                         <?php if (!empty($product['is_orderable'])): ?>

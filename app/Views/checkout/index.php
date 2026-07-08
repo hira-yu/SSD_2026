@@ -67,7 +67,7 @@ declare(strict_types=1);
 
                 <div class="form-field">
                     <label for="customer_contact">電話番号</label>
-                    <input id="customer_contact" type="tel" name="customer_contact" value="<?= e((string) ($form['customer_contact'] ?? '')) ?>" autocomplete="tel" inputmode="tel" placeholder="例: 09012345678" required>
+                    <input id="customer_contact" type="tel" name="customer_contact" value="<?= e((string) ($form['customer_contact'] ?? '')) ?>" autocomplete="tel" inputmode="tel" maxlength="11" placeholder="例: 09012345678" required>
                 </div>
             </section>
 
@@ -119,7 +119,7 @@ declare(strict_types=1);
 
                 <div class="form-field">
                     <label for="card_number">カード番号</label>
-                    <input id="card_number" type="text" name="card_number" value="" autocomplete="off" inputmode="numeric" maxlength="19" placeholder="半角数字 13〜19桁" required>
+                    <input id="card_number" type="text" name="card_number" value="" autocomplete="off" inputmode="numeric" maxlength="19" placeholder="例: 1234 5678 9012 3456" required>
                 </div>
 
                 <div class="form-field">

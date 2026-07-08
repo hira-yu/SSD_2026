@@ -7,7 +7,7 @@ declare(strict_types=1);
         <p class="eyebrow">Staff Sign In</p>
         <h2>担当者ログイン</h2>
         <p class="lead compact">
-            注文受付係、会計係、商品発送係の担当者専用ログインです。
+            注文受付係、会計係、商品発送係、商品管理担当の担当者専用ログインです。
         </p>
 
         <?php if (!empty($errorMessage)): ?>
@@ -45,6 +45,7 @@ declare(strict_types=1);
                 <li>注文受付係: <code>reception01</code> / <code>reception123</code></li>
                 <li>会計係: <code>account01</code> / <code>account123</code></li>
                 <li>商品発送係: <code>shipper01</code> / <code>shipper123</code></li>
+                <li>商品管理担当: <code>product01</code> / <code>product123</code></li>
             </ul>
         </div>
     </div>

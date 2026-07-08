@@ -65,6 +65,7 @@ $customerUtilityLinks = [
     ['label' => '店舗のご案内', 'url' => '/stores', 'icon' => 'store'],
 ];
 $cartCount = 0;
+$subtotal = 0;
 $authService = new AuthService();
 $currentRole = (string) (($authUser['role'] ?? ''));
 $adminMenu = [
@@ -82,11 +83,24 @@ $adminMenu = [
         ['label' => '発送トップ', 'url' => '/staff/shipper'],
         ['label' => '未発送一覧', 'url' => '/staff/shipper/orders'],
     ],
+    'product_manager' => [
+        ['label' => '商品管理トップ', 'url' => '/staff/product-manager'],
+        ['label' => '商品一覧', 'url' => '/staff/product-manager/products'],
+        ['label' => '新規追加', 'url' => '/staff/product-manager/products/new'],
+    ],
 ];
 
 foreach ((array) ($_SESSION[(string) config('app.online_order.cart_session_key', 'online_cart')] ?? []) as $quantity) {
     if (is_int($quantity) && $quantity > 0) {
         $cartCount += $quantity;
+    }
+}
+
+if ($isCustomerArea && $cartCount > 0) {
+    try {
+        $subtotal = (int) ((new CartService())->cartViewData()['subtotal'] ?? 0);
+    } catch (Throwable) {
+        $subtotal = 0;
     }
 }
 ?>
@@ -148,8 +162,8 @@ foreach ((array) ($_SESSION[(string) config('app.online_order.cart_session_key',
 
                 <a class="customer-cart-link" href="/cart">
                     <i data-lucide="shopping-cart" aria-hidden="true"></i>
-                    <span>カート</span>
                     <strong><?= e((string) $cartCount) ?></strong>
+                    <?= $cartCount > 0 ? '<span>¥' . number_format((int) $subtotal) . '</span>' : '' ?>
                 </a>
             </div>
         </div>
