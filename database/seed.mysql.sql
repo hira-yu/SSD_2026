@@ -10,9 +10,9 @@ INSERT INTO users (id, login_id, password_hash, role, name) VALUES
     (4, 'product01', '$2y$12$Vdkjnnpy/HMLRq7wdrOOYuZG2kPHz5T2J.PUv5441pDXPF1O1mVHi', 'product_manager', '商品管理担当');
 
 INSERT INTO products (id, product_no, name, price, category, maker, image_path, stock_quantity_1, stock_quantity_2) VALUES
-    (1, 'PRD-001', 'ワイヤレスマウス', 2980, 'PC周辺機器', 'Open Gadget', 'assets/img/products/generated/385860cdb842e459b6a315d54f4c4db2e3dc101a2703675621346a4687695c97.webp', 20, 20),
-    (2, 'PRD-002', 'メカニカルキーボード', 9800, 'PC周辺機器', 'Open Gadget', 'assets/img/products/generated/878a2e553daa5e608f1c61ebd64f31101e459647dd68f5e794f6406a279d67df.webp', 10, 10),
-    (3, 'PRD-003', 'USB-C 充電器', 2480, 'アクセサリ', 'Fast Charge', 'assets/img/products/generated/cbf4019fbe584ad1d0467ee088af370fbbf5b1886e455098a4de15e8aa44c1a4.webp', 35, 35),
+    (1, 'PRD-001', 'ワイヤレスマウス', 2980, '電子機器', 'Open Gadget', 'assets/img/products/generated/385860cdb842e459b6a315d54f4c4db2e3dc101a2703675621346a4687695c97.webp', 20, 20),
+    (2, 'PRD-002', 'メカニカルキーボード', 9800, '電子機器', 'Open Gadget', 'assets/img/products/generated/878a2e553daa5e608f1c61ebd64f31101e459647dd68f5e794f6406a279d67df.webp', 10, 10),
+    (3, 'PRD-003', 'USB-C 充電器', 2480, '電子機器', 'Fast Charge', 'assets/img/products/generated/cbf4019fbe584ad1d0467ee088af370fbbf5b1886e455098a4de15e8aa44c1a4.webp', 35, 35),
     (4, 'PRD-004', 'A4コピー用紙 500枚', 680, '事務用品', 'Paper Works', 'assets/img/products/generated/4f955387ce903fae86181765d2c1112c31d62d8e010ed45057c6184680093525.webp', 50, 50),
     (5, 'PRD-005', 'ラベルプリンター', 12800, '事務用品', 'Label Lab', 'assets/img/products/generated/b957f415e7ad123587d289ea6485039ca2efe1f49c1ad5c948f80131cf809f35.webp', 6, 6),
     (6, 'PRD-006', 'オックスフォードシャツ', 4980, '服', 'Urban Thread', 'assets/img/products/generated/44ff702c531d759b5ec2ab0538179b17b57e2ecc3988c7044c5f0feea5e41fc9.webp', 18, 18),

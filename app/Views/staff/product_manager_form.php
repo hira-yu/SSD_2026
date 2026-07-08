@@ -76,7 +76,6 @@ $action = $isEdit ? '/staff/product-manager/products/' . $productId : '/staff/pr
                 <div>
                     <strong>現在の画像</strong>
                     <p><?= e((string) $form['image_path']) ?></p>
-                    <p>新しい画像を選択した場合のみ差し替えます。</p>
                 </div>
             </div>
         <?php endif; ?>
@@ -89,7 +88,6 @@ $action = $isEdit ? '/staff/product-manager/products/' . $productId : '/staff/pr
             <label class="form-field">
                 <span>セール開始</span>
                 <input type="text" name="sale_starts_at" value="<?= e((string) ($form['sale_starts_at'] ?? '')) ?>" placeholder="2026/07/08 09:00">
-                <small class="form-help-text">24時間表記で入力します。</small>
             </label>
             <label class="form-field">
                 <span>セール終了</span>
@@ -98,7 +96,6 @@ $action = $isEdit ? '/staff/product-manager/products/' . $productId : '/staff/pr
             <label class="form-field">
                 <span>販売開始</span>
                 <input type="text" name="available_from" value="<?= e((string) ($form['available_from'] ?? '')) ?>" placeholder="2026/07/08 09:00">
-                <small class="form-help-text">空欄の場合は期間制限なしです。</small>
             </label>
             <label class="form-field">
                 <span>販売終了</span>
@@ -131,7 +128,6 @@ $action = $isEdit ? '/staff/product-manager/products/' . $productId : '/staff/pr
                 <dd><?= e((string) ($product['stock_quantity_2'] ?? 0)) ?></dd>
             </div>
         </dl>
-        <p class="form-help-text">在庫2は在庫1と発送待ち数量から定まるため、直接編集せず、仕入れ入庫で増加させます。</p>
     </section>
 
     <section class="panel">
