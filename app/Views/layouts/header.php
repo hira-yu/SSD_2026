@@ -6,7 +6,9 @@ $applicationName = (string) config('app.name', 'IPUT EC');
 $adminApplicationName = (string) config('app.admin_name', 'IPUT EC 管理画面');
 $authUser = $_SESSION['auth'] ?? null;
 $currentPath = current_path();
-$isAdminArea = $currentPath === '/login' || str_starts_with($currentPath, '/staff');
+$isAdminArea = $currentPath === '/login'
+    || str_starts_with($currentPath, '/staff')
+    || str_starts_with($currentPath, '/system');
 $isCustomerArea = !$isAdminArea;
 $bodyClass = $isAdminArea ? 'admin-shell admin-page' : 'customer-shell public-page';
 $serviceName = (string) config('app.customer_ui.service_name', 'IPUT EC');

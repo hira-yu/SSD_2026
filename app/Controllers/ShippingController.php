@@ -70,4 +70,39 @@ class ShippingController extends Controller
         $targetOrderNo = (string) ($result['order_no'] ?? $orderNo);
         $this->redirect('/staff/shipper/orders/' . urlencode($targetOrderNo));
     }
+
+    public function document(string $orderNo): void
+    {
+        $this->auth->authorizeRole('shipper');
+        $detail = $this->shipping->findOrderDetail($orderNo);
+
+        if ($detail === null) {
+            http_response_code(404);
+            echo '対象の注文が見つかりませんでした。';
+            return;
+        }
+
+        try {
+            $pdf = (new DeliveryDocumentPdfService())->generate(
+                (array) $detail['order'],
+                (array) $detail['items']
+            );
+        } catch (Throwable $exception) {
+            app_log('Delivery document PDF generation failed', [
+                'type' => $exception::class,
+                'message' => $exception->getMessage(),
+                'order_no' => $orderNo,
+            ]);
+            http_response_code(500);
+            echo 'PDFの生成に失敗しました。時間をおいて再度お試しください。';
+            return;
+        }
+
+        $safeOrderNo = preg_replace('/[^A-Za-z0-9_-]/', '', $orderNo) ?: 'order';
+        header('Content-Type: application/pdf');
+        header('Content-Disposition: attachment; filename="delivery-document-' . $safeOrderNo . '.pdf"');
+        header('Content-Length: ' . strlen($pdf));
+        header('Cache-Control: private, no-store, max-age=0');
+        echo $pdf;
+    }
 }
