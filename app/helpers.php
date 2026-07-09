@@ -246,6 +246,72 @@ function product_availability(array $product): array
     ];
 }
 
+/**
+ * @param array<string, mixed> $product
+ * @return array<string, mixed>
+ */
+function product_delivery_schedule(array $product): array
+{
+    if (empty($product['is_orderable'])) {
+        $availability = product_availability($product);
+
+        return [
+            'supports_same_day' => false,
+            'summary_type' => 'unavailable',
+            'summary_text' => !$availability['is_orderable']
+                ? '現在在庫がないため、入荷までお時間をいただく場合があります。'
+                : '',
+            'deadline_hours' => 0,
+            'deadline_minutes' => 0,
+            'arrival_date_label' => '',
+        ];
+    }
+
+    $timezone = new DateTimeZone('Asia/Tokyo');
+    $now = new DateTimeImmutable('now', $timezone);
+    $cutoffToday = $now->setTime(15, 0);
+    $supportsSameDay = $now <= $cutoffToday;
+    $deadlineAt = $supportsSameDay ? $cutoffToday : $cutoffToday->modify('+1 day');
+    $arrivalAt = $supportsSameDay ? $now : $now->modify('+1 day');
+    $remainingSeconds = max(0, $deadlineAt->getTimestamp() - $now->getTimestamp());
+    $deadlineHours = intdiv($remainingSeconds, 3600);
+    $deadlineMinutes = intdiv($remainingSeconds % 3600, 60);
+    $weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+    $weekday = $weekdays[(int) $arrivalAt->format('w')] ?? '';
+
+    return [
+        'supports_same_day' => $supportsSameDay,
+        'summary_type' => 'orderable',
+        'summary_text' => '',
+        'deadline_hours' => $deadlineHours,
+        'deadline_minutes' => $deadlineMinutes,
+        'arrival_date_label' => $arrivalAt->format('Y年m月d日') . $weekday . '曜日',
+    ];
+}
+
+function product_delivery_deadline_label(array $deliverySchedule): string
+{
+    $deadlineHours = (int) ($deliverySchedule['deadline_hours'] ?? 0);
+    $deadlineMinutes = (int) ($deliverySchedule['deadline_minutes'] ?? 0);
+    $deadlineParts = [];
+
+    if ($deadlineHours > 0) {
+        $deadlineParts[] = sprintf('%d時間', $deadlineHours);
+    }
+
+    if ($deadlineMinutes > 0) {
+        $deadlineParts[] = sprintf('%d分', $deadlineMinutes);
+    }
+
+    $deadlineLabel = implode('と', $deadlineParts);
+
+    if ($deadlineLabel !== '') {
+        $deadlineLabel .= '以内';
+    }
+
+    return $deadlineLabel;
+}
+
 function app_log(string $message, array $context = []): void
 {
     $logLine = sprintf(

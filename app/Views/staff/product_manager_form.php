@@ -52,6 +52,10 @@ $action = $isEdit ? '/staff/product-manager/products/' . $productId : '/staff/pr
                 <span>商品名</span>
                 <input type="text" name="name" value="<?= e((string) ($form['name'] ?? '')) ?>" required>
             </label>
+            <label class="form-field form-field-wide">
+                <span>商品説明</span>
+                <textarea name="description" rows="4" required><?= e((string) ($form['description'] ?? '')) ?></textarea>
+            </label>
             <label class="form-field">
                 <span>価格</span>
                 <input type="number" name="price" min="0" step="1" value="<?= e((string) ($form['price'] ?? '')) ?>" required>

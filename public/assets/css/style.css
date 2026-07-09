@@ -2252,6 +2252,10 @@ body.public-page .market-complete-box {
     margin-bottom: 1rem;
 }
 
+.form-field-wide {
+    grid-column: 1 / -1;
+}
+
 .staff-product-form {
     display: grid;
     gap: 1rem;
@@ -2451,6 +2455,20 @@ body.public-page .market-complete-box {
     gap: 0.45rem;
 }
 
+.market-cart-stock-row {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    flex-wrap: wrap;
+}
+
+.market-cart-delivery-note {
+    margin: 0;
+    color: #666;
+    font-size: 0.78rem;
+    line-height: 1.7;
+}
+
 .market-cart-links {
     display: flex;
     align-items: center;
@@ -2500,7 +2518,7 @@ body.public-page .market-complete-box {
 }
 
 .market-cart-qty-form input {
-    width: 3.1rem;
+    width: 4.4rem;
     min-height: 2rem;
     padding: 0.25rem 0.35rem;
     border: 1px solid #c9ced6;
@@ -3217,6 +3235,13 @@ body.public-page .market-complete-box {
     margin: 0;
     color: #666;
     font-size: 0.78rem;
+}
+
+.market-detail-copy {
+    margin: 0.5rem 0 0;
+    color: #4b5563;
+    font-size: 0.94rem;
+    line-height: 1.75;
 }
 
 .market-detail-delivery-note-strong {
