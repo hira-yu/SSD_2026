@@ -2002,6 +2002,7 @@ body.public-page .market-complete-box {
 
 .market-stock-copy.status-ok {
     background: #edf8f0;
+    color: #1f7a35;
 }
 
 .market-stock-copy.status-low,
@@ -2327,44 +2328,244 @@ body.public-page .market-complete-box {
 
 .market-cart-list {
     display: grid;
-    gap: 0.8rem;
+    gap: 0;
+    background: #fff;
+}
+
+.market-cart-page-header {
+    display: grid;
+    gap: 0.35rem;
+    margin-bottom: 1rem;
+}
+
+.market-cart-page-header h2 {
+    margin: 0;
+    font-size: clamp(2rem, 2.5vw, 2.35rem);
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    color: #2c2c2c;
+}
+
+.market-cart-page-header p {
+    margin: 0;
+    color: #6b7280;
+    font-size: 0.92rem;
+}
+
+.market-cart-list-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 10rem 6rem;
+    gap: 1rem;
+    padding: 0 0 0.75rem;
+    border-bottom: 1px solid #d9d9d9;
+    color: #333;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.market-cart-list-head-price,
+.market-cart-list-head-qty {
+    text-align: center;
 }
 
 .market-cart-item {
     display: grid;
-    gap: 0.8rem;
-    padding: 0.8rem;
+    gap: 1.1rem;
+    padding: 1.2rem 0;
+    border: 0;
+    border-bottom: 1px solid #d9d9d9;
+    border-radius: 0;
+    align-items: start;
 }
 
 .market-cart-image {
-    border: 1px solid #ececec;
+    border: 0;
     background: #fff;
-    padding: 0.65rem;
+    padding: 0.2rem 0;
 }
 
 .market-cart-image img {
     width: 100%;
-    height: 120px;
+    height: 96px;
     object-fit: contain;
 }
 
 .market-cart-heading {
     display: flex;
     justify-content: space-between;
-    gap: 0.75rem;
+    gap: 1rem;
+    align-items: flex-start;
 }
 
-.market-cart-total {
+.market-cart-price-block {
     display: grid;
-    gap: 0.2rem;
-    align-content: start;
-    color: #666;
-    font-size: 0.8rem;
+    justify-items: end;
+    gap: 0.12rem;
+    flex: 0 0 auto;
 }
 
-.market-cart-total strong {
-    color: #ef5a00;
+.market-cart-price-block .market-price-row {
+    margin: 0;
+    color: #ed2518;
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+
+.market-cart-price-block span {
+    color: #ed2518;
+    font-size: 0.74rem;
+}
+
+.market-cart-main {
+    display: grid;
+    gap: 0.65rem;
+    min-width: 0;
+}
+
+.market-cart-side {
+    display: grid;
+    justify-items: center;
+    gap: 0.8rem;
+    align-content: start;
+}
+
+.market-cart-side-price {
+    display: grid;
+    justify-items: center;
+    gap: 0.14rem;
+}
+
+.market-cart-side-price strong {
+    color: #ed2518;
     font-size: 1.1rem;
+    line-height: 1.15;
+}
+
+.market-cart-side-price span {
+    color: #666;
+    font-size: 0.76rem;
+}
+
+.market-cart-utility {
+    display: grid;
+    gap: 0.45rem;
+}
+
+.market-cart-links {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    font-size: 0.82rem;
+}
+
+.market-cart-links a {
+    color: #376daf;
+    text-decoration: none;
+}
+
+.market-cart-links a:hover {
+    color: #d52a17;
+    text-decoration: underline;
+}
+
+.market-cart-links span {
+    color: #a1a1aa;
+}
+
+.market-cart-remove-form {
+    justify-self: start;
+}
+
+.market-cart-actions {
+    justify-content: center;
+}
+
+.market-cart-qty-form {
+    display: grid;
+    justify-items: center;
+    gap: 0.45rem;
+}
+
+.market-cart-qty-form label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.market-cart-qty-form input {
+    width: 3.1rem;
+    min-height: 2rem;
+    padding: 0.25rem 0.35rem;
+    border: 1px solid #c9ced6;
+    border-radius: 0.28rem;
+    text-align: center;
+    font-size: 0.95rem;
+}
+
+.market-cart-qty-form .button-small {
+    min-width: 3.8rem;
+    padding: 0.38rem 0.7rem;
+}
+
+.market-order-summary {
+    align-content: start;
+}
+
+.market-summary-card {
+    border-radius: 0.25rem;
+}
+
+.market-order-summary .market-panel-heading {
+    background: #f5f5f5;
+    border-radius: 0.25rem 0.25rem 0 0;
+}
+
+.market-order-summary .market-summary-list {
+    padding: 0.1rem 0.95rem 0;
+}
+
+.market-order-summary .market-summary-list div {
+    padding: 0.45rem 0;
+    font-size: 0.88rem;
+}
+
+.market-order-summary .market-summary-list .total-row dt,
+.market-order-summary .market-summary-list .total-row dd {
+    color: #1f2937;
+    font-size: 0.95rem;
+}
+
+.market-order-summary .market-summary-list .total-row dd {
+    color: #ed2518;
+    font-size: 1.05rem;
+}
+
+.market-summary-actions {
+    padding: 0.9rem 0.95rem 1rem;
+}
+
+.market-summary-actions .button-submit {
+    border-color: #c51414;
+    background: linear-gradient(180deg, #f24a3f 0%, #c81414 100%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.32);
+}
+
+.market-summary-actions .button-submit:hover,
+.market-summary-actions .button-submit:focus-visible {
+    background: linear-gradient(180deg, #f65d52 0%, #b91010 100%);
+}
+
+.market-summary-actions .button-secondary {
+    border-color: #d1d5db;
+    background: #fff;
+    color: #4b5563;
 }
 
 .market-summary-list,
@@ -2544,7 +2745,7 @@ body.public-page .market-complete-box {
     }
 
     .market-cart-item {
-        grid-template-columns: 140px minmax(0, 1fr) 120px;
+        grid-template-columns: 96px minmax(0, 1fr) 120px;
     }
 
     .market-complete-statuses {
@@ -2657,6 +2858,41 @@ body.public-page .market-complete-box {
     .market-cart-qty-form,
     .market-summary-actions {
         display: grid;
+    }
+
+    .market-cart-page-header h2 {
+        font-size: 1.85rem;
+    }
+
+    .market-cart-list-head {
+        display: none;
+    }
+
+    .market-cart-item {
+        grid-template-columns: 84px minmax(0, 1fr);
+        gap: 0.9rem;
+        padding: 1rem 0;
+    }
+
+    .market-cart-side {
+        grid-column: 1 / -1;
+        justify-items: stretch;
+        gap: 0.65rem;
+    }
+
+    .market-cart-side-price,
+    .market-cart-price-block {
+        justify-items: start;
+    }
+
+    .market-cart-actions {
+        justify-content: flex-start;
+    }
+
+    .market-cart-qty-form {
+        grid-template-columns: auto auto;
+        justify-content: start;
+        align-items: center;
     }
 
     .market-step-bar {
@@ -2981,6 +3217,15 @@ body.public-page .market-complete-box {
     margin: 0;
     color: #666;
     font-size: 0.78rem;
+}
+
+.market-detail-delivery-note-strong {
+    line-height: 1.7;
+}
+
+.market-detail-delivery-emphasis {
+    color: #d52a17;
+    font-weight: 700;
 }
 
 .market-detail-price {

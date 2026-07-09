@@ -15,11 +15,8 @@ declare(strict_types=1);
         <div class="market-step-item">4. 注文完了</div>
     </div>
 
-    <div class="market-results-summary">
-        <div>
-            <h2>ショッピングカート</h2>
-            <p>商品内容、数量、合計金額を確認してご注文手続きへ進めます。</p>
-        </div>
+    <div class="market-cart-page-header">
+        <h2>ショッピングカート</h2>
     </div>
 
     <?php if ($successMessage): ?>
@@ -49,6 +46,11 @@ declare(strict_types=1);
     <?php else: ?>
         <div class="market-cart-layout">
             <section class="market-cart-list">
+                <div class="market-cart-list-head" aria-hidden="true">
+                    <span class="market-cart-list-head-product">商品</span>
+                    <span class="market-cart-list-head-price">価格</span>
+                    <span class="market-cart-list-head-qty">数量</span>
+                </div>
                 <?php foreach ($items as $item): ?>
                     <article class="market-cart-item">
                         <div class="market-cart-image">
@@ -62,27 +64,26 @@ declare(strict_types=1);
                         <div class="market-cart-main">
                             <div class="market-cart-heading">
                                 <div>
-                                    <p class="market-product-meta"><?= e((string) $item['category']) ?> / <?= e((string) $item['maker']) ?></p>
-                                    <h3 class="market-cart-title"><?= e((string) $item['product_name']) ?></h3>
-                                    <p class="market-product-code"><?= e((string) $item['product_no']) ?></p>
+                                    <p class="market-product-meta"><?= e((string) $item['maker']) ?></p>
+                                    <h3 class="market-cart-title">
+                                        <a href="<?= e(app_path('/products/' . (int) $item['product_id'])) ?>"><?= e((string) $item['product_name']) ?></a>
+                                    </h3>
+                                    <p class="market-product-code"><?= e((string) $item['category']) ?> / <?= e((string) $item['product_no']) ?></p>
                                 </div>
-                                <p class="market-price-row">¥<?= number_format((int) $item['unit_price']) ?></p>
+                                <div class="market-cart-price-block">
+                                    <p class="market-price-row">¥<?= number_format((int) $item['unit_price']) ?></p>
+                                    <span>(税込)</span>
+                                </div>
                             </div>
 
                             <?php if (!empty($item['warning'])): ?>
                                 <p class="market-stock-copy status-ng"><?= e((string) $item['warning']) ?></p>
+                            <?php elseif (!empty($item['availability_label'])): ?>
+                                <p class="market-stock-copy <?= e((string) $item['availability_class']) ?>"><?= e((string) $item['availability_label']) ?></p>
                             <?php endif; ?>
 
-                            <div class="market-cart-actions">
-                                <form class="market-cart-qty-form" method="post" action="<?= e(app_path('/cart/update')) ?>">
-                                    <input type="hidden" name="_csrf" value="<?= e((string) $csrfToken) ?>">
-                                    <input type="hidden" name="product_id" value="<?= e((string) $item['product_id']) ?>">
-                                    <label for="cart-qty-<?= e((string) $item['product_id']) ?>">数量</label>
-                                    <input id="cart-qty-<?= e((string) $item['product_id']) ?>" type="number" name="quantity" min="0" value="<?= e((string) $item['quantity']) ?>" inputmode="numeric">
-                                    <button class="button-link button-secondary button-small" type="submit">数量を更新</button>
-                                </form>
-
-                                <form method="post" action="<?= e(app_path('/cart/remove')) ?>">
+                            <div class="market-cart-utility">
+                                <form class="market-cart-remove-form" method="post" action="<?= e(app_path('/cart/remove')) ?>">
                                     <input type="hidden" name="_csrf" value="<?= e((string) $csrfToken) ?>">
                                     <input type="hidden" name="product_id" value="<?= e((string) $item['product_id']) ?>">
                                     <button class="button-link button-ghost button-small" type="submit">削除</button>
@@ -90,9 +91,16 @@ declare(strict_types=1);
                             </div>
                         </div>
 
-                        <div class="market-cart-total">
-                            <span>小計</span>
-                            <strong>¥<?= number_format((int) $item['line_total']) ?></strong>
+                        <div class="market-cart-side">
+                            <div class="market-cart-actions">
+                                <form class="market-cart-qty-form" method="post" action="<?= e(app_path('/cart/update')) ?>">
+                                    <input type="hidden" name="_csrf" value="<?= e((string) $csrfToken) ?>">
+                                    <input type="hidden" name="product_id" value="<?= e((string) $item['product_id']) ?>">
+                                    <label for="cart-qty-<?= e((string) $item['product_id']) ?>">数量</label>
+                                    <input id="cart-qty-<?= e((string) $item['product_id']) ?>" type="number" name="quantity" min="0" value="<?= e((string) $item['quantity']) ?>" inputmode="numeric">
+                                    <button class="button-link button-secondary button-small" type="submit">更新</button>
+                                </form>
+                            </div>
                         </div>
                     </article>
                 <?php endforeach; ?>
@@ -120,7 +128,7 @@ declare(strict_types=1);
                         </div>
                     </dl>
                     <div class="market-summary-actions">
-                        <a class="button-link button-submit button-full" href="<?= e(app_path('/checkout')) ?>">注文へ進む</a>
+                        <a class="button-link button-submit button-full" href="<?= e(app_path('/checkout')) ?>">購入手続きに進む</a>
                         <a class="button-link button-secondary button-full" href="<?= e(app_path('/products')) ?>">買い物を続ける</a>
                     </div>
                 </div>
