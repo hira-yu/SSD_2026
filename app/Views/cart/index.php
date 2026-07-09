@@ -52,6 +52,10 @@ declare(strict_types=1);
                     <span class="market-cart-list-head-qty">数量</span>
                 </div>
                 <?php foreach ($items as $item): ?>
+                    <?php
+                    $deliverySchedule = is_array($item['delivery_schedule'] ?? null) ? $item['delivery_schedule'] : [];
+                    $deadlineLabel = product_delivery_deadline_label($deliverySchedule);
+                    ?>
                     <article class="market-cart-item">
                         <div class="market-cart-image">
                             <img
@@ -68,7 +72,6 @@ declare(strict_types=1);
                                     <h3 class="market-cart-title">
                                         <a href="<?= e(app_path('/products/' . (int) $item['product_id'])) ?>"><?= e((string) $item['product_name']) ?></a>
                                     </h3>
-                                    <p class="market-product-code"><?= e((string) $item['category']) ?> / <?= e((string) $item['product_no']) ?></p>
                                 </div>
                                 <div class="market-cart-price-block">
                                     <p class="market-price-row">¥<?= number_format((int) $item['unit_price']) ?></p>
@@ -76,11 +79,28 @@ declare(strict_types=1);
                                 </div>
                             </div>
 
-                            <?php if (!empty($item['warning'])): ?>
-                                <p class="market-stock-copy status-ng"><?= e((string) $item['warning']) ?></p>
-                            <?php elseif (!empty($item['availability_label'])): ?>
-                                <p class="market-stock-copy <?= e((string) $item['availability_class']) ?>"><?= e((string) $item['availability_label']) ?></p>
-                            <?php endif; ?>
+                            <div class="market-cart-stock-row">
+                                <?php if (!empty($item['warning'])): ?>
+                                    <p class="market-stock-copy status-ng"><?= e((string) $item['warning']) ?></p>
+                                <?php elseif (!empty($item['availability_label'])): ?>
+                                    <p class="market-stock-copy <?= e((string) $item['availability_class']) ?>"><?= e((string) $item['availability_label']) ?></p>
+                                <?php endif; ?>
+
+                                <?php if (empty($item['warning']) && ($deliverySchedule['summary_type'] ?? '') === 'orderable'): ?>
+                                    <p class="market-cart-delivery-note market-detail-delivery-note-strong">
+                                        今から
+                                        <span class="market-detail-delivery-emphasis"><?= e($deadlineLabel) ?></span>
+                                        のご注文で、
+                                        <?php if (!empty($deliverySchedule['supports_same_day'])): ?>
+                                            <span class="market-detail-delivery-emphasis">本日中に</span>
+                                            お届けします。
+                                        <?php else: ?>
+                                            <span class="market-detail-delivery-emphasis"><?= e((string) ($deliverySchedule['arrival_date_label'] ?? '')) ?></span>
+                                            までにお届けします。
+                                        <?php endif; ?>
+                                    </p>
+                                <?php endif; ?>
+                            </div>
 
                             <div class="market-cart-utility">
                                 <form class="market-cart-remove-form" method="post" action="<?= e(app_path('/cart/remove')) ?>">

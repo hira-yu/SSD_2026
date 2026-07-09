@@ -41,6 +41,7 @@ class ProductManagementService
         return [
             'product_no' => '',
             'name' => '',
+            'description' => '',
             'price' => '',
             'category' => '',
             'maker' => '',
@@ -62,6 +63,7 @@ class ProductManagementService
         return [
             'product_no' => (string) ($product['product_no'] ?? ''),
             'name' => (string) ($product['name'] ?? ''),
+            'description' => (string) ($product['description'] ?? ''),
             'price' => (string) ($product['price'] ?? ''),
             'category' => (string) ($product['category'] ?? ''),
             'maker' => (string) ($product['maker'] ?? ''),
@@ -160,6 +162,7 @@ class ProductManagementService
         $data = [
             'product_no' => trim((string) ($input['product_no'] ?? '')),
             'name' => trim((string) ($input['name'] ?? '')),
+            'description' => trim((string) ($input['description'] ?? '')),
             'price' => $this->integerInput($input['price'] ?? ''),
             'category' => trim((string) ($input['category'] ?? '')),
             'maker' => trim((string) ($input['maker'] ?? '')),
@@ -174,7 +177,7 @@ class ProductManagementService
         ];
         $errors = [];
 
-        foreach (['product_no' => '商品番号', 'name' => '商品名', 'category' => 'カテゴリ', 'maker' => 'メーカー'] as $field => $label) {
+        foreach (['product_no' => '商品番号', 'name' => '商品名', 'description' => '商品説明', 'category' => 'カテゴリ', 'maker' => 'メーカー'] as $field => $label) {
             if ($data[$field] === '') {
                 $errors[] = $label . 'を入力してください。';
             }

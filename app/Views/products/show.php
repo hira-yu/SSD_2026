@@ -7,23 +7,7 @@ $favoriteProductIds = isset($favoriteProductIds) && is_array($favoriteProductIds
 $isFavorite = in_array((int) $product['id'], $favoriteProductIds, true);
 $redirectTo = $_SERVER['REQUEST_URI'] ?? '/products/' . (string) $product['id'];
 $deliverySchedule = is_array($deliverySchedule ?? null) ? $deliverySchedule : [];
-$deadlineHours = (int) ($deliverySchedule['deadline_hours'] ?? 0);
-$deadlineMinutes = (int) ($deliverySchedule['deadline_minutes'] ?? 0);
-$deadlineParts = [];
-
-if ($deadlineHours > 0) {
-    $deadlineParts[] = sprintf('%d時間', $deadlineHours);
-}
-
-if ($deadlineMinutes > 0) {
-    $deadlineParts[] = sprintf('%d分', $deadlineMinutes);
-}
-
-$deadlineLabel = implode('と', $deadlineParts);
-
-if ($deadlineLabel !== '') {
-    $deadlineLabel .= '以内';
-}
+$deadlineLabel = product_delivery_deadline_label($deliverySchedule);
 ?>
 <section class="market-product-detail-page">
     <div class="market-breadcrumb">
@@ -46,7 +30,7 @@ if ($deadlineLabel !== '') {
         <div class="market-detail-main">
             <p class="market-detail-maker"><?= e((string) $product['maker']) ?></p>
             <h1><?= e((string) $product['name']) ?></h1>
-            <p class="market-detail-copy">商品番号 <?= e((string) $product['product_no']) ?> / <?= e((string) $product['category']) ?></p>
+            <p class="market-detail-copy"><?= nl2br(e((string) ($product['description'] ?? ''))) ?></p>
 
             <div class="market-detail-price-box">
                 <p class="market-detail-price-label">価格</p>

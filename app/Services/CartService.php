@@ -35,7 +35,7 @@ class CartService
 
         if ($cart[$productId] > (int) $product['stock_quantity_2']) {
             return sprintf(
-                '%s をカートに追加しました。在庫数を超えるため、注文確定前に数量をご確認ください。',
+                '%s をカートに追加しました。',
                 (string) $product['name']
             );
         }
@@ -71,7 +71,7 @@ class CartService
 
         if ($quantity > (int) $product['stock_quantity_2']) {
             return sprintf(
-                '%s の数量を更新しました。在庫数を超えるため、注文確定前に数量をご確認ください。',
+                '%s の数量を更新しました。',
                 (string) $product['name']
             );
         }
@@ -182,13 +182,15 @@ class CartService
             $subtotal += $lineTotal;
             $stockQuantity2 = (int) $product['stock_quantity_2'];
             $availability = product_availability($product);
+            $product['is_orderable'] = $availability['is_orderable'];
+            $deliverySchedule = product_delivery_schedule($product);
             $warning = null;
 
             if (!$availability['is_orderable']) {
                 $warning = sprintf('%sのため、注文を確定できません。', (string) $availability['label']);
                 $warnings[] = (string) $product['name'] . ': ' . $warning;
             } elseif ($quantity > $stockQuantity2) {
-                $warning = '在庫数を超えています。注文確定前に数量を調整してください。';
+                $warning = '在庫数を超えているため、現在ご注文いただけません。';
                 $warnings[] = (string) $product['name'] . ': ' . $warning;
             }
 
@@ -208,6 +210,7 @@ class CartService
                 'stock_quantity_2' => $stockQuantity2,
                 'availability_label' => (string) $availability['label'],
                 'availability_class' => (string) $availability['class'],
+                'delivery_schedule' => $deliverySchedule,
                 'warning' => $warning,
             ];
         }
