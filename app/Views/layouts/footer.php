@@ -81,7 +81,7 @@ $addressJsVersion = is_file(base_path('public/assets/js/address-autofill.js')) ?
 </main>
 <footer class="site-footer">
     <div class="container">
-        <?php if (current_path() === '/login' || str_starts_with(current_path(), '/staff')): ?>
+        <?php if (current_path() === '/login' || str_starts_with(current_path(), '/staff') || str_starts_with(current_path(), '/system')): ?>
             <p>IPUT EC 管理画面 | 学習目的の試作システムです。</p>
         <?php else: ?>
             <div class="customer-footer-mega">

@@ -126,24 +126,26 @@ $eligibility = $order['shipping_eligibility'] ?? ['status' => '', 'label' => '',
 </section>
 
 <section class="panel print-block">
-    <p class="eyebrow">Delivery Slip</p>
-    <h3><?= e((string) $deliverySlipTitle) ?></h3>
+    <div class="panel-heading-bar">
+        <div>
+            <p class="eyebrow">Delivery Document</p>
+            <h3><?= $showInvoice ? '納品書兼請求書' : '納品書' ?>のPDF出力</h3>
+        </div>
+        <a
+            class="button-link button-secondary"
+            href="<?= e(app_path('/staff/shipper/orders/' . (string) $order['order_no'] . '/document.pdf')) ?>"
+            download
+        >
+            <i data-lucide="file-down" aria-hidden="true"></i>
+            PDFをダウンロード
+        </a>
+    </div>
     <div class="document-card">
         <p><strong>宛先:</strong> <?= e((string) $order['customer_name']) ?> 様</p>
-        <p><strong>住所:</strong> <?= e((string) $order['customer_address']) ?></p>
         <p><strong>注文番号:</strong> <?= e((string) $order['order_no']) ?></p>
-        <p><strong>同梱内容:</strong> ご注文商品の納品書を同封してください。</p>
+        <p><strong>帳票種別:</strong> <?= $showInvoice ? '納品書兼請求書（代金引換）' : '納品書' ?></p>
+        <p><strong>同梱内容:</strong> ダウンロードしたPDFを印刷し、商品へ同梱してください。</p>
     </div>
-
-    <?php if ($showInvoice): ?>
-        <p class="eyebrow">Invoice</p>
-        <h3><?= e((string) $invoiceTitle) ?></h3>
-        <div class="document-card">
-            <p><strong>請求先:</strong> <?= e((string) $order['customer_name']) ?> 様</p>
-            <p><strong>請求金額:</strong> ¥<?= number_format((int) $order['total_amount']) ?></p>
-            <p><strong>案内:</strong> 代金引換のため、配達時に代金を回収してください。</p>
-        </div>
-    <?php endif; ?>
 </section>
 
 <?php if (($eligibility['status'] ?? '') === 'shippable'): ?>

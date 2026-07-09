@@ -59,6 +59,7 @@ $router->get('/staff/accountant/orders/{order_no}', [AccountingController::class
 $router->post('/staff/accountant/orders/{order_no}/payment', [AccountingController::class, 'updatePayment']);
 $router->get('/staff/shipper', [StaffController::class, 'shipper']);
 $router->get('/staff/shipper/orders', [ShippingController::class, 'index']);
+$router->get('/staff/shipper/orders/{order_no}/document.pdf', [ShippingController::class, 'document']);
 $router->get('/staff/shipper/orders/{order_no}', [ShippingController::class, 'show']);
 $router->post('/staff/shipper/orders/{order_no}/ship', [ShippingController::class, 'ship']);
 $router->get('/staff/product-manager', [StaffController::class, 'productManager']);

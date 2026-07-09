@@ -2,12 +2,34 @@
 
 declare(strict_types=1);
 ?>
-<section class="panel">
-    <h2>DB接続確認</h2>
-    <p class="<?= $result['success'] ? 'status-ok' : 'status-ng' ?>">
-        <?= e((string) $result['message']) ?>
-    </p>
+<section class="staff-hero">
+    <div class="panel">
+        <p class="eyebrow">System Status</p>
+        <h2>DB接続確認</h2>
+        <p class="lead compact">アプリケーションとデータベース間の接続状態を確認します。</p>
+    </div>
+    <aside class="status-card">
+        <h3>確認担当者</h3>
+        <dl>
+            <div>
+                <dt>担当者名</dt>
+                <dd><?= e((string) ($user['user_name'] ?? '')) ?></dd>
+            </div>
+            <div>
+                <dt>ロール</dt>
+                <dd><?= e((string) $roleLabel) ?></dd>
+            </div>
+        </dl>
+    </aside>
+</section>
 
+<section class="panel">
+    <div class="panel-heading-bar">
+        <h3>接続診断結果</h3>
+        <span class="<?= $result['success'] ? 'status-ok' : 'status-ng' ?>">
+            <?= e((string) $result['message']) ?>
+        </span>
+    </div>
     <dl class="detail-list">
         <div>
             <dt>DB接続</dt>
