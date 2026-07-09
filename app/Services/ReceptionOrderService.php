@@ -55,6 +55,7 @@ class ReceptionOrderService
             'errors' => $errors,
             'productOptions' => $this->products->listAll(),
             'paymentOptions' => $this->paymentOptions(),
+            'prefectureOptions' => $this->prefectureOptions(),
         ];
     }
 
@@ -299,10 +300,25 @@ class ReceptionOrderService
     private function normalizeFormInput(array $input): array
     {
         $items = [];
-        $productIds = $input['product_ids'] ?? ($input['items']['product_id'] ?? []);
-        $quantities = $input['quantities'] ?? ($input['items']['quantity'] ?? []);
+        $submittedItems = $input['items'] ?? null;
 
-        if (is_array($productIds) || is_array($quantities)) {
+        if (is_array($submittedItems) && array_is_list($submittedItems)) {
+            foreach ($submittedItems as $item) {
+                if (!is_array($item)) {
+                    continue;
+                }
+
+                $items[] = [
+                    'product_id' => trim((string) ($item['product_id'] ?? '')),
+                    'quantity' => trim((string) ($item['quantity'] ?? '1')),
+                ];
+            }
+        }
+
+        $productIds = $input['product_ids'] ?? [];
+        $quantities = $input['quantities'] ?? [];
+
+        if ($items === [] && (is_array($productIds) || is_array($quantities))) {
             $maxCount = max(
                 is_array($productIds) ? count($productIds) : 0,
                 is_array($quantities) ? count($quantities) : 0
@@ -311,7 +327,7 @@ class ReceptionOrderService
             for ($index = 0; $index < max($maxCount, 1); $index++) {
                 $items[] = [
                     'product_id' => trim((string) ((is_array($productIds) ? ($productIds[$index] ?? '') : ''))),
-                    'quantity' => trim((string) ((is_array($quantities) ? ($quantities[$index] ?? '') : ''))),
+                    'quantity' => trim((string) ((is_array($quantities) ? ($quantities[$index] ?? '1') : '1'))),
                 ];
             }
         }
@@ -323,8 +339,17 @@ class ReceptionOrderService
         }
 
         return [
-            'customer_name' => trim((string) ($input['customer_name'] ?? '')),
-            'customer_address' => trim((string) ($input['customer_address'] ?? '')),
+            'last_name' => trim((string) ($input['last_name'] ?? '')),
+            'first_name' => trim((string) ($input['first_name'] ?? '')),
+            'last_name_kana' => trim((string) ($input['last_name_kana'] ?? '')),
+            'first_name_kana' => trim((string) ($input['first_name_kana'] ?? '')),
+            'postal_code' => preg_replace('/\D+/', '', (string) ($input['postal_code'] ?? '')) ?? '',
+            'prefecture' => trim((string) ($input['prefecture'] ?? '')),
+            'city' => trim((string) ($input['city'] ?? '')),
+            'address_line' => trim((string) ($input['address_line'] ?? '')),
+            'building' => trim((string) ($input['building'] ?? '')),
+            'customer_name' => $this->buildCustomerName($input),
+            'customer_address' => $this->buildCustomerAddress($input),
             'customer_contact' => trim((string) ($input['customer_contact'] ?? '')),
             'payment_method' => trim((string) ($input['payment_method'] ?? 'bank')),
             'items' => $items,
@@ -367,12 +392,35 @@ class ReceptionOrderService
     {
         $errors = [];
 
-        if ($form['customer_name'] === '') {
-            $errors[] = '購入者氏名を入力してください。';
+        if ($form['last_name'] === '' || $form['first_name'] === '') {
+            $errors[] = '氏名を入力してください。';
         }
 
-        if ($form['customer_address'] === '') {
-            $errors[] = '住所を入力してください。';
+        if ($form['last_name_kana'] === '' || $form['first_name_kana'] === '') {
+            $errors[] = '氏名カナを入力してください。';
+        }
+
+        if (
+            ($form['last_name_kana'] !== '' && preg_match('/^[ァ-ヶー－\s　]+$/u', $form['last_name_kana']) !== 1)
+            || ($form['first_name_kana'] !== '' && preg_match('/^[ァ-ヶー－\s　]+$/u', $form['first_name_kana']) !== 1)
+        ) {
+            $errors[] = '氏名カナは全角カタカナで入力してください。';
+        }
+
+        if (preg_match('/^\d{7}$/', $form['postal_code']) !== 1) {
+            $errors[] = '郵便番号はハイフンなし7桁で入力してください。';
+        }
+
+        if (!array_key_exists($form['prefecture'], $this->prefectureOptions()) || $form['prefecture'] === '') {
+            $errors[] = '都道府県を選択してください。';
+        }
+
+        if ($form['city'] === '') {
+            $errors[] = '市区町村を入力してください。';
+        }
+
+        if ($form['address_line'] === '') {
+            $errors[] = '町名・番地を入力してください。';
         }
 
         if ($form['customer_contact'] === '') {
@@ -410,6 +458,62 @@ class ReceptionOrderService
         }
 
         return $errors;
+    }
+
+    /**
+     * @param array<string, mixed> $input
+     */
+    private function buildCustomerName(array $input): string
+    {
+        $lastName = trim((string) ($input['last_name'] ?? ''));
+        $firstName = trim((string) ($input['first_name'] ?? ''));
+
+        if ($lastName !== '' || $firstName !== '') {
+            return trim($lastName . ' ' . $firstName);
+        }
+
+        return trim((string) ($input['customer_name'] ?? ''));
+    }
+
+    /**
+     * @param array<string, mixed> $input
+     */
+    private function buildCustomerAddress(array $input): string
+    {
+        $postalCode = preg_replace('/\D+/', '', (string) ($input['postal_code'] ?? '')) ?? '';
+        $prefecture = trim((string) ($input['prefecture'] ?? ''));
+        $city = trim((string) ($input['city'] ?? ''));
+        $addressLine = trim((string) ($input['address_line'] ?? ''));
+        $building = trim((string) ($input['building'] ?? ''));
+
+        if ($postalCode === '' && $prefecture === '' && $city === '' && $addressLine === '') {
+            return trim((string) ($input['customer_address'] ?? ''));
+        }
+
+        $postal = strlen($postalCode) === 7
+            ? '〒' . substr($postalCode, 0, 3) . '-' . substr($postalCode, 3)
+            : '';
+        $main = $prefecture . $city . $addressLine;
+
+        return trim($postal . ' ' . $main . ($building !== '' ? ' ' . $building : ''));
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function prefectureOptions(): array
+    {
+        $prefectures = [
+            '北海道', '青森県', '岩手県', '宮城県', '秋田県', '山形県', '福島県',
+            '茨城県', '栃木県', '群馬県', '埼玉県', '千葉県', '東京都', '神奈川県',
+            '新潟県', '富山県', '石川県', '福井県', '山梨県', '長野県', '岐阜県',
+            '静岡県', '愛知県', '三重県', '滋賀県', '京都府', '大阪府', '兵庫県',
+            '奈良県', '和歌山県', '鳥取県', '島根県', '岡山県', '広島県', '山口県',
+            '徳島県', '香川県', '愛媛県', '高知県', '福岡県', '佐賀県', '長崎県',
+            '熊本県', '大分県', '宮崎県', '鹿児島県', '沖縄県',
+        ];
+
+        return ['' => '選択してください'] + array_combine($prefectures, $prefectures);
     }
 
     private function generateOrderNo(): string
