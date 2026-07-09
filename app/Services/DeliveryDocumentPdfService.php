@@ -163,7 +163,8 @@ class DeliveryDocumentPdfService
             $this->text($image, 'お支払い方法: ' . (string) ($order['payment_method_label'] ?? ''), 16, $margin, $noticeY, $ink);
 
             if ((string) ($order['payment_method'] ?? '') === 'cod') {
-                $this->text($image, '配達時に合計金額をお支払いください。', 16, $margin, $noticeY + 38, $totalColor);
+                $this->text($image, '合計金額を配送業者にお支払いください。', 16, $margin, $noticeY + 38, $totalColor);
+                $this->text($image, 'なお、お支払いの証明となりますので、受領領収書は大切に保管ください。', 16, $margin, $noticeY + 76, $totalColor);
             } else {
                 $this->text($image, '本書は商品の納品内容をご確認いただくための書類です。', 15, $margin, $noticeY + 38, $muted);
             }

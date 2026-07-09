@@ -45,24 +45,70 @@ declare(strict_types=1);
     <form method="post" action="<?= e(app_path('/staff/receptionist/orders/confirm')) ?>" class="reception-order-form">
         <input type="hidden" name="_csrf" value="<?= e((string) $csrfToken) ?>">
 
-        <div class="form-grid">
-            <div class="form-field">
-                <label for="customer_name">購入者氏名</label>
-                <input id="customer_name" type="text" name="customer_name" value="<?= e((string) ($form['customer_name'] ?? '')) ?>" required>
+        <section class="market-form-section">
+            <div class="market-panel-heading">お客様情報</div>
+            <div class="market-form-grid market-form-grid-two">
+                <div class="form-field">
+                    <label for="last_name">姓</label>
+                    <input id="last_name" type="text" name="last_name" value="<?= e((string) ($form['last_name'] ?? '')) ?>" autocomplete="family-name" required>
+                </div>
+                <div class="form-field">
+                    <label for="first_name">名</label>
+                    <input id="first_name" type="text" name="first_name" value="<?= e((string) ($form['first_name'] ?? '')) ?>" autocomplete="given-name" required>
+                </div>
+                <div class="form-field">
+                    <label for="last_name_kana">セイ</label>
+                    <input id="last_name_kana" type="text" name="last_name_kana" value="<?= e((string) ($form['last_name_kana'] ?? '')) ?>" required>
+                </div>
+                <div class="form-field">
+                    <label for="first_name_kana">メイ</label>
+                    <input id="first_name_kana" type="text" name="first_name_kana" value="<?= e((string) ($form['first_name_kana'] ?? '')) ?>" required>
+                </div>
             </div>
-
             <div class="form-field">
-                <label for="customer_contact">連絡先</label>
-                <input id="customer_contact" type="text" name="customer_contact" value="<?= e((string) ($form['customer_contact'] ?? '')) ?>" required>
+                <label for="customer_contact">電話番号</label>
+                <input id="customer_contact" type="tel" name="customer_contact" value="<?= e((string) ($form['customer_contact'] ?? '')) ?>" autocomplete="tel" inputmode="tel" maxlength="11" placeholder="例: 09012345678" required>
             </div>
-        </div>
+        </section>
 
-        <div class="form-field">
-            <label for="customer_address">住所</label>
-            <textarea id="customer_address" name="customer_address" rows="3" required><?= e((string) ($form['customer_address'] ?? '')) ?></textarea>
-        </div>
+        <section class="market-form-section" data-address-autofill-form>
+            <div class="market-panel-heading">お届け先</div>
+            <div class="market-form-grid market-form-grid-two">
+                <div class="form-field">
+                    <label for="postal_code">郵便番号</label>
+                    <input id="postal_code" type="text" name="postal_code" value="<?= e((string) ($form['postal_code'] ?? '')) ?>" inputmode="numeric" maxlength="7" autocomplete="postal-code" placeholder="例: 1000001" required>
+                </div>
+                <div class="form-field align-end">
+                    <button class="button-link button-secondary button-small" type="button" data-address-autofill-trigger>住所を自動入力</button>
+                </div>
+                <div class="form-field">
+                    <label for="prefecture">都道府県</label>
+                    <select id="prefecture" name="prefecture" autocomplete="address-level1" required>
+                        <?php foreach ($prefectureOptions as $value => $label): ?>
+                            <option value="<?= e((string) $value) ?>" <?= ((string) ($form['prefecture'] ?? '')) === (string) $value ? 'selected' : '' ?>>
+                                <?= e((string) $label) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="form-field">
+                    <label for="city">市区町村</label>
+                    <input id="city" type="text" name="city" value="<?= e((string) ($form['city'] ?? '')) ?>" autocomplete="address-level2" required>
+                </div>
+            </div>
+            <div class="form-field">
+                <label for="address_line">町名・番地</label>
+                <input id="address_line" type="text" name="address_line" value="<?= e((string) ($form['address_line'] ?? '')) ?>" autocomplete="address-line1" required>
+            </div>
+            <div class="form-field">
+                <label for="building">建物名</label>
+                <input id="building" type="text" name="building" value="<?= e((string) ($form['building'] ?? '')) ?>" autocomplete="address-line2">
+            </div>
+        </section>
 
-        <div class="form-field">
+        <section class="market-form-section">
+            <div class="market-panel-heading">お支払い情報</div>
+            <div class="form-field">
             <label for="payment_method">支払い方法</label>
             <select id="payment_method" name="payment_method" required>
                 <?php foreach ($paymentOptions as $value => $label): ?>
@@ -71,7 +117,8 @@ declare(strict_types=1);
                     </option>
                 <?php endforeach; ?>
             </select>
-        </div>
+            </div>
+        </section>
 
         <div class="panel panel-subsection">
             <div class="section-heading">

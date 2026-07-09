@@ -10,6 +10,7 @@ $isAdminArea = $currentPath === '/login'
     || str_starts_with($currentPath, '/staff')
     || str_starts_with($currentPath, '/system');
 $isCustomerArea = !$isAdminArea;
+$needsAddressAutofill = $isCustomerArea || str_starts_with($currentPath, '/staff/receptionist/orders');
 $bodyClass = $isAdminArea ? 'admin-shell admin-page' : 'customer-shell public-page';
 $serviceName = (string) config('app.customer_ui.service_name', 'IPUT EC');
 $titleBase = $isAdminArea ? $adminApplicationName : $serviceName;
@@ -114,7 +115,7 @@ if ($isCustomerArea && $cartCount > 0) {
     <title><?= e($documentTitle) ?></title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <?php if ($isCustomerArea): ?>
+    <?php if ($needsAddressAutofill): ?>
         <link rel="preload" href="https://yubinbango.github.io/yubinbango/yubinbango.js" as="script">
         <script src="https://yubinbango.github.io/yubinbango/yubinbango.js" charset="UTF-8" defer></script>
     <?php endif; ?>

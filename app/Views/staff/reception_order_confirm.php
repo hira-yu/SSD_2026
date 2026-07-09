@@ -84,10 +84,17 @@ declare(strict_types=1);
 
     <form method="post" action="<?= e(app_path('/staff/receptionist/orders')) ?>" class="search-actions">
         <input type="hidden" name="_csrf" value="<?= e((string) $csrfToken) ?>">
-        <input type="hidden" name="customer_name" value="<?= e((string) $form['customer_name']) ?>">
+        <input type="hidden" name="last_name" value="<?= e((string) $form['last_name']) ?>">
+        <input type="hidden" name="first_name" value="<?= e((string) $form['first_name']) ?>">
+        <input type="hidden" name="last_name_kana" value="<?= e((string) $form['last_name_kana']) ?>">
+        <input type="hidden" name="first_name_kana" value="<?= e((string) $form['first_name_kana']) ?>">
+        <input type="hidden" name="postal_code" value="<?= e((string) $form['postal_code']) ?>">
+        <input type="hidden" name="prefecture" value="<?= e((string) $form['prefecture']) ?>">
+        <input type="hidden" name="city" value="<?= e((string) $form['city']) ?>">
+        <input type="hidden" name="address_line" value="<?= e((string) $form['address_line']) ?>">
+        <input type="hidden" name="building" value="<?= e((string) $form['building']) ?>">
         <input type="hidden" name="customer_contact" value="<?= e((string) $form['customer_contact']) ?>">
         <input type="hidden" name="payment_method" value="<?= e((string) $form['payment_method']) ?>">
-        <textarea name="customer_address" hidden><?= e((string) $form['customer_address']) ?></textarea>
         <?php foreach ($items as $item): ?>
             <input type="hidden" name="product_ids[]" value="<?= e((string) $item['product_id']) ?>">
             <input type="hidden" name="quantities[]" value="<?= e((string) $item['quantity']) ?>">
