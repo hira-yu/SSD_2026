@@ -343,9 +343,10 @@ body.public-page textarea {
 }
 
 .customer-brand-link {
-    display: grid;
+    display: inline-grid;
     gap: 0.12rem;
-    flex: 0 0 13rem;
+    flex: 0 0 auto;
+    justify-self: start;
 }
 
 .customer-brand-link strong {
@@ -387,7 +388,7 @@ body.public-page .customer-search-form input {
     flex: 1;
     min-width: 0;
     min-height: 2.7rem;
-    border: 0;
+    border: 1px solid #cfcfcf;
     padding: 0 1rem;
     border-radius: 0;
     color: #444;
@@ -414,6 +415,9 @@ body.public-page .customer-search-form input::placeholder {
 }
 
 .customer-cart-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
     gap: 0.35rem;
     min-width: 6.75rem;
     padding: 0.45rem 0.7rem;
@@ -425,6 +429,10 @@ body.public-page .customer-search-form input::placeholder {
     font-size: 0.9rem;
     font-weight: 700;
     transition: background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.customer-cart-link.is-empty {
+    justify-content: center;
 }
 
 .customer-cart-link:hover,
@@ -2551,42 +2559,96 @@ body.public-page .market-complete-box {
 }
 
 @media (max-width: 767px) {
-    .customer-utility-inner,
     .customer-guidance-inner,
     .customer-search-inner,
     .customer-nav-inner,
-    .customer-search-form,
-    .customer-guidance-links,
-    .customer-utility-links {
+    .customer-guidance-links {
         align-items: stretch;
         flex-direction: column;
     }
 
-    .customer-brand-link {
-        flex-basis: auto;
+    .customer-utility-inner {
+        align-items: center;
+        flex-direction: row;
+        gap: 0.6rem;
+        overflow-x: auto;
     }
 
-    .customer-search-category,
-    .customer-search-form input,
-    .customer-search-form .button-submit,
-    .market-search-select,
-    .market-search-input,
-    .market-search-form .button-submit {
-        width: 100%;
-        border-radius: 2px;
+    .customer-utility-links {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        gap: 0.8rem;
+        white-space: nowrap;
+    }
+
+    .customer-utility-status,
+    .customer-nav-wrap,
+    .market-maker-section,
+    .market-side-rail .market-rail-card:not(.market-rail-card-alert) {
+        display: none;
+    }
+
+    .customer-brand-link {
+        flex-basis: auto;
+        align-self: flex-start;
+        width: fit-content;
     }
 
     .customer-search-form {
+        flex-direction: row;
+        align-items: stretch;
         overflow: visible;
         border: 0;
         border-radius: 0;
         background: transparent;
     }
 
-    .customer-search-category,
+    .customer-search-category {
+        display: none;
+    }
+
+    body.public-page .customer-search-form input {
+        border-radius: 0.95rem 0 0 0.95rem;
+    }
+
+    .customer-search-form input,
+    .customer-search-form .button-submit,
+    .market-search-select,
+    .market-search-input,
+    .market-search-form .button-submit {
+        border-radius: 0.35rem;
+    }
+
     .customer-search-form input,
     .customer-search-form .button-submit {
         border: 1px solid #bfc6ce;
+        width: auto;
+    }
+
+    .customer-search-form input {
+        flex: 1 1 auto;
+        min-width: 0;
+        border-radius: 0.35rem;
+        background: #fff;
+    }
+
+    .customer-search-form .button-submit {
+        flex: 0 0 auto;
+        border-radius: 0.35rem;
+    }
+
+    .market-category-list li {
+        align-items: center;
+    }
+
+    .market-category-list a,
+    .market-category-list span {
+        white-space: nowrap;
+    }
+
+    .market-category-list span {
+        flex: 0 0 auto;
     }
 
     .market-search-strip,
