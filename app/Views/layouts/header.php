@@ -112,6 +112,10 @@ if ($isCustomerArea && $cartCount > 0) {
     <title><?= e($documentTitle) ?></title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <?php if ($isCustomerArea): ?>
+        <link rel="preload" href="https://yubinbango.github.io/yubinbango/yubinbango.js" as="script">
+        <script src="https://yubinbango.github.io/yubinbango/yubinbango.js" charset="UTF-8" defer></script>
+    <?php endif; ?>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800&family=Noto+Serif+JP:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<?= e(app_path('/assets/css/style.css')) ?>">
 </head>

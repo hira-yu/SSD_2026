@@ -70,7 +70,6 @@ declare(strict_types=1);
                     <input id="customer_contact" type="tel" name="customer_contact" value="<?= e((string) ($form['customer_contact'] ?? '')) ?>" autocomplete="tel" inputmode="tel" maxlength="11" placeholder="例: 09012345678" required>
                 </div>
             </section>
-
             <section class="market-form-section" data-address-autofill-form>
                 <div class="market-panel-heading">お届け先</div>
                 <div class="market-form-grid market-form-grid-two">
@@ -107,13 +106,11 @@ declare(strict_types=1);
                     <input id="building" type="text" name="building" value="<?= e((string) ($form['building'] ?? '')) ?>" autocomplete="address-line2">
                 </div>
 
-                <p class="form-help-text" data-address-autofill-status>郵便番号を入力すると、対応する住所候補を補完できます。</p>
             </section>
 
             <section class="market-form-section">
                 <div class="market-panel-heading">お支払い情報</div>
                 <div class="market-card-guidance">
-                    <p><?= e((string) $demoNotice) ?></p>
                     <p>カード番号、有効期限、セキュリティコードをご入力ください。</p>
                 </div>
 

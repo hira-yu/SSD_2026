@@ -4,51 +4,71 @@ document.addEventListener('DOMContentLoaded', function () {
     const prefectureInput = document.querySelector('#prefecture');
     const cityInput = document.querySelector('#city');
     const addressLineInput = document.querySelector('#address_line');
-    const statusNode = document.querySelector('[data-address-autofill-status]');
 
-    if (!button || !postalCodeInput || !prefectureInput || !cityInput || !addressLineInput || !statusNode) {
+    if (!button || !postalCodeInput || !prefectureInput || !cityInput || !addressLineInput) {
         return;
     }
 
-    const postalDirectory = {
-        '1000001': { prefecture: '東京都', city: '千代田区', addressLine: '千代田' },
-        '1500001': { prefecture: '東京都', city: '渋谷区', addressLine: '神宮前' },
-        '2200012': { prefecture: '神奈川県', city: '横浜市西区', addressLine: 'みなとみらい' },
-        '4600008': { prefecture: '愛知県', city: '名古屋市中区', addressLine: '栄' },
-        '5300001': { prefecture: '大阪府', city: '大阪市北区', addressLine: '梅田' },
-        '0600001': { prefecture: '北海道', city: '札幌市中央区', addressLine: '北一条西' },
-    };
+    let inputTimer = 0;
 
-    const updateStatus = function (message, isError) {
-        statusNode.textContent = message;
-        statusNode.classList.toggle('is-error', Boolean(isError));
-    };
-
-    button.addEventListener('click', function () {
+    const lookupAddress = function () {
         const normalizedPostalCode = postalCodeInput.value.replace(/\D+/g, '');
 
         postalCodeInput.value = normalizedPostalCode;
 
         if (normalizedPostalCode.length !== 7) {
-            updateStatus('郵便番号はハイフンなし7桁で入力してください。', true);
             postalCodeInput.focus();
             return;
         }
 
-        const entry = postalDirectory[normalizedPostalCode];
-
-        if (!entry) {
-            updateStatus('住所候補が見つかりませんでした。市区町村以下を手入力してください。', true);
+        if (typeof YubinBango === 'undefined' || typeof YubinBango.Core !== 'function') {
             return;
         }
 
-        prefectureInput.value = entry.prefecture;
-        cityInput.value = entry.city;
+        button.disabled = true;
+        button.setAttribute('aria-busy', 'true');
 
-        if (addressLineInput.value.trim() === '') {
-            addressLineInput.value = entry.addressLine;
+        new YubinBango.Core(normalizedPostalCode, function (address) {
+            if (!address) {
+                button.disabled = false;
+                button.removeAttribute('aria-busy');
+                return;
+            }
+
+            prefectureInput.value = String(address.region || '');
+            cityInput.value = String(address.l || '');
+            addressLineInput.value = String(address.m || '');
+            button.disabled = false;
+            button.removeAttribute('aria-busy');
+            addressLineInput.focus();
+        });
+    };
+
+    button.addEventListener('click', function () {
+        lookupAddress();
+    });
+
+    postalCodeInput.addEventListener('keydown', function (event) {
+        if (event.key !== 'Enter') {
+            return;
         }
 
-        updateStatus('住所候補を入力しました。番地と建物名を確認してください。', false);
+        event.preventDefault();
+        lookupAddress();
+    });
+
+    postalCodeInput.addEventListener('input', function () {
+        const normalizedPostalCode = postalCodeInput.value.replace(/\D+/g, '');
+
+        if (postalCodeInput.value !== normalizedPostalCode) {
+            postalCodeInput.value = normalizedPostalCode;
+        }
+
+        if (normalizedPostalCode.length !== 7) {
+            return;
+        }
+
+        window.clearTimeout(inputTimer);
+        inputTimer = window.setTimeout(lookupAddress, 120);
     });
 });

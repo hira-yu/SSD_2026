@@ -32,18 +32,18 @@ $redirectTo = $_SERVER['REQUEST_URI'] ?? '/';
 
     <div class="market-hero-column">
         <div class="market-promo-tabs">
-            <a href="<?= e(app_path('/products')) ?>"><i data-lucide="fan" aria-hidden="true"></i>季節家電</a>
-            <a href="<?= e(app_path('/products')) ?>"><i data-lucide="package-check" aria-hidden="true"></i>日用品まとめ買い</a>
-            <a href="<?= e(app_path('/products')) ?>"><i data-lucide="monitor" aria-hidden="true"></i>PC・周辺機器</a>
-            <a href="<?= e(app_path('/products')) ?>"><i data-lucide="badge-percent" aria-hidden="true"></i>数量限定SALE</a>
-            <a href="<?= e(app_path('/products')) ?>"><i data-lucide="sparkles" aria-hidden="true"></i>新着商品</a>
+            <a href="<?= e(app_path('/products')) ?>?feature=seasonal"><i data-lucide="fan" aria-hidden="true"></i>季節家電</a>
+            <a href="<?= e(app_path('/products')) ?>?feature=bulk"><i data-lucide="package-check" aria-hidden="true"></i>日用品まとめ買い</a>
+            <a href="<?= e(app_path('/products')) ?>?feature=pc"><i data-lucide="monitor" aria-hidden="true"></i>PC・周辺機器</a>
+            <a href="<?= e(app_path('/products')) ?>?feature=limited-sale"><i data-lucide="badge-percent" aria-hidden="true"></i>数量限定SALE</a>
+            <a href="<?= e(app_path('/products')) ?>?feature=new"><i data-lucide="sparkles" aria-hidden="true"></i>新着商品</a>
         </div>
 
         <div class="market-sub-promos">
-            <a class="market-sub-promo market-sub-promo-blue" href="<?= e(app_path('/products')) ?>">
+            <a class="market-sub-promo market-sub-promo-blue" href="<?= e(app_path('/products')) ?>?feature=pc">
                 <div>
                     <p>人気カテゴリ</p>
-                    <strong>周辺機器・事務用品をまとめて確認</strong>
+                    <strong>PC・周辺機器をまとめて確認</strong>
                 </div>
                 <span>検索へ<i data-lucide="arrow-right" aria-hidden="true"></i></span>
             </a>
