@@ -7,6 +7,7 @@ $selectedCategory = (string) ($filters['category'] ?? '');
 $selectedMakers = isset($filters['makers']) && is_array($filters['makers']) ? $filters['makers'] : [];
 $minPrice = (string) ($filters['min_price'] ?? '');
 $maxPrice = (string) ($filters['max_price'] ?? '');
+$feature = (string) ($filters['feature'] ?? '');
 $placeholderImage = product_image_url('');
 $favoriteProductIds = isset($favoriteProductIds) && is_array($favoriteProductIds) ? $favoriteProductIds : [];
 $redirectTo = $_SERVER['REQUEST_URI'] ?? '/products';
@@ -51,6 +52,9 @@ $redirectTo = $_SERVER['REQUEST_URI'] ?? '/products';
                 <form class="market-side-filter-form" method="get" action="<?= e(app_path('/products')) ?>">
                     <input type="hidden" name="name" value="<?= e($name) ?>">
                     <input type="hidden" name="category" value="<?= e($selectedCategory) ?>">
+                    <?php if ($feature !== ''): ?>
+                        <input type="hidden" name="feature" value="<?= e($feature) ?>">
+                    <?php endif; ?>
 
                     <fieldset class="market-filter-fieldset">
                         <legend><i data-lucide="factory" aria-hidden="true"></i>メーカー</legend>

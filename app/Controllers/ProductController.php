@@ -24,7 +24,8 @@ class ProductController extends Controller
             $_GET['category'] ?? null,
             $_GET['maker'] ?? null,
             $_GET['min_price'] ?? null,
-            $_GET['max_price'] ?? null
+            $_GET['max_price'] ?? null,
+            $_GET['feature'] ?? null
         );
 
         $this->render('products/index', [

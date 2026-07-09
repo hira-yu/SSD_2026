@@ -14,38 +14,40 @@ class ProductService
     /**
      * @param array<int, string>|string|null $makers
      * @return array{
-     *   filters: array{name: string, category: string, makers: array<int, string>, min_price: string, max_price: string},
+     *   filters: array{name: string, category: string, makers: array<int, string>, min_price: string, max_price: string, feature: string},
      *   products: array<int, array<string, mixed>>,
      *   categoryOptions: array<int, array<string, mixed>>,
      *   makerOptions: array<int, array<string, mixed>>
      * }
      */
-    public function searchPublicProducts(?string $name, ?string $category = null, array|string|null $makers = null, mixed $minPrice = null, mixed $maxPrice = null): array
+    public function searchPublicProducts(?string $name, ?string $category = null, array|string|null $makers = null, mixed $minPrice = null, mixed $maxPrice = null, mixed $feature = null): array
     {
         $normalizedName = trim((string) $name);
         $normalizedCategory = trim((string) $category);
         $normalizedMakers = $this->normalizeMakerFilter($makers);
         $normalizedMinPrice = $this->normalizePriceFilter($minPrice);
         $normalizedMaxPrice = $this->normalizePriceFilter($maxPrice);
-        $products = $this->products->searchForCustomer(
+        $normalizedFeature = $this->normalizeFeatureFilter($feature);
+        $products = $this->applyFeatureFilter($this->decorateProducts($this->products->searchForCustomer(
             $normalizedName,
             $normalizedCategory,
             $normalizedMakers,
             $normalizedMinPrice,
             $normalizedMaxPrice
-        );
+        )), $normalizedFeature);
         $allProducts = $this->decorateProducts($this->products->listAll());
         $makerFacetProducts = $normalizedName !== ''
             || $normalizedCategory !== ''
             || $normalizedMinPrice !== null
             || $normalizedMaxPrice !== null
-            ? $this->decorateProducts($this->products->searchForCustomer(
+            || $normalizedFeature !== ''
+            ? $this->applyFeatureFilter($this->decorateProducts($this->products->searchForCustomer(
                 $normalizedName,
                 $normalizedCategory,
                 null,
                 $normalizedMinPrice,
                 $normalizedMaxPrice
-            ))
+            )), $normalizedFeature)
             : $allProducts;
 
         return [
@@ -55,8 +57,9 @@ class ProductService
                 'makers' => $normalizedMakers,
                 'min_price' => $normalizedMinPrice === null ? '' : (string) $normalizedMinPrice,
                 'max_price' => $normalizedMaxPrice === null ? '' : (string) $normalizedMaxPrice,
+                'feature' => $normalizedFeature,
             ],
-            'products' => $this->decorateProducts($products),
+            'products' => $products,
             'categoryOptions' => $this->buildFacetOptions($allProducts, 'category'),
             'makerOptions' => $this->buildFacetOptions($makerFacetProducts, 'maker'),
         ];
@@ -194,6 +197,50 @@ class ProductService
         $product['image_url'] = product_image_url((string) ($product['image_path'] ?? ''));
 
         return $product;
+    }
+
+    private function normalizeFeatureFilter(mixed $feature): string
+    {
+        $normalized = trim((string) $feature);
+
+        return in_array($normalized, ['seasonal', 'bulk', 'pc', 'limited-sale', 'new'], true)
+            ? $normalized
+            : '';
+    }
+
+    /**
+     * @param array<int, array<string, mixed>> $products
+     * @return array<int, array<string, mixed>>
+     */
+    private function applyFeatureFilter(array $products, string $feature): array
+    {
+        if ($feature === '') {
+            return $products;
+        }
+
+        if ($feature === 'new') {
+            usort(
+                $products,
+                static fn (array $left, array $right): int => (int) ($right['id'] ?? 0) <=> (int) ($left['id'] ?? 0)
+            );
+
+            return array_slice($products, 0, 24);
+        }
+
+        $filtered = array_filter($products, static function (array $product) use ($feature): bool {
+            $category = (string) ($product['category'] ?? '');
+
+            return match ($feature) {
+                'seasonal' => $category === '家電',
+                'bulk' => in_array($category, ['食べ物', '飲み物', '事務用品'], true),
+                'pc' => in_array($category, ['電子機器', '電子部品'], true),
+                'limited-sale' => !empty($product['is_on_sale'])
+                    || (int) ($product['stock_quantity_1'] ?? 0) <= 10,
+                default => true,
+            };
+        });
+
+        return array_values($filtered);
     }
 
     /**
