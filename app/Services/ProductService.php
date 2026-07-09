@@ -131,9 +131,7 @@ class ProductService
             'sameMakerProducts' => array_slice($sameMakerProducts, 0, 8),
             'categoryOptions' => $this->buildFacetOptions($allProducts, 'category'),
             'makerOptions' => $this->buildFacetOptions($allProducts, 'maker'),
-            'deliverySummary' => $decoratedProduct['is_orderable']
-                ? '在庫があるため、通常 2-4 日でお届け予定です。'
-                : '現在在庫がないため、入荷までお時間をいただく場合があります。',
+            'deliverySchedule' => $this->buildDeliverySchedule($decoratedProduct),
         ];
     }
 
@@ -196,6 +194,45 @@ class ProductService
         $product['image_url'] = product_image_url((string) ($product['image_path'] ?? ''));
 
         return $product;
+    }
+
+    /**
+     * @param array<string, mixed> $product
+     * @return array<string, mixed>
+     */
+    private function buildDeliverySchedule(array $product): array
+    {
+        if (empty($product['is_orderable'])) {
+            return [
+                'supports_same_day' => false,
+                'summary_type' => 'unavailable',
+                'summary_text' => '現在在庫がないため、入荷までお時間をいただく場合があります。',
+                'deadline_hours' => 0,
+                'deadline_minutes' => 0,
+                'arrival_date_label' => '',
+            ];
+        }
+
+        $timezone = new DateTimeZone('Asia/Tokyo');
+        $now = new DateTimeImmutable('now', $timezone);
+        $cutoffToday = $now->setTime(15, 0);
+        $supportsSameDay = $now <= $cutoffToday;
+        $deadlineAt = $supportsSameDay ? $cutoffToday : $cutoffToday->modify('+1 day');
+        $arrivalAt = $supportsSameDay ? $now : $now->modify('+1 day');
+        $remainingSeconds = max(0, $deadlineAt->getTimestamp() - $now->getTimestamp());
+        $deadlineHours = intdiv($remainingSeconds, 3600);
+        $deadlineMinutes = intdiv($remainingSeconds % 3600, 60);
+        $weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+        $weekday = $weekdays[(int) $arrivalAt->format('w')] ?? '';
+
+        return [
+            'supports_same_day' => $supportsSameDay,
+            'summary_type' => 'orderable',
+            'summary_text' => '',
+            'deadline_hours' => $deadlineHours,
+            'deadline_minutes' => $deadlineMinutes,
+            'arrival_date_label' => $arrivalAt->format('Y年m月d日') . $weekday . '曜日',
+        ];
     }
 
     /**

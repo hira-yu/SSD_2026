@@ -6,6 +6,24 @@ $placeholderImage = product_image_url('');
 $favoriteProductIds = isset($favoriteProductIds) && is_array($favoriteProductIds) ? $favoriteProductIds : [];
 $isFavorite = in_array((int) $product['id'], $favoriteProductIds, true);
 $redirectTo = $_SERVER['REQUEST_URI'] ?? '/products/' . (string) $product['id'];
+$deliverySchedule = is_array($deliverySchedule ?? null) ? $deliverySchedule : [];
+$deadlineHours = (int) ($deliverySchedule['deadline_hours'] ?? 0);
+$deadlineMinutes = (int) ($deliverySchedule['deadline_minutes'] ?? 0);
+$deadlineParts = [];
+
+if ($deadlineHours > 0) {
+    $deadlineParts[] = sprintf('%d時間', $deadlineHours);
+}
+
+if ($deadlineMinutes > 0) {
+    $deadlineParts[] = sprintf('%d分', $deadlineMinutes);
+}
+
+$deadlineLabel = implode('と', $deadlineParts);
+
+if ($deadlineLabel !== '') {
+    $deadlineLabel .= '以内';
+}
 ?>
 <section class="market-product-detail-page">
     <div class="market-breadcrumb">
@@ -31,7 +49,7 @@ $redirectTo = $_SERVER['REQUEST_URI'] ?? '/products/' . (string) $product['id'];
             <p class="market-detail-copy">商品番号 <?= e((string) $product['product_no']) ?> / <?= e((string) $product['category']) ?></p>
 
             <div class="market-detail-price-box">
-                <p class="market-detail-price-label">販売価格</p>
+                <p class="market-detail-price-label">価格</p>
                 <p class="market-detail-price">
                     <?php if (!empty($product['is_on_sale'])): ?>
                         <span class="market-regular-price">¥<?= number_format((int) $product['regular_price']) ?></span>
@@ -45,7 +63,25 @@ $redirectTo = $_SERVER['REQUEST_URI'] ?? '/products/' . (string) $product['id'];
                 <?php if (!empty($product['sales_period_label'])): ?>
                     <p class="market-detail-delivery-note">販売期間: <?= e((string) $product['sales_period_label']) ?></p>
                 <?php endif; ?>
-                <p class="market-detail-delivery-note"><?= e((string) $deliverySummary) ?></p>
+                <?php if (($deliverySchedule['summary_type'] ?? '') === 'orderable'): ?>
+                    <p class="market-detail-delivery-note market-detail-delivery-note-strong">
+                        <?php if (!empty($deliverySchedule['supports_same_day'])): ?>
+                            今から
+                            <span class="market-detail-delivery-emphasis"><?= e($deadlineLabel) ?></span>
+                            のご注文で、
+                            <span class="market-detail-delivery-emphasis">本日中に</span>
+                            お届けします。
+                        <?php else: ?>
+                            今から
+                            <span class="market-detail-delivery-emphasis"><?= e($deadlineLabel) ?></span>
+                            のご注文で、
+                            <span class="market-detail-delivery-emphasis"><?= e((string) ($deliverySchedule['arrival_date_label'] ?? '')) ?></span>
+                            までにお届けします。
+                        <?php endif; ?>
+                    </p>
+                <?php else: ?>
+                    <p class="market-detail-delivery-note"><?= e((string) ($deliverySchedule['summary_text'] ?? '')) ?></p>
+                <?php endif; ?>
             </div>
 
             <dl class="market-detail-specs">
@@ -56,14 +92,6 @@ $redirectTo = $_SERVER['REQUEST_URI'] ?? '/products/' . (string) $product['id'];
                 <div>
                     <dt>カテゴリ</dt>
                     <dd><?= e((string) $product['category']) ?></dd>
-                </div>
-                <div>
-                    <dt>商品番号</dt>
-                    <dd><?= e((string) $product['product_no']) ?></dd>
-                </div>
-                <div>
-                    <dt>配送</dt>
-                    <dd>通常 2-4 日</dd>
                 </div>
             </dl>
         </div>
@@ -93,11 +121,6 @@ $redirectTo = $_SERVER['REQUEST_URI'] ?? '/products/' . (string) $product['id'];
                             <?= $isFavorite ? 'お気に入りから外す' : 'お気に入りに追加' ?>
                         </button>
                     </form>
-
-                    <a class="button-link button-secondary button-full" href="<?= e(app_path('/cart')) ?>">
-                        <i data-lucide="shopping-bag" aria-hidden="true"></i>
-                        カートを見る
-                    </a>
                 <?php else: ?>
                     <p class="market-stock-copy status-ng">現在在庫がないため、カートに追加できません。</p>
                 <?php endif; ?>
