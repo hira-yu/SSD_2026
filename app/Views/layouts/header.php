@@ -160,7 +160,7 @@ if ($isCustomerArea && $cartCount > 0) {
                     </button>
                 </form>
 
-                <a class="customer-cart-link" href="<?= e(app_path('/cart')) ?>">
+                <a class="customer-cart-link <?= $cartCount < 1 ? 'is-empty' : '' ?>" href="<?= e(app_path('/cart')) ?>">
                     <i data-lucide="shopping-cart" aria-hidden="true"></i>
                     <strong><?= e((string) $cartCount) ?></strong>
                     <?= $cartCount > 0 ? '<span>¥' . number_format((int) $subtotal) . '</span>' : '' ?>
