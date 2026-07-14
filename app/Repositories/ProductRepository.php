@@ -71,6 +71,7 @@ class ProductRepository
 
         $conditions = [];
         $params = [];
+        $effectivePriceExpression = $this->effectivePriceExpression();
 
         if ($name !== null && $name !== '') {
             $conditions[] = 'name LIKE :name';
@@ -97,12 +98,12 @@ class ProductRepository
         }
 
         if ($minPrice !== null) {
-            $conditions[] = 'price >= :min_price';
+            $conditions[] = $effectivePriceExpression . ' >= :min_price';
             $params['min_price'] = $minPrice;
         }
 
         if ($maxPrice !== null) {
-            $conditions[] = 'price <= :max_price';
+            $conditions[] = $effectivePriceExpression . ' <= :max_price';
             $params['max_price'] = $maxPrice;
         }
 
@@ -545,6 +546,21 @@ class ProductRepository
     private function imagePathSelectExpression(): string
     {
         return $this->hasImagePathColumn() ? 'image_path' : "'' AS image_path";
+    }
+
+    private function effectivePriceExpression(): string
+    {
+        return <<<'SQL'
+            CAST((CASE
+                WHEN sale_price IS NOT NULL
+                 AND sale_price > 0
+                 AND sale_price < price
+                 AND (sale_starts_at IS NULL OR sale_starts_at = '' OR sale_starts_at <= CURRENT_TIMESTAMP)
+                 AND (sale_ends_at IS NULL OR sale_ends_at = '' OR sale_ends_at >= CURRENT_TIMESTAMP)
+                THEN sale_price
+                ELSE price
+            END) AS SIGNED)
+        SQL;
     }
 
     private function hasImagePathColumn(): bool

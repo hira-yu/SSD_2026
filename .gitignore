@@ -6,3 +6,8 @@
 /.idea/
 /.vscode/
 .DS_Store
+/work/
+/tests/
+/docs/
+/outputs/
+test-results.json
