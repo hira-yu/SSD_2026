@@ -220,6 +220,12 @@ sh scripts/dev.sh
 - 画像未設定またはパス不正時は `public/assets/img/products/placeholder.svg` を表示します
 - 既存DBへ列追加だけ行う場合は `php scripts/migrate_add_product_images.php` を使います
 
+### 納品書PDF
+
+- GD拡張が利用できる環境では画像ベースのPDFを生成します
+- GD拡張がない環境では、同梱した `NotoSansJP-VF.ttf` を埋め込むPDF生成へ自動的に切り替わります
+- PDF生成のために本番環境へGD拡張を追加する必要はありません
+
 ### カート追加
 
 - 在庫数量2が1以上の商品に数量入力欄と `カートに追加` ボタンを表示します

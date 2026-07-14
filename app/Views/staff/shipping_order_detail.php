@@ -134,7 +134,6 @@ $eligibility = $order['shipping_eligibility'] ?? ['status' => '', 'label' => '',
         <a
             class="button-link button-secondary"
             href="<?= e(app_path('/staff/shipper/orders/' . (string) $order['order_no'] . '/document.pdf')) ?>"
-            download
         >
             <i data-lucide="file-down" aria-hidden="true"></i>
             PDFをダウンロード

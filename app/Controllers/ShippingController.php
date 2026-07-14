@@ -94,6 +94,9 @@ class ShippingController extends Controller
                 'order_no' => $orderNo,
             ]);
             http_response_code(500);
+            header('Content-Type: text/plain; charset=UTF-8');
+            header('Content-Disposition: inline');
+            header('Cache-Control: no-store, max-age=0');
             echo 'PDFの生成に失敗しました。時間をおいて再度お試しください。';
             return;
         }

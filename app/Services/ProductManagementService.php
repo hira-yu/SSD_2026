@@ -187,7 +187,9 @@ class ProductManagementService
             $errors[] = '価格は0以上で入力してください。';
         }
 
-        if ($data['sale_price'] !== null && $data['sale_price'] >= $data['price']) {
+        if ($data['sale_price'] !== null && $data['sale_price'] < 0) {
+            $errors[] = 'セール価格は0以上で入力してください。';
+        } elseif ($data['sale_price'] !== null && $data['sale_price'] >= $data['price']) {
             $errors[] = 'セール価格は通常価格より低い金額を入力してください。';
         }
 
@@ -262,16 +264,20 @@ class ProductManagementService
 
     private function integerInput(mixed $value): int
     {
-        $value = preg_replace('/[^\d]/', '', (string) $value) ?? '';
+        $rawValue = trim((string) $value);
+        $isNegative = preg_match('/^-/', $rawValue) === 1;
+        $value = preg_replace('/[^\d]/', '', $rawValue) ?? '';
 
-        return $value === '' ? 0 : (int) $value;
+        return $value === '' ? 0 : ($isNegative ? -1 : 1) * (int) $value;
     }
 
     private function nullableIntegerInput(mixed $value): ?int
     {
-        $value = preg_replace('/[^\d]/', '', (string) $value) ?? '';
+        $rawValue = trim((string) $value);
+        $isNegative = preg_match('/^-/', $rawValue) === 1;
+        $value = preg_replace('/[^\d]/', '', $rawValue) ?? '';
 
-        return $value === '' ? null : (int) $value;
+        return $value === '' ? null : ($isNegative ? -1 : 1) * (int) $value;
     }
 
     private function normalizeDateTime(mixed $value): ?string
